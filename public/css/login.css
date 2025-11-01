@@ -1,0 +1,135 @@
+/* 🔥 Fuente moderna */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap'); 
+/* Importa la fuente "Poppins" desde Google Fonts para usarla en todo el sitio */
+
+/* Estilos base para toda la página */
+html, body {
+    margin: 0; /* Elimina los márgenes por defecto del navegador */
+    padding: 0; /* Elimina el padding por defecto */
+    height: 100%; /* Hace que ocupen toda la altura de la ventana */
+    overflow: hidden; /* Quita las barras de desplazamiento */
+    font-family: 'Poppins', sans-serif; /* Aplica la fuente importada a todo el contenido */
+}
+
+/* Contenedor principal */
+.login-container {
+    display: flex; /* Usa flexbox para alinear el contenido */
+    justify-content: center; /* Centra horizontalmente el contenido */
+    align-items: flex-start; /* Alinea al inicio verticalmente */
+    min-height: 100vh; /* Ocupa toda la altura visible de la pantalla */
+    width: 100%; /* Ocupa todo el ancho */
+    background: url("../images/1.png") no-repeat center center; /* Fondo con imagen centrada */
+    background-size: cover; /* La imagen cubre todo el contenedor */
+    background-attachment: fixed; /* La imagen de fondo no se mueve al hacer scroll */
+    padding-top: 60px; /* Espacio desde la parte superior */
+}
+
+/* Caja del formulario */
+.login-form {
+    background: #fff; /* Fondo blanco */
+    padding: 20px 25px; /* Espaciado interno */
+    border-radius: 15px; /* Bordes redondeados */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15); /* Sombra para dar profundidad */
+    width: 320px; /* Ancho fijo del formulario */
+    text-align: left; /* Texto alineado a la izquierda */
+    position: relative; /* Posición relativa para elementos internos posicionados absolutamente */
+}
+
+.login-logo img.logo {
+    width: 180px;      /* más pequeño */
+    height: auto;
+    display: block;
+    margin: 20px auto 15px auto; /* más abajo y con espacio inferior */
+}
+
+/* ---- INPUTS CON ICONO Y LABEL FLOTANTE ---- */
+.input-group {
+    position: relative; /* Necesario para posicionar íconos y labels dentro */
+    margin-bottom: 20px; /* Espacio inferior entre inputs */
+    width: 100%; /* Ocupa todo el ancho del formulario */
+}
+
+.input-group:first-of-type {
+    margin-top: 40px; /* Ajusta margen superior solo para el primer input */
+}
+
+/* ÍCONO a la izquierda dentro del input */
+.input-group .icon {
+    position: absolute; /* Posiciona de forma absoluta respecto al .input-group */
+    top: 50%; /* Centrado vertical */
+    left: 32px; /* Separación desde la izquierda */
+    transform: translateY(-50%); /* Ajusta para un centrado exacto vertical */
+    font-size: 16px; /* Tamaño del ícono */
+    color: #5b69ff; /* Color del ícono */
+    pointer-events: none; /* El ícono no captura clics */
+    transition: color 0.3s ease; /* Transición suave al cambiar color */
+}
+
+/* Estilos del input */
+.input-group input {
+    width: 73%; /* Ancho del input */
+    margin-left: 5%; /* Margen izquierdo para centrar dentro del grupo */
+    padding: 14px 12px 14px 40px; /* Espaciado interno, dejando espacio para el ícono */
+    border-radius: 10px; /* Bordes redondeados */
+    border: 1px solid #ccc; /* Borde gris claro */
+    background: #f9f9f9; /* Fondo gris muy claro */
+    font-size: 14px; /* Tamaño del texto */
+    outline: none; /* Quita el borde por defecto al enfocar */
+    transition: border 0.3s ease, box-shadow 0.3s ease; /* Transición suave al enfocar */
+}
+
+/* Label flotante */
+.input-group label {
+    position: absolute; /* Posiciona el label dentro del input-group */
+    left: calc(5% + 40px); /* Lo alinea después del ícono */
+    top: 50%; /* Centrado vertical */
+    transform: translateY(-50%); /* Ajuste vertical exacto */
+    font-size: 14px; /* Tamaño de texto del label */
+    color: #666; /* Color gris */
+    pointer-events: none; /* No captura clics */
+    transition: all 0.25s ease-in-out; /* Transición suave de todos los cambios */
+}
+
+/* Animación del label al enfocar o tener contenido */
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label {
+    top: -8px; /* Se mueve hacia arriba */
+    left: calc(5% + 36px); /* Ajusta ligeramente la posición horizontal */
+    font-size: 12px; /* Se hace más pequeño */
+    color: #2a41d9; /* Cambia de color al azul */
+    background: #fff; /* Fondo blanco detrás del label */
+    padding: 0 5px; /* Espaciado interno horizontal */
+    border-radius: 5px; /* Bordes redondeados del label */
+}
+
+/* Efecto de foco en input + sombra */
+.input-group input:focus {
+    border-color: #2a41d9; /* Cambia el borde a azul */
+    background: #fff; /* Fondo blanco */
+    box-shadow: 0 0 6px rgba(42, 65, 217, 0.3); /* Sombra azul tenue */
+}
+
+/* Cambio de color del ícono al enfocar el input */
+.input-group input:focus ~ .icon {
+    color: #2a41d9; /* Ícono se vuelve azul */
+}
+
+/* Botón de login */
+.login-form button {
+    width: 100%; /* Ocupa todo el ancho del formulario */
+    padding: 10px; /* Espaciado interno */
+    border: none; /* Sin borde */
+    border-radius: 10px; /* Bordes redondeados */
+    background: linear-gradient(135deg, #fa69d1, #f241d7); /* Degradado rosa */
+    color: white; /* Texto blanco */
+    font-size: 15px; /* Tamaño del texto */
+    font-weight: 600; /* Negrita */
+    cursor: pointer; /* Cambia el cursor al pasar por encima */
+    transition: all 0.3s ease; /* Transición suave para todos los cambios */
+}
+
+/* Efecto hover del botón */
+.login-form button:hover {
+    background: linear-gradient(135deg, #5682f4, #4451ea); /* Degradado azul al pasar el mouse */
+    transform: translateY(-2px); /* Se eleva ligeramente al pasar el mouse */
+}

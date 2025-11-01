@@ -1,0 +1,77 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request; 
+use App\Models\Cita;
+
+class CitaController extends Controller
+{
+    // Mostrar todas las citas
+    public function index()
+    {
+        $citas = Cita::all();
+        return view('citas.index', compact('citas'));
+    }
+
+    // Formulario para crear nueva cita
+    public function create()
+    {
+        return view('citas.create');
+    }
+
+    // Guardar nueva cita
+    public function store(Request $request)
+    {
+        $request->validate([
+            'fecha_cita' => 'required|date',
+            'hora_cita' => 'required',
+            'id_mascota' => 'required|integer',
+        ]);
+
+        Cita::create([
+            'fecha_cita' => $request->fecha_cita,
+            'hora_cita' => $request->hora_cita,
+            'id_mascota' => $request->id_mascota,
+        ]);
+
+        return redirect()->route('citas.index')->with('success', 'Cita creada correctamente.');
+    }
+
+    // Mostrar una cita específica
+    public function show(Cita $cita)
+    {
+        return view('citas.show', compact('cita'));
+    }
+
+    // Formulario para editar cita
+    public function edit(Cita $cita)
+    {
+        return view('citas.edit', compact('cita'));
+    }
+
+    // Actualizar cita
+    public function update(Request $request, Cita $cita)
+    {
+        $request->validate([
+            'fecha_cita' => 'required|date',
+            'hora_cita' => 'required',
+            'id_mascota' => 'required|integer',
+        ]);
+
+        $cita->update([
+            'fecha_cita' => $request->fecha_cita,
+            'hora_cita' => $request->hora_cita,
+            'id_mascota' => $request->id_mascota,
+        ]);
+
+        return redirect()->route('citas.index')->with('success', 'Cita actualizada correctamente.');
+    }
+
+    // Eliminar cita
+    public function destroy(Cita $cita)
+    {
+        $cita->delete();
+        return redirect()->route('citas.index')->with('success', 'Cita eliminada correctamente.');
+    }
+}
