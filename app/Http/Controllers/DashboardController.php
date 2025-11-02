@@ -20,12 +20,10 @@ class DashboardController extends Controller
         $totalConsultas = Consulta::count();
         $totalVacunas = Vacuna::count();
 
-        // Mascotas con sus relaciones para la tabla
-        $mascotas = Mascota::with([
-            'propietario',
-            'historiaClinica.consultas',
-            'historiaClinica.vacunas'
-        ])->paginate(10); // Paginación de 10 por página
+        $mascotasConHistoria = Mascota::has('historiaClinica')->count();
+        $mascotasSinHistoria = Mascota::doesntHave('historiaClinica')->count();
+
+        $mascotas = Mascota::orderBy('nombre')->get(['id_mascota', 'nombre', 'especie']);
 
         return view('dashboard', compact(
             'totalMascotas',
@@ -34,6 +32,8 @@ class DashboardController extends Controller
             'totalConsultas',
             'totalVacunas',
             'mascotas',
+            'mascotasConHistoria',
+            'mascotasSinHistoria',
         ));
     }
 }
