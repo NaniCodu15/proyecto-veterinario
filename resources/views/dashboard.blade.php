@@ -73,66 +73,100 @@
         <div id="section-historias" class="section">
             <h1 class="titulo">Historias Clínicas</h1>
 
-            <!-- BOTÓN NUEVA HISTORIA -->
-            <button id="btnNuevaHistoria" class="btn btn-primary" style="margin-bottom:15px;">
-                <i class="fas fa-plus"></i> Nueva Historia Clínica
-            </button>
+            <div class="historias-wrapper">
+                <div id="alertaHistoria" class="historia-alert is-hidden" role="status" aria-live="polite"></div>
 
-            <!-- TABLA DE HISTORIAS -->
-            <table class="tabla-consultas">
-                <thead>
-                    <tr>
-                        <th>N° Historia</th>
-                        <th>Mascota</th>
-                        <th>Fecha Apertura</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="tablaHistorias">
-                    <tr>
-                        <td>HC-2025-001</td>
-                        <td>Firulais</td>
-                        <td>24/10/2025</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm btnEditar"><i class="fas fa-edit"></i></button>
-                            <button class="btn btn-danger btn-sm btnEliminar"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                <div class="historias-header">
+                    <div class="historias-texto">
+                        <h2 class="historias-titulo">Registro rápido de pacientes</h2>
+                        <p class="historias-descripcion">Conserva la información esencial de cada visita con un solo formulario.</p>
+                    </div>
+                    <button id="btnNuevaHistoria" class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        Nueva Historia Clínica
+                    </button>
+                </div>
 
-            <!-- MODAL NUEVA/EDITAR HISTORIA -->
-            <div id="modalHistoria" class="modal">
+                <div class="historia-card">
+                    <div class="tabla-wrapper">
+                        <table class="tabla-consultas">
+                            <thead>
+                                <tr>
+                                    <th>N° Historia</th>
+                                    <th>Mascota</th>
+                                    <th>Fecha Apertura</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaHistorias">
+                                <tr data-sintomas="Vacunación anual" data-diagnostico="Control preventivo">
+                                    <td>HC-2025-001</td>
+                                    <td>
+                                        <div class="historia-mascota">
+                                            <span class="mascota-nombre">Firulais</span>
+                                            <span class="historia-meta">Peso: 5.4 kg · Temp: 38.5 °C</span>
+                                        </div>
+                                    </td>
+                                    <td>24/10/2025</td>
+                                    <td class="tabla-acciones">
+                                        <button class="btn btn-icon btn-warning btn-sm btnEditar" type="button" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-icon btn-danger btn-sm btnEliminar" type="button" title="Eliminar">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p id="emptyHistorias" class="empty-state hidden">
+                        No hay historias clínicas registradas todavía. ¡Añade la primera para comenzar!
+                    </p>
+                </div>
+            </div>
+
+            <div id="modalHistoria" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
                 <div class="modal-content">
-                    <span class="close">&times;</span>
-                    <h2 id="modalTitulo">Nueva Historia Clínica</h2>
-                    <form id="formHistoria">
-                        <div class="form-group">
-                            <label>Mascota:</label>
-                            <input type="text" id="mascota" required>
+                    <div class="modal-header">
+                        <h2 id="modalTitulo">Nueva Historia Clínica</h2>
+                        <button type="button" class="close-modal" aria-label="Cerrar formulario">
+                            <i class="fas fa-xmark"></i>
+                        </button>
+                    </div>
+                    <form id="formHistoria" autocomplete="off">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="mascota">Mascota</label>
+                                <input type="text" id="mascota" placeholder="Nombre de la mascota" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="peso">Peso (kg)</label>
+                                <input type="number" id="peso" min="0" step="0.1" placeholder="Ej. 5.4" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="temperatura">Temperatura (°C)</label>
+                                <input type="number" id="temperatura" step="0.1" placeholder="Ej. 38.5" required>
+                            </div>
+
+                            <div class="form-group form-group-full">
+                                <label for="sintomas">Síntomas</label>
+                                <textarea id="sintomas" rows="3" placeholder="Describe los síntomas observados"></textarea>
+                            </div>
+
+                            <div class="form-group form-group-full">
+                                <label for="diagnostico">Diagnóstico</label>
+                                <textarea id="diagnostico" rows="3" placeholder="Registra el diagnóstico inicial"></textarea>
+                            </div>
                         </div>
 
-                        <div class="form-group">
-                            <label>Peso (kg):</label>
-                            <input type="number" id="peso" required>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-light" id="cancelarHistoria">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
                         </div>
-
-                        <div class="form-group">
-                            <label>Temperatura (°C):</label>
-                            <input type="number" id="temperatura" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Síntomas:</label>
-                            <textarea id="sintomas" rows="3"></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Diagnóstico:</label>
-                            <textarea id="diagnostico" rows="3"></textarea>
-                        </div>
-
-                        <button type="submit" class="btn btn-success">Guardar</button>
                     </form>
                 </div>
             </div>
@@ -197,6 +231,7 @@
     // Estado inicial: solo Inicio
     document.addEventListener('DOMContentLoaded', () => {
         showSection('inicio');
+        renderEmptyState();
     });
 
     // Navegación por sidebar
@@ -215,28 +250,159 @@
     });
 
     // ===== MODAL HISTORIAS CLÍNICAS =====
-    const modal     = document.getElementById('modalHistoria');
-    const btnNueva  = document.getElementById('btnNuevaHistoria');
-    const spanClose = document.querySelector('#modalHistoria .close');
-    const form      = document.getElementById('formHistoria');
-    const titulo    = document.getElementById('modalTitulo');
+    const modal            = document.getElementById('modalHistoria');
+    const btnNueva         = document.getElementById('btnNuevaHistoria');
+    const closeButtons     = document.querySelectorAll('#modalHistoria .close-modal');
+    const btnCancelar      = document.getElementById('cancelarHistoria');
+    const form             = document.getElementById('formHistoria');
+    const titulo           = document.getElementById('modalTitulo');
+    const tablaHistorias   = document.getElementById('tablaHistorias');
+    const emptyState       = document.getElementById('emptyHistorias');
+    const alertaHistoria   = document.getElementById('alertaHistoria');
+
+    function obtenerCorrelativoInicial() {
+        if (!tablaHistorias) return 0;
+        const valores = Array.from(tablaHistorias.querySelectorAll('tr td:first-child'))
+            .map(celda => celda.textContent.trim().split('-').pop())
+            .map(numero => parseInt(numero, 10))
+            .filter(numero => !Number.isNaN(numero));
+
+        return valores.length ? Math.max(...valores) : 0;
+    }
+
+    let correlativoHistoria = obtenerCorrelativoInicial();
+
+    function renderEmptyState() {
+        if (!emptyState || !tablaHistorias) return;
+        const hayFilas = tablaHistorias.querySelectorAll('tr').length > 0;
+        emptyState.classList.toggle('hidden', hayFilas);
+    }
+
+    let alertaTimeout;
+
+    function showAlert(message, type = 'success') {
+        if (!alertaHistoria) return;
+        alertaHistoria.textContent = message;
+        alertaHistoria.classList.remove('is-hidden', 'is-error', 'is-success');
+        alertaHistoria.classList.add(type === 'error' ? 'is-error' : 'is-success');
+
+        if (alertaTimeout) clearTimeout(alertaTimeout);
+        alertaTimeout = setTimeout(() => {
+            alertaHistoria.classList.add('is-hidden');
+        }, 3200);
+    }
+
+    function generarNumeroHistoria() {
+        const year = new Date().getFullYear();
+        correlativoHistoria += 1;
+        return `HC-${year}-${String(correlativoHistoria).padStart(3, '0')}`;
+    }
+
+    function formatoDecimal(valor) {
+        if (valor === '' || Number.isNaN(Number(valor))) {
+            return '—';
+        }
+        return Number(valor).toFixed(1);
+    }
+
+    function crearFilaHistoria(data) {
+        if (!tablaHistorias) return;
+        const fila = document.createElement('tr');
+        fila.dataset.sintomas = data.sintomas;
+        fila.dataset.diagnostico = data.diagnostico;
+        const pesoTexto = data.peso === '—' ? '—' : `${data.peso} kg`;
+        const temperaturaTexto = data.temperatura === '—' ? '—' : `${data.temperatura} °C`;
+        fila.innerHTML = `
+            <td>${data.numero}</td>
+            <td>
+                <div class="historia-mascota">
+                    <span class="mascota-nombre">${data.mascota}</span>
+                    <span class="historia-meta">Peso: ${pesoTexto} · Temp: ${temperaturaTexto}</span>
+                </div>
+            </td>
+            <td>${data.fecha}</td>
+            <td class="tabla-acciones">
+                <button class="btn btn-icon btn-warning btn-sm btnEditar" type="button" title="Editar">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-icon btn-danger btn-sm btnEliminar" type="button" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        `;
+
+        fila.classList.add('is-new');
+        tablaHistorias.prepend(fila);
+
+        setTimeout(() => {
+            fila.classList.remove('is-new');
+        }, 1600);
+
+        renderEmptyState();
+    }
+
+    function openModal() {
+        if (!modal || !form) return;
+        form.reset();
+        modal.style.display = 'flex';
+        requestAnimationFrame(() => modal.classList.add('show'));
+
+        setTimeout(() => {
+            document.getElementById('mascota')?.focus();
+        }, 150);
+    }
+
+    function closeModal() {
+        if (!modal) return;
+        modal.classList.remove('show');
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 200);
+    }
 
     if (btnNueva) {
         btnNueva.addEventListener('click', () => {
-            titulo.textContent = "Nueva Historia Clínica";
-            form.reset();
-            modal.style.display = 'block';
+            titulo.textContent = 'Nueva Historia Clínica';
+            openModal();
         });
     }
-    if (spanClose) spanClose.addEventListener('click', () => modal.style.display = 'none');
-    window.addEventListener('click', e => { if (e.target === modal) modal.style.display = 'none'; });
+
+    closeButtons.forEach(button => button.addEventListener('click', closeModal));
+    if (btnCancelar) btnCancelar.addEventListener('click', closeModal);
+    window.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal?.classList.contains('show')) closeModal(); });
 
     if (form) {
         form.addEventListener('submit', e => {
             e.preventDefault();
-            alert("Historia guardada correctamente (aquí se conectará con backend).");
-            modal.style.display = 'none';
+
+            const mascota      = document.getElementById('mascota').value.trim();
+            const peso          = document.getElementById('peso').value.trim();
+            const temperatura   = document.getElementById('temperatura').value.trim();
+            const sintomas      = document.getElementById('sintomas').value.trim();
+            const diagnostico   = document.getElementById('diagnostico').value.trim();
+
+            if (!mascota) {
+                showAlert('Ingresa el nombre de la mascota para continuar.', 'error');
+                return;
+            }
+
+            const historia = {
+                numero: generarNumeroHistoria(),
+                mascota,
+                peso: formatoDecimal(peso),
+                temperatura: formatoDecimal(temperatura),
+                sintomas: sintomas || 'Sin síntomas registrados',
+                diagnostico: diagnostico || 'Sin diagnóstico registrado',
+                fecha: new Date().toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' })
+            };
+
+            crearFilaHistoria(historia);
+            form.reset();
+            closeModal();
+            showAlert('Historia clínica guardada correctamente.');
         });
     }
+
 </script>
 @endsection
