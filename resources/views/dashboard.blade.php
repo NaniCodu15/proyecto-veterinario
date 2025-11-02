@@ -108,8 +108,67 @@
                     <h2 id="modalTitulo">Nueva Historia Clínica</h2>
                     <form id="formHistoria">
                         <div class="form-group">
-                            <label>Mascota:</label>
-                            <input type="text" id="mascota" required>
+                            <label>ID de Historia Clínica:</label>
+                            <input type="text" id="idHistoria" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Nombre de la Mascota:</label>
+                            <input type="text" id="nombreMascota" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Especie:</label>
+                            <select id="especie" required>
+                                <option value="" selected disabled>Seleccione una opción</option>
+                                <option value="perro">Perro</option>
+                                <option value="gato">Gato</option>
+                                <option value="otro">Otros</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="grupoEspecieOtro" style="display: none;">
+                            <label>Especifique la especie:</label>
+                            <input type="text" id="especieOtro">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Edad (años):</label>
+                            <input type="number" id="edad" min="0" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Raza:</label>
+                            <input type="text" id="raza" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Sexo:</label>
+                            <select id="sexo" required>
+                                <option value="" selected disabled>Seleccione una opción</option>
+                                <option value="macho">Macho</option>
+                                <option value="hembra">Hembra</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Nombre del Propietario:</label>
+                            <input type="text" id="nombrePropietario" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Teléfono:</label>
+                            <input type="tel" id="telefono" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Dirección:</label>
+                            <input type="text" id="direccion" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>DNI:</label>
+                            <input type="text" id="dni" required>
                         </div>
 
                         <div class="form-group">
@@ -215,21 +274,57 @@
     });
 
     // ===== MODAL HISTORIAS CLÍNICAS =====
-    const modal     = document.getElementById('modalHistoria');
-    const btnNueva  = document.getElementById('btnNuevaHistoria');
-    const spanClose = document.querySelector('#modalHistoria .close');
-    const form      = document.getElementById('formHistoria');
-    const titulo    = document.getElementById('modalTitulo');
+    const modal             = document.getElementById('modalHistoria');
+    const btnNueva          = document.getElementById('btnNuevaHistoria');
+    const spanClose         = document.querySelector('#modalHistoria .close');
+    const form              = document.getElementById('formHistoria');
+    const titulo            = document.getElementById('modalTitulo');
+    const historiaIdInput   = document.getElementById('idHistoria');
+    const especieSelect     = document.getElementById('especie');
+    const especieOtroGroup  = document.getElementById('grupoEspecieOtro');
+    const especieOtroInput  = document.getElementById('especieOtro');
+
+    function generarIdHistoria() {
+        const timestamp = Date.now().toString(36).toUpperCase();
+        const aleatorio = Math.random().toString(36).substring(2, 6).toUpperCase();
+        return `PET-${timestamp}-${aleatorio}`;
+    }
+
+    function prepararFormularioHistoria() {
+        if (!form) return;
+        form.reset();
+        if (historiaIdInput) {
+            historiaIdInput.value = generarIdHistoria();
+        }
+        if (especieOtroGroup && especieOtroInput) {
+            especieOtroGroup.style.display = 'none';
+            especieOtroInput.removeAttribute('required');
+        }
+    }
 
     if (btnNueva) {
         btnNueva.addEventListener('click', () => {
             titulo.textContent = "Nueva Historia Clínica";
-            form.reset();
+            prepararFormularioHistoria();
             modal.style.display = 'block';
         });
     }
     if (spanClose) spanClose.addEventListener('click', () => modal.style.display = 'none');
     window.addEventListener('click', e => { if (e.target === modal) modal.style.display = 'none'; });
+
+    if (especieSelect) {
+        especieSelect.addEventListener('change', () => {
+            if (!especieOtroGroup || !especieOtroInput) return;
+            if (especieSelect.value === 'otro') {
+                especieOtroGroup.style.display = 'block';
+                especieOtroInput.setAttribute('required', 'required');
+            } else {
+                especieOtroGroup.style.display = 'none';
+                especieOtroInput.removeAttribute('required');
+                especieOtroInput.value = '';
+            }
+        });
+    }
 
     if (form) {
         form.addEventListener('submit', e => {
