@@ -61,28 +61,51 @@ img {
     bottom: 16px;
     left: 16px;
     width: 260px;
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-soft);
-    border: 1px solid rgba(127, 169, 255, 0.16);
-    padding: 36px 24px 28px;
+    padding: 38px 26px 28px;
     display: flex;
     flex-direction: column;
-    gap: 24px;
-    backdrop-filter: blur(12px);
+    gap: 26px;
+    border-radius: var(--radius-xl);
+    border: 1px solid rgba(255, 176, 210, 0.45);
+    background: linear-gradient(160deg, rgba(255, 192, 221, 0.88), rgba(255, 235, 245, 0.68));
+    box-shadow: 0 24px 60px rgba(255, 176, 210, 0.28);
+    backdrop-filter: blur(18px);
     overflow: hidden;
+    z-index: 10;
+}
+
+.sidebar::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.55), transparent 55%),
+        radial-gradient(circle at 80% 0%, rgba(255, 255, 255, 0.35), transparent 60%);
+    opacity: 0.9;
+    pointer-events: none;
 }
 
 .sidebar-header {
     text-align: center;
+    position: relative;
+    z-index: 1;
 }
 
 .sidebar-logo {
     width: 150px;
     margin: 0 auto;
+    transition: transform 0.35s ease, filter 0.35s ease;
+    filter: drop-shadow(0 12px 24px rgba(255, 176, 210, 0.35));
+}
+
+.sidebar-logo:hover,
+.sidebar-logo:focus {
+    transform: scale(1.04);
+    filter: drop-shadow(0 18px 30px rgba(122, 168, 255, 0.25));
 }
 
 .sidebar-menu {
+    position: relative;
+    z-index: 1;
     list-style: none;
     padding: 0;
     margin: 0;
@@ -102,25 +125,47 @@ img {
     padding: 13px 18px;
     border-radius: var(--radius-md);
     text-decoration: none;
-    color: var(--text-muted);
+    color: rgba(35, 52, 87, 0.75);
     font-weight: 600;
-    letter-spacing: 0.02em;
-    transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+    letter-spacing: 0.01em;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid transparent;
+    box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.2);
+    transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease,
+        border-color 0.3s ease;
+}
+
+.sidebar-menu a span {
+    flex: 1;
+    font-size: 0.95rem;
 }
 
 .sidebar-menu a i {
     font-size: 18px;
+    color: rgba(122, 168, 255, 0.85);
+    transition: color 0.3s ease;
 }
 
 .sidebar-menu a:hover,
+.sidebar-menu a:focus,
 .sidebar-menu a.active {
-    background: linear-gradient(135deg, rgba(122, 168, 255, 0.18), rgba(255, 159, 207, 0.18));
-    color: var(--primary-dark);
-    transform: translateX(6px);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.65), rgba(255, 220, 238, 0.85));
+    color: rgba(47, 70, 112, 0.95);
+    border-color: rgba(255, 176, 210, 0.55);
+    box-shadow: 0 16px 35px rgba(255, 176, 210, 0.32);
+    transform: translateX(8px);
+}
+
+.sidebar-menu a:hover i,
+.sidebar-menu a:focus i,
+.sidebar-menu a.active i {
+    color: rgba(255, 147, 201, 0.95);
 }
 
 .logout-form {
     margin-top: auto;
+    position: relative;
+    z-index: 1;
 }
 
 .btn-logout {
@@ -129,19 +174,29 @@ img {
     justify-content: center;
     gap: 10px;
     width: 100%;
-    background: rgba(255, 159, 207, 0.15);
-    border: none;
-    color: var(--accent-dark);
+    background: rgba(255, 255, 255, 0.28);
+    border: 1px solid rgba(255, 176, 210, 0.45);
+    color: rgba(199, 81, 142, 0.95);
     padding: 14px 18px;
     border-radius: var(--radius-md);
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.25s ease, transform 0.25s ease;
+    transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.btn-logout:hover {
-    background: rgba(255, 159, 207, 0.25);
+.btn-logout:hover,
+.btn-logout:focus {
+    background: rgba(255, 220, 238, 0.72);
+    box-shadow: 0 16px 30px rgba(255, 176, 210, 0.28);
     transform: translateX(6px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sidebar-logo,
+    .sidebar-menu a,
+    .btn-logout {
+        transition: none;
+    }
 }
 
 .content {
