@@ -127,89 +127,112 @@
                     <span class="close">&times;</span>
                     <h2 id="modalTitulo">Nueva Historia Clínica</h2>
                     <form id="formHistoria">
-                        <div class="form-grid">
-                            <div class="form-group full-width">
-                                <label>ID de Historia Clínica:</label>
-                                <input type="text" id="numero_historia" name="numero_historia" readonly>
-                            </div>
+                        <div class="form-section">
+                            <h3 class="form-section__title"><span>🐶</span>Datos de la mascota</h3>
+                            <div class="form-grid">
+                                <div class="form-group full-width">
+                                    <label>ID de Historia Clínica:</label>
+                                    <input type="text" id="numero_historia" name="numero_historia" readonly>
+                                </div>
 
-                            <div class="form-group">
-                                <label>Nombre de la Mascota:</label>
-                                <input type="text" id="nombreMascota" name="nombreMascota" required>
-                            </div>
+                                <div class="form-group">
+                                    <label>Nombre de la Mascota:</label>
+                                    <input type="text" id="nombreMascota" name="nombreMascota" required>
+                                </div>
 
-                            <div class="form-group">
-                                <label>Especie:</label>
-                                <select id="especie" name="especie" required>
-                                    <option value="" selected disabled>Seleccione una opción</option>
-                                    <option value="perro">Perro</option>
-                                    <option value="gato">Gato</option>
-                                    <option value="otro">Otros</option>
-                                </select>
-                            </div>
+                                <div class="form-group">
+                                    <label>Especie:</label>
+                                    <select id="especie" name="especie" required>
+                                        <option value="" selected disabled>Seleccione una opción</option>
+                                        <option value="perro">Perro</option>
+                                        <option value="gato">Gato</option>
+                                        <option value="otro">Otros</option>
+                                    </select>
+                                </div>
 
-                            <div class="form-group full-width" id="grupoEspecieOtro" style="display: none;">
-                                <label>Especifique la especie:</label>
-                                <input type="text" id="especieOtro" name="especieOtro">
-                            </div>
+                                <div class="form-group full-width" id="grupoEspecieOtro" style="display: none;">
+                                    <label>Especifique la especie:</label>
+                                    <input type="text" id="especieOtro" name="especieOtro">
+                                </div>
 
-                            <div class="form-group">
-                                <label>Edad (años):</label>
-                                <input type="number" id="edad" name="edad" min="0">
-                            </div>
+                                <div class="form-group">
+                                    <label>Edad (años):</label>
+                                    <input type="number" id="edad" name="edad" min="0">
+                                </div>
 
-                            <div class="form-group">
-                                <label>Raza:</label>
-                                <input type="text" id="raza" name="raza" required>
-                            </div>
+                                <div class="form-group">
+                                    <label>Raza:</label>
+                                    <input type="text" id="raza" name="raza" required>
+                                </div>
 
-                            <div class="form-group">
-                                <label>Sexo:</label>
-                                <select id="sexo" name="sexo" required>
-                                    <option value="" selected disabled>Seleccione una opción</option>
-                                    <option value="macho">Macho</option>
-                                    <option value="hembra">Hembra</option>
-                                </select>
-                            </div>
+                                <div class="form-group">
+                                    <label>Sexo:</label>
+                                    <select id="sexo" name="sexo" required>
+                                        <option value="" selected disabled>Seleccione una opción</option>
+                                        <option value="macho">Macho</option>
+                                        <option value="hembra">Hembra</option>
+                                    </select>
+                                </div>
 
-                            <div class="form-group">
-                                <label>Nombre del Propietario:</label>
-                                <input type="text" id="nombrePropietario" name="nombrePropietario" required>
+                                <div class="form-group">
+                                    <label>Peso (kg):</label>
+                                    <input type="number" id="peso" name="peso" step="0.01">
+                                </div>
                             </div>
+                        </div>
 
-                            <div class="form-group">
-                                <label>Teléfono:</label>
-                                <input type="tel" id="telefono" name="telefono" required>
+                        <div class="form-section">
+                            <h3 class="form-section__title"><span>👤</span>Datos del propietario</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Nombre del Propietario:</label>
+                                    <input type="text" id="nombrePropietario" name="nombrePropietario" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Teléfono:</label>
+                                    <input type="tel" id="telefono" name="telefono" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Dirección:</label>
+                                    <input type="text" id="direccion" name="direccion" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>DNI:</label>
+                                    <input type="text" id="dni" name="dni" required>
+                                </div>
                             </div>
+                        </div>
 
-                            <div class="form-group">
-                                <label>Dirección:</label>
-                                <input type="text" id="direccion" name="direccion" required>
-                            </div>
+                        <div class="form-section">
+                            <h3 class="form-section__title"><span>🩺</span>Consulta</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Temperatura (°C):</label>
+                                    <input type="number" id="temperatura" name="temperatura" step="0.1">
+                                </div>
 
-                            <div class="form-group">
-                                <label>DNI:</label>
-                                <input type="text" id="dni" name="dni" required>
-                            </div>
+                                <div class="form-group full-width">
+                                    <label>Síntomas:</label>
+                                    <textarea id="sintomas" name="sintomas" rows="3"></textarea>
+                                </div>
 
-                            <div class="form-group">
-                                <label>Peso (kg):</label>
-                                <input type="number" id="peso" name="peso" step="0.01" required>
-                            </div>
+                                <div class="form-group full-width">
+                                    <label>Diagnóstico:</label>
+                                    <textarea id="diagnostico" name="diagnostico" rows="3"></textarea>
+                                </div>
 
-                            <div class="form-group">
-                                <label>Temperatura (°C):</label>
-                                <input type="number" id="temperatura" name="temperatura" step="0.1" required>
-                            </div>
+                                <div class="form-group full-width">
+                                    <label>Vacunas:</label>
+                                    <textarea id="vacunas" name="vacunas" rows="3"></textarea>
+                                </div>
 
-                            <div class="form-group full-width">
-                                <label>Síntomas:</label>
-                                <textarea id="sintomas" name="sintomas" rows="3"></textarea>
-                            </div>
-
-                            <div class="form-group full-width">
-                                <label>Diagnóstico:</label>
-                                <textarea id="diagnostico" name="diagnostico" rows="3"></textarea>
+                                <div class="form-group full-width">
+                                    <label>Tratamientos:</label>
+                                    <textarea id="tratamientos" name="tratamientos" rows="3"></textarea>
+                                </div>
                             </div>
                         </div>
 
@@ -259,6 +282,16 @@
     </div>
 </div>
 
+<div id="confirmModal" class="confirm-modal" role="alertdialog" aria-modal="true" aria-labelledby="confirmModalMessage" hidden>
+    <div class="confirm-modal__dialog">
+        <p id="confirmModalMessage" class="confirm-modal__message">¿Desea eliminar esta historia clínica?</p>
+        <div class="confirm-modal__actions">
+            <button type="button" class="btn btn-confirm-cancel" data-confirm="cancel">Cancelar</button>
+            <button type="button" class="btn btn-confirm-accept" data-confirm="accept">Aceptar</button>
+        </div>
+    </div>
+</div>
+
 <script>
     const links    = document.querySelectorAll('.sidebar-menu a.nav-link');
     const sections = Array.from(document.querySelectorAll('#main-content .section'));
@@ -270,6 +303,7 @@
     const csrfToken        = csrfTokenElement ? csrfTokenElement.getAttribute('content') : '';
 
     let historiaEditandoId = null;
+    let historiaPorEliminarId = null;
     let proximoNumeroHistoria = 'HC-00001';
 
     function showSection(key) {
@@ -315,6 +349,9 @@
     const btnGuardar          = form?.querySelector('.btn-guardar');
     const btnAccesoRapido     = document.getElementById('btnAccesoRapido');
     const btnIrHistorias      = document.querySelector('.btn-ir-historias');
+    const confirmModal        = document.getElementById('confirmModal');
+    const confirmAcceptButton = confirmModal?.querySelector('[data-confirm="accept"]');
+    const confirmCancelButton = confirmModal?.querySelector('[data-confirm="cancel"]');
 
     const campos = {
         nombreMascota: document.getElementById('nombreMascota'),
@@ -329,6 +366,8 @@
         temperatura: document.getElementById('temperatura'),
         sintomas: document.getElementById('sintomas'),
         diagnostico: document.getElementById('diagnostico'),
+        vacunas: document.getElementById('vacunas'),
+        tratamientos: document.getElementById('tratamientos'),
     };
 
     function ocultarEspecieOtro() {
@@ -380,6 +419,37 @@
 
         modal.style.display = 'none';
         document.body.classList.remove('modal-open');
+    }
+
+    function abrirConfirmacionPara(id) {
+        if (!id) {
+            return;
+        }
+
+        if (!confirmModal) {
+            if (window.confirm('¿Desea eliminar esta historia clínica?')) {
+                eliminarHistoria(id);
+            }
+            return;
+        }
+
+        historiaPorEliminarId = id;
+        confirmModal.hidden = false;
+        confirmModal.classList.add('is-visible');
+        window.setTimeout(() => {
+            confirmAcceptButton?.focus();
+        }, 10);
+    }
+
+    function cerrarConfirmacion() {
+        if (!confirmModal) {
+            historiaPorEliminarId = null;
+            return;
+        }
+
+        confirmModal.classList.remove('is-visible');
+        confirmModal.hidden = true;
+        historiaPorEliminarId = null;
     }
 
     function reiniciarFormulario() {
@@ -661,6 +731,39 @@
         }
     }
 
+    if (confirmCancelButton) {
+        confirmCancelButton.addEventListener('click', () => {
+            cerrarConfirmacion();
+        });
+    }
+
+    if (confirmAcceptButton) {
+        confirmAcceptButton.addEventListener('click', async () => {
+            if (!historiaPorEliminarId) {
+                cerrarConfirmacion();
+                return;
+            }
+
+            const id = historiaPorEliminarId;
+            cerrarConfirmacion();
+            await eliminarHistoria(id);
+        });
+    }
+
+    if (confirmModal) {
+        confirmModal.addEventListener('click', event => {
+            if (event.target === confirmModal) {
+                cerrarConfirmacion();
+            }
+        });
+    }
+
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && confirmModal?.classList.contains('is-visible')) {
+            cerrarConfirmacion();
+        }
+    });
+
     if (tablaHistorias) {
         tablaHistorias.addEventListener('click', event => {
             const botonEditar = event.target.closest('.btnEditar');
@@ -677,8 +780,8 @@
             if (botonEliminar) {
                 const fila = botonEliminar.closest('tr');
                 const id = fila?.dataset.historiaId;
-                if (id && confirm('¿Desea eliminar esta historia clínica?')) {
-                    eliminarHistoria(id);
+                if (id) {
+                    abrirConfirmacionPara(id);
                 }
             }
         });
@@ -710,7 +813,7 @@
                 }
             });
 
-            ['especieOtro', 'edad', 'peso', 'temperatura', 'sintomas', 'diagnostico'].forEach(campo => {
+            ['especieOtro', 'edad', 'peso', 'temperatura', 'sintomas', 'diagnostico', 'vacunas', 'tratamientos'].forEach(campo => {
                 if (payload[campo] === '' || payload[campo] === undefined) {
                     delete payload[campo];
                 }
