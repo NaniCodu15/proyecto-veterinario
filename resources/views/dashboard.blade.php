@@ -95,14 +95,8 @@
                             </tr>
                         </thead>
                         <tbody id="tablaHistorias">
-                            <tr>
-                                <td>HC-2025-001</td>
-                                <td>Firulais</td>
-                                <td>24/10/2025</td>
-                                <td class="acciones">
-                                    <button class="btn btn-warning btn-sm btnEditar"><i class="fas fa-edit"></i></button>
-                                    <button class="btn btn-danger btn-sm btnEliminar"><i class="fas fa-trash"></i></button>
-                                </td>
+                            <tr class="tabla-historias__empty">
+                                <td colspan="4">No hay historias clínicas registradas todavía.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -118,17 +112,17 @@
                         <div class="form-grid">
                             <div class="form-group full-width">
                                 <label>ID de Historia Clínica:</label>
-                                <input type="text" id="idHistoria" readonly>
+                                <input type="text" id="numero_historia" name="numero_historia" readonly>
                             </div>
 
                             <div class="form-group">
                                 <label>Nombre de la Mascota:</label>
-                                <input type="text" id="nombreMascota" required>
+                                <input type="text" id="nombreMascota" name="nombreMascota" required>
                             </div>
 
                             <div class="form-group">
                                 <label>Especie:</label>
-                                <select id="especie" required>
+                                <select id="especie" name="especie" required>
                                     <option value="" selected disabled>Seleccione una opción</option>
                                     <option value="perro">Perro</option>
                                     <option value="gato">Gato</option>
@@ -138,22 +132,22 @@
 
                             <div class="form-group full-width" id="grupoEspecieOtro" style="display: none;">
                                 <label>Especifique la especie:</label>
-                                <input type="text" id="especieOtro">
+                                <input type="text" id="especieOtro" name="especieOtro">
                             </div>
 
                             <div class="form-group">
                                 <label>Edad (años):</label>
-                                <input type="number" id="edad" min="0" required>
+                                <input type="number" id="edad" name="edad" min="0">
                             </div>
 
                             <div class="form-group">
                                 <label>Raza:</label>
-                                <input type="text" id="raza" required>
+                                <input type="text" id="raza" name="raza" required>
                             </div>
 
                             <div class="form-group">
                                 <label>Sexo:</label>
-                                <select id="sexo" required>
+                                <select id="sexo" name="sexo" required>
                                     <option value="" selected disabled>Seleccione una opción</option>
                                     <option value="macho">Macho</option>
                                     <option value="hembra">Hembra</option>
@@ -162,42 +156,42 @@
 
                             <div class="form-group">
                                 <label>Nombre del Propietario:</label>
-                                <input type="text" id="nombrePropietario" required>
+                                <input type="text" id="nombrePropietario" name="nombrePropietario" required>
                             </div>
 
                             <div class="form-group">
                                 <label>Teléfono:</label>
-                                <input type="tel" id="telefono" required>
+                                <input type="tel" id="telefono" name="telefono" required>
                             </div>
 
                             <div class="form-group">
                                 <label>Dirección:</label>
-                                <input type="text" id="direccion" required>
+                                <input type="text" id="direccion" name="direccion" required>
                             </div>
 
                             <div class="form-group">
                                 <label>DNI:</label>
-                                <input type="text" id="dni" required>
+                                <input type="text" id="dni" name="dni" required>
                             </div>
 
                             <div class="form-group">
                                 <label>Peso (kg):</label>
-                                <input type="number" id="peso" required>
+                                <input type="number" id="peso" name="peso" step="0.01" required>
                             </div>
 
                             <div class="form-group">
                                 <label>Temperatura (°C):</label>
-                                <input type="number" id="temperatura" required>
+                                <input type="number" id="temperatura" name="temperatura" step="0.1" required>
                             </div>
 
                             <div class="form-group full-width">
                                 <label>Síntomas:</label>
-                                <textarea id="sintomas" rows="3"></textarea>
+                                <textarea id="sintomas" name="sintomas" rows="3"></textarea>
                             </div>
 
                             <div class="form-group full-width">
                                 <label>Diagnóstico:</label>
-                                <textarea id="diagnostico" rows="3"></textarea>
+                                <textarea id="diagnostico" name="diagnostico" rows="3"></textarea>
                             </div>
                         </div>
 
@@ -253,91 +247,90 @@
     const links    = document.querySelectorAll('.sidebar-menu a.nav-link');
     const sections = Array.from(document.querySelectorAll('#main-content .section'));
 
-    // Colapsar sidebar
-    toggle.addEventListener('click', () => sidebar.classList.toggle('collapsed'));
+    const historiaListUrl  = "{{ route('historia_clinicas.list') }}";
+    const historiaStoreUrl = "{{ route('historia_clinicas.store') }}";
+    const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
+    const csrfToken        = csrfTokenElement ? csrfTokenElement.getAttribute('content') : '';
 
-    // --- helpers para mostrar/ocultar secciones sin depender del CSS ---
+    // Colapsar sidebar
+    toggle?.addEventListener('click', () => sidebar?.classList.toggle('collapsed'));
+
     function showSection(key) {
-        // oculta todas
-        sections.forEach(sec => { sec.style.display = 'none'; sec.classList.remove('active'); });
-        // muestra solo la pedida
+        sections.forEach(sec => {
+            sec.style.display = 'none';
+            sec.classList.remove('active');
+        });
+
         const el = document.getElementById('section-' + key);
-        if (el) { el.style.display = 'block'; el.classList.add('active'); }
+        if (el) {
+            el.style.display = 'block';
+            el.classList.add('active');
+        }
     }
 
-    // Estado inicial: solo Inicio
     document.addEventListener('DOMContentLoaded', () => {
         showSection('inicio');
+        cargarHistorias();
     });
 
-    // Navegación por sidebar
     links.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
 
-            // activo visual
             links.forEach(l => l.classList.remove('active'));
             this.classList.add('active');
 
-            // mostrar sección
             const key = this.dataset.section;
             showSection(key);
+
+            if (key === 'historias') {
+                cargarHistorias();
+            }
         });
     });
 
-    // ===== MODAL HISTORIAS CLÍNICAS =====
-    const modal             = document.getElementById('modalHistoria');
-    const btnNueva          = document.getElementById('btnNuevaHistoria');
-    const spanClose         = document.querySelector('#modalHistoria .close');
-    const form              = document.getElementById('formHistoria');
-    const titulo            = document.getElementById('modalTitulo');
-    const historiaIdInput   = document.getElementById('idHistoria');
-    const especieSelect     = document.getElementById('especie');
-    const especieOtroGroup  = document.getElementById('grupoEspecieOtro');
-    const especieOtroInput  = document.getElementById('especieOtro');
-    const tablaHistorias    = document.getElementById('tablaHistorias');
-    const mensajeHistorias  = document.getElementById('historiaMensaje');
+    const modal               = document.getElementById('modalHistoria');
+    const btnNueva            = document.getElementById('btnNuevaHistoria');
+    const spanClose           = document.querySelector('#modalHistoria .close');
+    const form                = document.getElementById('formHistoria');
+    const titulo              = document.getElementById('modalTitulo');
+    const numeroHistoriaInput = document.getElementById('numero_historia');
+    const especieSelect       = document.getElementById('especie');
+    const especieOtroGroup    = document.getElementById('grupoEspecieOtro');
+    const especieOtroInput    = document.getElementById('especieOtro');
+    const tablaHistorias      = document.getElementById('tablaHistorias');
+    const mensajeHistorias    = document.getElementById('historiaMensaje');
+    const btnGuardar          = form?.querySelector('.btn-guardar');
 
-    function generarIdHistoria() {
+    function generarNumeroHistoria() {
         const timestamp = Date.now().toString(36).toUpperCase();
         const aleatorio = Math.random().toString(36).substring(2, 6).toUpperCase();
         return `PET-${timestamp}-${aleatorio}`;
     }
 
     function prepararFormularioHistoria() {
-        if (!form) return;
-        form.reset();
-        if (historiaIdInput) {
-            historiaIdInput.value = generarIdHistoria();
+        if (!form) {
+            return;
         }
+
+        form.reset();
+
+        if (numeroHistoriaInput) {
+            numeroHistoriaInput.value = generarNumeroHistoria();
+        }
+
         if (especieOtroGroup && especieOtroInput) {
             especieOtroGroup.style.display = 'none';
+            especieOtroInput.value = '';
             especieOtroInput.removeAttribute('required');
         }
     }
 
-    function obtenerFechaActualFormateada() {
-        const ahora = new Date();
-        const opciones = { day: '2-digit', month: '2-digit', year: 'numeric' };
-        return ahora.toLocaleDateString('es-ES', opciones);
-    }
-
-    function crearFilaHistoria({ id, mascota, fecha }) {
-        const fila = document.createElement('tr');
-        fila.innerHTML = `
-            <td>${id}</td>
-            <td>${mascota}</td>
-            <td>${fecha}</td>
-            <td class="acciones">
-                <button class="btn btn-warning btn-sm btnEditar" title="Editar historia"><i class="fas fa-edit"></i></button>
-                <button class="btn btn-danger btn-sm btnEliminar" title="Eliminar historia"><i class="fas fa-trash"></i></button>
-            </td>
-        `;
-        return fila;
-    }
-
     function mostrarMensajeHistoria(texto, tipo = 'success') {
-        if (!mensajeHistorias) return;
+        if (!mensajeHistorias) {
+            return;
+        }
+
         mensajeHistorias.textContent = texto;
         mensajeHistorias.classList.remove('alert--success', 'alert--error');
         mensajeHistorias.classList.add(`alert--${tipo}`);
@@ -349,19 +342,119 @@
         }, 4000);
     }
 
+    function crearFilaHistoria(historia) {
+        const fila = document.createElement('tr');
+        fila.dataset.historiaId = historia.id ?? '';
+
+        const numeroCell = document.createElement('td');
+        numeroCell.textContent = historia.numero_historia || '—';
+
+        const mascotaCell = document.createElement('td');
+        mascotaCell.textContent = historia.mascota || 'Sin nombre';
+
+        const fechaCell = document.createElement('td');
+        fechaCell.textContent = historia.fecha_apertura || '—';
+
+        const accionesCell = document.createElement('td');
+        accionesCell.classList.add('acciones');
+
+        const btnEditar = document.createElement('button');
+        btnEditar.className = 'btn btn-warning btn-sm btnEditar';
+        btnEditar.title = 'Editar historia';
+        btnEditar.innerHTML = '<i class="fas fa-edit"></i>';
+
+        const btnEliminar = document.createElement('button');
+        btnEliminar.className = 'btn btn-danger btn-sm btnEliminar';
+        btnEliminar.title = 'Eliminar historia';
+        btnEliminar.innerHTML = '<i class="fas fa-trash"></i>';
+
+        accionesCell.append(btnEditar, btnEliminar);
+        fila.append(numeroCell, mascotaCell, fechaCell, accionesCell);
+
+        return fila;
+    }
+
+    function renderHistorias(lista = []) {
+        if (!tablaHistorias) {
+            return;
+        }
+
+        tablaHistorias.innerHTML = '';
+
+        if (!Array.isArray(lista) || lista.length === 0) {
+            const filaVacia = document.createElement('tr');
+            filaVacia.classList.add('tabla-historias__empty');
+
+            const celda = document.createElement('td');
+            celda.colSpan = 4;
+            celda.textContent = 'No hay historias clínicas registradas todavía.';
+
+            filaVacia.appendChild(celda);
+            tablaHistorias.appendChild(filaVacia);
+            return;
+        }
+
+        const fragment = document.createDocumentFragment();
+        lista.forEach(historia => {
+            fragment.appendChild(crearFilaHistoria(historia));
+        });
+
+        tablaHistorias.appendChild(fragment);
+    }
+
+    async function cargarHistorias() {
+        if (!historiaListUrl || !tablaHistorias) {
+            return;
+        }
+
+        try {
+            const response = await fetch(historiaListUrl, {
+                headers: { 'Accept': 'application/json' },
+            });
+
+            if (!response.ok) {
+                throw new Error('No se pudieron obtener las historias clínicas.');
+            }
+
+            const data = await response.json();
+            renderHistorias(data.data ?? []);
+        } catch (error) {
+            console.error(error);
+            mostrarMensajeHistoria('No se pudieron cargar las historias clínicas.', 'error');
+            renderHistorias();
+        }
+    }
+
     if (btnNueva) {
         btnNueva.addEventListener('click', () => {
-            titulo.textContent = "Nueva Historia Clínica";
+            titulo.textContent = 'Nueva Historia Clínica';
             prepararFormularioHistoria();
-            modal.style.display = 'block';
+            if (modal) {
+                modal.style.display = 'block';
+            }
         });
     }
-    if (spanClose) spanClose.addEventListener('click', () => modal.style.display = 'none');
-    window.addEventListener('click', e => { if (e.target === modal) modal.style.display = 'none'; });
+
+    if (spanClose) {
+        spanClose.addEventListener('click', () => {
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        });
+    }
+
+    window.addEventListener('click', event => {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
 
     if (especieSelect) {
         especieSelect.addEventListener('change', () => {
-            if (!especieOtroGroup || !especieOtroInput) return;
+            if (!especieOtroGroup || !especieOtroInput) {
+                return;
+            }
+
             if (especieSelect.value === 'otro') {
                 especieOtroGroup.style.display = 'block';
                 especieOtroInput.setAttribute('required', 'required');
@@ -374,23 +467,98 @@
     }
 
     if (form) {
-        form.addEventListener('submit', e => {
-            e.preventDefault();
+        form.addEventListener('submit', async event => {
+            event.preventDefault();
 
-            const datosHistoria = {
-                id: historiaIdInput ? (historiaIdInput.value || generarIdHistoria()) : generarIdHistoria(),
-                mascota: document.getElementById('nombreMascota')?.value.trim() || 'Sin nombre',
-                fecha: obtenerFechaActualFormateada(),
-            };
-
-            if (tablaHistorias) {
-                const nuevaFila = crearFilaHistoria(datosHistoria);
-                tablaHistorias.prepend(nuevaFila);
+            if (!historiaStoreUrl) {
+                return;
             }
 
-            mostrarMensajeHistoria('Historia clínica guardada correctamente.');
-            modal.style.display = 'none';
-            prepararFormularioHistoria();
+            const formData = new FormData(form);
+
+            if (!formData.get('numero_historia')) {
+                formData.set('numero_historia', generarNumeroHistoria());
+            }
+
+            const payload = {};
+            formData.forEach((value, key) => {
+                if (typeof value === 'string') {
+                    payload[key] = value.trim();
+                } else {
+                    payload[key] = value;
+                }
+            });
+
+            if (!payload.especieOtro) {
+                delete payload.especieOtro;
+            }
+
+            if (!payload.edad) {
+                delete payload.edad;
+            }
+
+            if (!payload.sintomas) {
+                delete payload.sintomas;
+            }
+
+            if (!payload.diagnostico) {
+                delete payload.diagnostico;
+            }
+
+            if (btnGuardar) {
+                btnGuardar.disabled = true;
+            }
+
+            try {
+                const response = await fetch(historiaStoreUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: JSON.stringify(payload),
+                });
+
+                const responseData = await response.json().catch(() => null);
+
+                if (response.status === 422) {
+                    const errores = Object.values(responseData?.errors ?? {}).flat();
+                    const mensaje = errores.join(' ') || 'Revisa los datos ingresados.';
+                    mostrarMensajeHistoria(mensaje, 'error');
+                    return;
+                }
+
+                if (!response.ok) {
+                    throw new Error(responseData?.message || 'No se pudo guardar la historia clínica.');
+                }
+
+                if (responseData?.historia) {
+                    if (tablaHistorias) {
+                        const filaVacia = tablaHistorias.querySelector('.tabla-historias__empty');
+                        if (filaVacia) {
+                            filaVacia.remove();
+                        }
+                        tablaHistorias.prepend(crearFilaHistoria(responseData.historia));
+                    }
+
+                    mostrarMensajeHistoria('Historia clínica guardada correctamente.');
+                    if (modal) {
+                        modal.style.display = 'none';
+                    }
+                    prepararFormularioHistoria();
+                } else {
+                    mostrarMensajeHistoria('Historia clínica guardada correctamente.');
+                    cargarHistorias();
+                }
+            } catch (error) {
+                console.error(error);
+                mostrarMensajeHistoria(error.message || 'No se pudo guardar la historia clínica.', 'error');
+            } finally {
+                if (btnGuardar) {
+                    btnGuardar.disabled = false;
+                }
+            }
         });
     }
 </script>
