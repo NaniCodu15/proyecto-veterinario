@@ -43,6 +43,8 @@ class HistoriaClinicaController extends Controller
             'temperatura' => ['nullable', 'numeric'],
             'sintomas' => ['nullable', 'string'],
             'diagnostico' => ['nullable', 'string'],
+            'vacunas' => ['nullable', 'string'],
+            'tratamientos' => ['nullable', 'string'],
         ], [
             'especieOtro.required_if' => 'Debe especificar la especie de la mascota.',
         ]);
@@ -105,6 +107,8 @@ class HistoriaClinicaController extends Controller
                 'temperatura' => $validated['temperatura'] ?? null,
                 'sintomas' => $validated['sintomas'] ?? null,
                 'diagnostico' => $validated['diagnostico'] ?? null,
+                'vacunas' => $validated['vacunas'] ?? null,
+                'tratamientos' => $validated['tratamientos'] ?? null,
                 'created_by' => Auth::id(),
             ]);
 
@@ -145,6 +149,8 @@ class HistoriaClinicaController extends Controller
             'temperatura' => ['nullable', 'numeric'],
             'sintomas' => ['nullable', 'string'],
             'diagnostico' => ['nullable', 'string'],
+            'vacunas' => ['nullable', 'string'],
+            'tratamientos' => ['nullable', 'string'],
         ], [
             'especieOtro.required_if' => 'Debe especificar la especie de la mascota.',
         ]);
@@ -192,6 +198,8 @@ class HistoriaClinicaController extends Controller
             $historia->temperatura = $validated['temperatura'] ?? null;
             $historia->sintomas = $validated['sintomas'] ?? null;
             $historia->diagnostico = $validated['diagnostico'] ?? null;
+            $historia->vacunas = $validated['vacunas'] ?? null;
+            $historia->tratamientos = $validated['tratamientos'] ?? null;
 
             $historia->save();
 
@@ -281,6 +289,8 @@ class HistoriaClinicaController extends Controller
             'temperatura' => $historia->temperatura,
             'sintomas' => $historia->sintomas,
             'diagnostico' => $historia->diagnostico,
+            'vacunas' => $historia->vacunas,
+            'tratamientos' => $historia->tratamientos,
         ];
     }
 
