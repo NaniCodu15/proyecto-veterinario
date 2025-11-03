@@ -41,4 +41,10 @@ class HistoriaClinica extends Model
     {
         return $this->hasMany(Consulta::class, 'id_historia', 'id_historia');
     }
+
+    // Relación: una historia clínica puede tener varias vacunas asociadas a través de la mascota
+    public function vacunas()
+    {
+        return $this->hasMany(Vacuna::class, 'id_mascota', 'id_mascota');
+    }
 }
