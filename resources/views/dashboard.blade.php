@@ -5,22 +5,62 @@
     <!-- SIDEBAR FIJO -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <img src="{{ asset('images/logoVet.png') }}" alt="Logo" class="sidebar-logo">
+            <div class="sidebar-brand">
+                <div class="sidebar-logo-wrap">
+                    <img src="{{ asset('images/logoVet.png') }}" alt="Logo" class="sidebar-logo">
+                </div>
+                <div class="sidebar-brand-text">
+                    <span class="sidebar-brand-label">Hospital</span>
+                    <h1 class="sidebar-brand-name">Hospital Veterinario</h1>
+                    <span class="sidebar-brand-tagline">Cuidado integral para cada paciente</span>
+                </div>
+            </div>
         </div>
 
         <ul class="sidebar-menu">
-            <li><a href="#" class="nav-link active" data-section="inicio"><i class="fas fa-home"></i><span>Inicio</span></a></li>
-            <li><a href="#" class="nav-link" data-section="citas"><i class="fas fa-calendar-alt"></i><span>Citas</span></a></li>
-            <li><a href="#" class="nav-link" data-section="historias"><i class="fas fa-notes-medical"></i><span>Historias Clínicas</span></a></li>
-            <li><a href="#" class="nav-link" data-section="mascotas"><i class="fas fa-dog"></i><span>Mascotas</span></a></li>
-            <li><a href="#" class="nav-link" data-section="propietarios"><i class="fas fa-user"></i><span>Propietarios</span></a></li>
-            <li><a href="#" class="nav-link" data-section="consultas"><i class="fas fa-stethoscope"></i><span>Consultas</span></a></li>
+            <li>
+                <a href="#" class="nav-link active" data-section="inicio">
+                    <span class="nav-icon"><i class="fas fa-home"></i></span>
+                    <span class="nav-text">Inicio</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link" data-section="citas">
+                    <span class="nav-icon"><i class="fas fa-calendar-alt"></i></span>
+                    <span class="nav-text">Citas</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link" data-section="historias">
+                    <span class="nav-icon"><i class="fas fa-notes-medical"></i></span>
+                    <span class="nav-text">Historias Clínicas</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link" data-section="mascotas">
+                    <span class="nav-icon"><i class="fas fa-dog"></i></span>
+                    <span class="nav-text">Mascotas</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link" data-section="propietarios">
+                    <span class="nav-icon"><i class="fas fa-user"></i></span>
+                    <span class="nav-text">Propietarios</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link" data-section="consultas">
+                    <span class="nav-icon"><i class="fas fa-stethoscope"></i></span>
+                    <span class="nav-text">Consultas</span>
+                </a>
+            </li>
         </ul>
 
         <form action="{{ route('logout') }}" method="POST" class="logout-form">
             @csrf
             <button type="submit" class="btn-logout">
-                <i class="fas fa-sign-out-alt"></i> <span>Cerrar sesión</span>
+                <span class="nav-icon nav-icon--logout"><i class="fas fa-sign-out-alt"></i></span>
+                <span class="nav-text">Cerrar sesión</span>
             </button>
         </form>
     </div>
