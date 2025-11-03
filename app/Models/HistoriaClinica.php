@@ -24,6 +24,10 @@ class HistoriaClinica extends Model
         'created_by',
     ];
 
+    protected $casts = [
+        'fecha_apertura' => 'date',
+    ];
+
     // Relación: la historia clínica pertenece a una mascota
     // Esto significa que podemos acceder a la mascota de esta historia usando $historia->mascota
     public function mascota()
