@@ -2,11 +2,6 @@
 
 @section('content')
 <div class="dashboard-container">
-    <!-- BOTÓN HAMBURGUESA -->
-    <button class="toggle-btn" id="toggleSidebar">
-        <i class="fas fa-bars"></i>
-    </button>
-
     <!-- SIDEBAR FIJO -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -36,10 +31,33 @@
     <div id="main-content" class="content">
         <!-- SECCIÓN INICIO -->
         <div id="section-inicio" class="section active">
-            <h1 class="titulo">HOSPITAL VETERINARIO</h1>
+            <div class="welcome-card">
+                <div class="welcome-card__body">
+                    <span class="welcome-card__badge">Hospital Veterinario</span>
+                    <h1 class="welcome-card__title">Cuidamos con amor a tus mejores amigos</h1>
+                    <p class="welcome-card__subtitle">
+                        Gestiona fácilmente historias clínicas, citas y propietarios desde un panel profesional y amigable.
+                    </p>
+                    <div class="welcome-card__actions">
+                        <a href="#" class="btn btn-primary btn-ir-historias" data-section="historias">
+                            <i class="fas fa-notes-medical"></i>
+                            Ver historias clínicas
+                        </a>
+                        <button type="button" class="btn btn-outline" id="btnAccesoRapido">
+                            <i class="fas fa-plus-circle"></i>
+                            Registrar nueva historia
+                        </button>
+                    </div>
+                </div>
+                <div class="welcome-card__illustration">
+                    <div class="welcome-card__halo"></div>
+                    <img src="{{ asset('images/logoVet.png') }}" alt="Hospital veterinario" class="welcome-card__image">
+                </div>
+            </div>
+
             <div class="search-bar">
                 <i class="fas fa-search"></i>
-                <input type="text" placeholder="Buscar...">
+                <input type="text" placeholder="Buscar en el panel...">
             </div>
 
             <div class="dashboard-cards">
@@ -47,7 +65,7 @@
                     <i class="fas fa-dog icon"></i>
                     <div class="stat-info">
                         <h2>{{ $totalMascotas }}</h2>
-                        <p>Mascotas Registradas</p>
+                        <p>Mascotas registradas</p>
                     </div>
                 </div>
 
@@ -55,7 +73,7 @@
                     <i class="fas fa-user icon"></i>
                     <div class="stat-info">
                         <h2>{{ $totalPropietarios }}</h2>
-                        <p>Propietarios Registrados</p>
+                        <p>Propietarios activos</p>
                     </div>
                 </div>
 
@@ -63,7 +81,7 @@
                     <i class="fas fa-stethoscope icon"></i>
                     <div class="stat-info">
                         <h2>{{ $totalConsultas ?? 0 }}</h2>
-                        <p>Consultas Realizadas</p>
+                        <p>Consultas realizadas</p>
                     </div>
                 </div>
             </div>
@@ -242,30 +260,24 @@
 </div>
 
 <script>
-    const sidebar  = document.getElementById('sidebar');
-    const toggle   = document.getElementById('toggleSidebar');
     const links    = document.querySelectorAll('.sidebar-menu a.nav-link');
     const sections = Array.from(document.querySelectorAll('#main-content .section'));
 
     const historiaListUrl  = "{{ route('historia_clinicas.list') }}";
     const historiaStoreUrl = "{{ route('historia_clinicas.store') }}";
+    const historiaBaseUrl  = "{{ url('historia_clinicas') }}";
     const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
     const csrfToken        = csrfTokenElement ? csrfTokenElement.getAttribute('content') : '';
 
-    // Colapsar sidebar
-    toggle?.addEventListener('click', () => sidebar?.classList.toggle('collapsed'));
+    let historiaEditandoId = null;
+    let proximoNumeroHistoria = 'HC-00001';
 
     function showSection(key) {
         sections.forEach(sec => {
-            sec.style.display = 'none';
-            sec.classList.remove('active');
+            const activa = sec.id === `section-${key}`;
+            sec.style.display = activa ? 'block' : 'none';
+            sec.classList.toggle('active', activa);
         });
-
-        const el = document.getElementById('section-' + key);
-        if (el) {
-            el.style.display = 'block';
-            el.classList.add('active');
-        }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -274,8 +286,8 @@
     });
 
     links.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
+        link.addEventListener('click', function (event) {
+            event.preventDefault();
 
             links.forEach(l => l.classList.remove('active'));
             this.classList.add('active');
@@ -301,29 +313,134 @@
     const tablaHistorias      = document.getElementById('tablaHistorias');
     const mensajeHistorias    = document.getElementById('historiaMensaje');
     const btnGuardar          = form?.querySelector('.btn-guardar');
+    const btnAccesoRapido     = document.getElementById('btnAccesoRapido');
+    const btnIrHistorias      = document.querySelector('.btn-ir-historias');
 
-    function generarNumeroHistoria() {
-        const timestamp = Date.now().toString(36).toUpperCase();
-        const aleatorio = Math.random().toString(36).substring(2, 6).toUpperCase();
-        return `PET-${timestamp}-${aleatorio}`;
+    const campos = {
+        nombreMascota: document.getElementById('nombreMascota'),
+        edad: document.getElementById('edad'),
+        raza: document.getElementById('raza'),
+        sexo: document.getElementById('sexo'),
+        nombrePropietario: document.getElementById('nombrePropietario'),
+        telefono: document.getElementById('telefono'),
+        direccion: document.getElementById('direccion'),
+        dni: document.getElementById('dni'),
+        peso: document.getElementById('peso'),
+        temperatura: document.getElementById('temperatura'),
+        sintomas: document.getElementById('sintomas'),
+        diagnostico: document.getElementById('diagnostico'),
+    };
+
+    function ocultarEspecieOtro() {
+        if (!especieOtroGroup || !especieOtroInput) {
+            return;
+        }
+
+        especieOtroGroup.style.display = 'none';
+        especieOtroInput.value = '';
+        especieOtroInput.removeAttribute('required');
     }
 
-    function prepararFormularioHistoria() {
+    function mostrarEspecieOtro() {
+        if (!especieOtroGroup || !especieOtroInput) {
+            return;
+        }
+
+        especieOtroGroup.style.display = 'block';
+        especieOtroInput.setAttribute('required', 'required');
+    }
+
+    function prepararFormularioBase() {
         if (!form) {
             return;
         }
 
         form.reset();
+        ocultarEspecieOtro();
 
         if (numeroHistoriaInput) {
-            numeroHistoriaInput.value = generarNumeroHistoria();
+            numeroHistoriaInput.value = proximoNumeroHistoria;
+            numeroHistoriaInput.placeholder = 'Se generará automáticamente';
+        }
+    }
+
+    function abrirModal() {
+        if (!modal) {
+            return;
         }
 
-        if (especieOtroGroup && especieOtroInput) {
-            especieOtroGroup.style.display = 'none';
-            especieOtroInput.value = '';
-            especieOtroInput.removeAttribute('required');
+        modal.style.display = 'block';
+        document.body.classList.add('modal-open');
+    }
+
+    function cerrarModal() {
+        if (!modal) {
+            return;
         }
+
+        modal.style.display = 'none';
+        document.body.classList.remove('modal-open');
+    }
+
+    function reiniciarFormulario() {
+        historiaEditandoId = null;
+        prepararFormularioBase();
+
+        if (titulo) {
+            titulo.textContent = 'Nueva Historia Clínica';
+        }
+
+        if (btnGuardar) {
+            btnGuardar.textContent = 'Guardar';
+        }
+    }
+
+    function abrirModalParaCrear() {
+        reiniciarFormulario();
+        abrirModal();
+    }
+
+    function rellenarFormulario(historia) {
+        if (!historia || !form) {
+            return;
+        }
+
+        prepararFormularioBase();
+        historiaEditandoId = historia.id ?? null;
+
+        if (titulo) {
+            const numero = historia.numero_historia ? ` ${historia.numero_historia}` : '';
+            titulo.textContent = `Editar${numero}`.trim();
+        }
+
+        if (btnGuardar) {
+            btnGuardar.textContent = 'Actualizar';
+        }
+
+        if (numeroHistoriaInput) {
+            numeroHistoriaInput.value = historia.numero_historia ?? '';
+        }
+
+        if (especieSelect) {
+            especieSelect.value = historia.especie ?? '';
+            if (historia.especie === 'otro') {
+                mostrarEspecieOtro();
+                if (especieOtroInput) {
+                    especieOtroInput.value = historia.especieOtro ?? '';
+                }
+            }
+        }
+
+        Object.entries(campos).forEach(([clave, campo]) => {
+            if (!campo) {
+                return;
+            }
+
+            const valor = historia[clave];
+            campo.value = valor ?? '';
+        });
+
+        abrirModal();
     }
 
     function mostrarMensajeHistoria(texto, tipo = 'success') {
@@ -374,6 +491,28 @@
         return fila;
     }
 
+    function actualizarProximoNumero(lista = []) {
+        let maximo = 0;
+
+        lista.forEach(historia => {
+            const coincidencia = /HC-(\d+)/.exec(historia.numero_historia ?? '');
+            if (!coincidencia) {
+                return;
+            }
+
+            const valor = parseInt(coincidencia[1], 10);
+            if (!Number.isNaN(valor)) {
+                maximo = Math.max(maximo, valor);
+            }
+        });
+
+        proximoNumeroHistoria = `HC-${String(maximo + 1).padStart(5, '0')}`;
+
+        if (!historiaEditandoId && numeroHistoriaInput && modal && modal.style.display === 'block') {
+            numeroHistoriaInput.value = proximoNumeroHistoria;
+        }
+    }
+
     function renderHistorias(lista = []) {
         if (!tablaHistorias) {
             return;
@@ -391,6 +530,7 @@
 
             filaVacia.appendChild(celda);
             tablaHistorias.appendChild(filaVacia);
+            actualizarProximoNumero([]);
             return;
         }
 
@@ -400,6 +540,7 @@
         });
 
         tablaHistorias.appendChild(fragment);
+        actualizarProximoNumero(lista);
     }
 
     async function cargarHistorias() {
@@ -409,7 +550,7 @@
 
         try {
             const response = await fetch(historiaListUrl, {
-                headers: { 'Accept': 'application/json' },
+                headers: { Accept: 'application/json' },
             });
 
             if (!response.ok) {
@@ -427,41 +568,118 @@
 
     if (btnNueva) {
         btnNueva.addEventListener('click', () => {
-            titulo.textContent = 'Nueva Historia Clínica';
-            prepararFormularioHistoria();
-            if (modal) {
-                modal.style.display = 'block';
+            abrirModalParaCrear();
+        });
+    }
+
+    if (btnAccesoRapido) {
+        btnAccesoRapido.addEventListener('click', () => {
+            abrirModalParaCrear();
+        });
+    }
+
+    if (btnIrHistorias) {
+        btnIrHistorias.addEventListener('click', event => {
+            event.preventDefault();
+
+            const linkHistorias = document.querySelector('.sidebar-menu a[data-section="historias"]');
+            if (linkHistorias) {
+                links.forEach(l => l.classList.remove('active'));
+                linkHistorias.classList.add('active');
             }
+
+            showSection('historias');
+            cargarHistorias();
         });
     }
 
     if (spanClose) {
         spanClose.addEventListener('click', () => {
-            if (modal) {
-                modal.style.display = 'none';
-            }
+            cerrarModal();
+            reiniciarFormulario();
         });
     }
 
     window.addEventListener('click', event => {
         if (event.target === modal) {
-            modal.style.display = 'none';
+            cerrarModal();
+            reiniciarFormulario();
         }
     });
 
     if (especieSelect) {
         especieSelect.addEventListener('change', () => {
-            if (!especieOtroGroup || !especieOtroInput) {
-                return;
+            if (especieSelect.value === 'otro') {
+                mostrarEspecieOtro();
+            } else {
+                ocultarEspecieOtro();
+            }
+        });
+    }
+
+    async function cargarHistoriaParaEditar(id) {
+        try {
+            const response = await fetch(`${historiaBaseUrl}/${id}`, {
+                headers: { Accept: 'application/json' },
+            });
+
+            if (!response.ok) {
+                throw new Error('No se pudo obtener la historia clínica.');
             }
 
-            if (especieSelect.value === 'otro') {
-                especieOtroGroup.style.display = 'block';
-                especieOtroInput.setAttribute('required', 'required');
-            } else {
-                especieOtroGroup.style.display = 'none';
-                especieOtroInput.removeAttribute('required');
-                especieOtroInput.value = '';
+            const data = await response.json();
+            rellenarFormulario(data.historia);
+        } catch (error) {
+            console.error(error);
+            mostrarMensajeHistoria(error.message || 'No se pudo cargar la historia clínica.', 'error');
+        }
+    }
+
+    async function eliminarHistoria(id) {
+        if (!historiaBaseUrl) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`${historiaBaseUrl}/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    Accept: 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('No se pudo eliminar la historia clínica.');
+            }
+
+            mostrarMensajeHistoria('Historia clínica eliminada correctamente.');
+            await cargarHistorias();
+        } catch (error) {
+            console.error(error);
+            mostrarMensajeHistoria(error.message || 'No se pudo eliminar la historia clínica.', 'error');
+        }
+    }
+
+    if (tablaHistorias) {
+        tablaHistorias.addEventListener('click', event => {
+            const botonEditar = event.target.closest('.btnEditar');
+            const botonEliminar = event.target.closest('.btnEliminar');
+
+            if (botonEditar) {
+                const fila = botonEditar.closest('tr');
+                const id = fila?.dataset.historiaId;
+                if (id) {
+                    cargarHistoriaParaEditar(id);
+                }
+            }
+
+            if (botonEliminar) {
+                const fila = botonEliminar.closest('tr');
+                const id = fila?.dataset.historiaId;
+                if (id && confirm('¿Desea eliminar esta historia clínica?')) {
+                    eliminarHistoria(id);
+                }
             }
         });
     }
@@ -475,46 +693,42 @@
             }
 
             const formData = new FormData(form);
-
-            if (!formData.get('numero_historia')) {
-                formData.set('numero_historia', generarNumeroHistoria());
-            }
-
             const payload = {};
+
             formData.forEach((value, key) => {
+                if (key === 'numero_historia') {
+                    return;
+                }
+
                 if (typeof value === 'string') {
-                    payload[key] = value.trim();
+                    const limpio = value.trim();
+                    if (limpio !== '') {
+                        payload[key] = limpio;
+                    }
                 } else {
                     payload[key] = value;
                 }
             });
 
-            if (!payload.especieOtro) {
-                delete payload.especieOtro;
-            }
-
-            if (!payload.edad) {
-                delete payload.edad;
-            }
-
-            if (!payload.sintomas) {
-                delete payload.sintomas;
-            }
-
-            if (!payload.diagnostico) {
-                delete payload.diagnostico;
-            }
+            ['especieOtro', 'edad', 'peso', 'temperatura', 'sintomas', 'diagnostico'].forEach(campo => {
+                if (payload[campo] === '' || payload[campo] === undefined) {
+                    delete payload[campo];
+                }
+            });
 
             if (btnGuardar) {
                 btnGuardar.disabled = true;
             }
 
             try {
-                const response = await fetch(historiaStoreUrl, {
-                    method: 'POST',
+                const url = historiaEditandoId ? `${historiaBaseUrl}/${historiaEditandoId}` : historiaStoreUrl;
+                const method = historiaEditandoId ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method,
                     headers: {
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json',
+                        Accept: 'application/json',
                         'X-CSRF-TOKEN': csrfToken,
                     },
                     body: JSON.stringify(payload),
@@ -533,24 +747,14 @@
                     throw new Error(responseData?.message || 'No se pudo guardar la historia clínica.');
                 }
 
-                if (responseData?.historia) {
-                    if (tablaHistorias) {
-                        const filaVacia = tablaHistorias.querySelector('.tabla-historias__empty');
-                        if (filaVacia) {
-                            filaVacia.remove();
-                        }
-                        tablaHistorias.prepend(crearFilaHistoria(responseData.historia));
-                    }
+                const mensajeExito = historiaEditandoId
+                    ? 'Historia clínica actualizada correctamente.'
+                    : 'Historia clínica guardada correctamente.';
 
-                    mostrarMensajeHistoria('Historia clínica guardada correctamente.');
-                    if (modal) {
-                        modal.style.display = 'none';
-                    }
-                    prepararFormularioHistoria();
-                } else {
-                    mostrarMensajeHistoria('Historia clínica guardada correctamente.');
-                    cargarHistorias();
-                }
+                mostrarMensajeHistoria(mensajeExito);
+                cerrarModal();
+                reiniciarFormulario();
+                await cargarHistorias();
             } catch (error) {
                 console.error(error);
                 mostrarMensajeHistoria(error.message || 'No se pudo guardar la historia clínica.', 'error');

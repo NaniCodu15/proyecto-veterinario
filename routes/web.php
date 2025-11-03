@@ -12,7 +12,7 @@ use App\Http\Controllers\VacunaController;
 use App\Http\Controllers\Auth\LoginController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
 
 // ✅ Rutas públicas para Login
