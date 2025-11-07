@@ -23,17 +23,33 @@ class CitaController extends Controller
     // Guardar nueva cita
     public function store(Request $request)
     {
-        $request->validate([
-            'fecha_cita' => 'required|date',
-            'hora_cita' => 'required',
-            'id_mascota' => 'required|integer',
+        $validated = $request->validate([
+            'fecha_cita' => ['required', 'date'],
+            'hora_cita' => ['nullable', 'date_format:H:i'],
+            'motivo' => ['required', 'string', 'max:255'],
+            'id_mascota' => ['required', 'exists:mascotas,id_mascota'],
         ]);
 
-        Cita::create([
-            'fecha_cita' => $request->fecha_cita,
-            'hora_cita' => $request->hora_cita,
-            'id_mascota' => $request->id_mascota,
+        $hora = $validated['hora_cita'] ?? '00:00';
+        if (strlen($hora) === 5) {
+            $hora .= ':00';
+        }
+
+        $cita = Cita::create([
+            'fecha_cita' => $validated['fecha_cita'],
+            'hora_cita' => $hora,
+            'motivo' => $validated['motivo'],
+            'id_mascota' => $validated['id_mascota'],
+            'estado' => 'Pendiente',
         ]);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Cita creada correctamente.',
+                'cita' => $cita,
+            ], 201);
+        }
 
         return redirect()->route('citas.index')->with('success', 'Cita creada correctamente.');
     }

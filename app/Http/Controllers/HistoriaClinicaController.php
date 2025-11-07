@@ -275,6 +275,7 @@ class HistoriaClinicaController extends Controller
         return [
             'id' => $historia->id_historia,
             'numero_historia' => $historia->numero_historia,
+            'id_mascota' => $mascota?->id_mascota,
             'nombreMascota' => $mascota?->nombre ?? '',
             'especie' => $especieFormulario['clave'],
             'especieOtro' => $especieFormulario['otro'],
