@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('citas', function (Blueprint $table) {
             $table->id('id_cita');
-            $table->unsignedBigInteger('id_mascota');
+            $table->unsignedBigInteger('id_historia');
             $table->date('fecha_cita');
             $table->time('hora_cita');
             $table->string('motivo', 255)->nullable();
             $table->enum('estado', ['Pendiente','Atendida','Cancelada'])->default('Pendiente');
 
-            $table->foreign('id_mascota')->references('id_mascota')->on('mascotas')->onDelete('cascade');
+            $table->foreign('id_historia')->references('id_historia')->on('historia_clinicas')->onDelete('cascade');
         });
     }
 

@@ -1156,7 +1156,7 @@
             const motivo = (citaCampos.motivo?.value || '').trim();
             const fecha = citaCampos.fecha?.value || '';
 
-            if (!historiaSeleccionadaParaCita?.id_mascota) {
+            if (!historiaSeleccionadaParaCita?.id) {
                 mostrarMensajeCita('Selecciona una historia clínica antes de registrar la cita.', 'error');
                 return;
             }
@@ -1174,7 +1174,7 @@
             }
 
             const payload = {
-                id_mascota: historiaSeleccionadaParaCita.id_mascota,
+                id_historia: historiaSeleccionadaParaCita.id,
                 fecha_cita: fecha,
                 motivo,
             };

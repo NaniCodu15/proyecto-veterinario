@@ -14,17 +14,16 @@ class Cita extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'id_mascota',
+        'id_historia',
         'fecha_cita',
         'hora_cita',
         'motivo',
         'estado',
     ];
 
-    // Relación: una cita pertenece a una mascota
-    // Podemos acceder a la mascota de la cita usando $cita->mascota
-    public function mascota()
+    // Relación: una cita pertenece a una historia clínica
+    public function historiaClinica()
     {
-        return $this->belongsTo(Mascota::class, 'id_mascota', 'id_mascota');
+        return $this->belongsTo(HistoriaClinica::class, 'id_historia', 'id_historia');
     }
 }
