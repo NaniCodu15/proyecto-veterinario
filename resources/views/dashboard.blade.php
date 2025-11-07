@@ -406,8 +406,72 @@
 
         <!-- SECCIÓN CITAS -->
         <div id="section-citas" class="section">
-            <h1 class="titulo">Citas</h1>
-            <p>Aquí aparecerán las citas programadas.</p>
+            <div class="citas-header">
+                <h1 class="titulo">Citas</h1>
+                <p>Coordina las citas con información actualizada de cada paciente y su familia en pocos pasos.</p>
+            </div>
+
+            <div class="citas-grid">
+                <section class="citas-card" id="registrarCitaCard">
+                    <div class="citas-card__header">
+                        <div>
+                            <h2>Registrar Cita</h2>
+                            <p>Selecciona una historia clínica existente para completar automáticamente los datos.</p>
+                        </div>
+                        <div class="citas-card__icon" aria-hidden="true"><i class="fas fa-calendar-plus"></i></div>
+                    </div>
+
+                    <div id="citaMensaje" class="cita-alert" role="alert" hidden></div>
+
+                    <form id="formRegistrarCita" class="cita-form" novalidate>
+                        <div class="cita-form__group">
+                            <label for="historiaSelectCitas">Historia clínica</label>
+                            <select id="historiaSelectCitas" name="historia" required>
+                                <option value="">Selecciona una historia clínica</option>
+                            </select>
+                        </div>
+
+                        <div class="cita-form__grid" aria-live="polite">
+                            <div class="cita-form__group">
+                                <label for="citaPropietarioNombre">Nombre del propietario</label>
+                                <input type="text" id="citaPropietarioNombre" readonly>
+                            </div>
+
+                            <div class="cita-form__group">
+                                <label for="citaPropietarioDni">DNI del propietario</label>
+                                <input type="text" id="citaPropietarioDni" readonly>
+                            </div>
+
+                            <div class="cita-form__group">
+                                <label for="citaPropietarioTelefono">Teléfono del propietario</label>
+                                <input type="text" id="citaPropietarioTelefono" readonly>
+                            </div>
+
+                            <div class="cita-form__group">
+                                <label for="citaMascotaNombre">Nombre de la mascota</label>
+                                <input type="text" id="citaMascotaNombre" readonly>
+                            </div>
+                        </div>
+
+                        <div class="cita-form__group">
+                            <label for="citaMotivo">Motivo de la cita</label>
+                            <textarea id="citaMotivo" name="motivo" placeholder="Describe brevemente el motivo de la visita" required></textarea>
+                        </div>
+
+                        <div class="cita-form__group">
+                            <label for="citaFecha">Fecha de la cita</label>
+                            <input type="date" id="citaFecha" name="fecha_cita" required>
+                        </div>
+
+                        <div class="cita-form__actions">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i>
+                                Guardar cita
+                            </button>
+                        </div>
+                    </form>
+                </section>
+            </div>
         </div>
 
         <!-- SECCIÓN MASCOTAS -->
@@ -448,6 +512,7 @@
     const historiaListUrl  = "{{ route('historia_clinicas.list') }}";
     const historiaStoreUrl = "{{ route('historia_clinicas.store') }}";
     const historiaBaseUrl  = "{{ url('historia_clinicas') }}";
+    const citasStoreUrl    = "{{ route('citas.store') }}";
     const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
     const csrfToken        = csrfTokenElement ? csrfTokenElement.getAttribute('content') : '';
 
@@ -518,6 +583,20 @@
         vacunas: document.getElementById('vacunas'),
         tratamientos: document.getElementById('tratamientos'),
     };
+
+    const formularioCita = document.getElementById('formRegistrarCita');
+    const historiaSelectCita = document.getElementById('historiaSelectCitas');
+    const citaCampos = {
+        propietarioNombre: document.getElementById('citaPropietarioNombre'),
+        propietarioDni: document.getElementById('citaPropietarioDni'),
+        propietarioTelefono: document.getElementById('citaPropietarioTelefono'),
+        mascotaNombre: document.getElementById('citaMascotaNombre'),
+        motivo: document.getElementById('citaMotivo'),
+        fecha: document.getElementById('citaFecha'),
+    };
+    const citaMensaje = document.getElementById('citaMensaje');
+
+    let historiaSeleccionadaParaCita = null;
 
     function ocultarEspecieOtro() {
         if (!especieOtroGroup || !especieOtroInput) {
@@ -678,6 +757,112 @@
         }, 4000);
     }
 
+    function mostrarMensajeCita(texto, tipo = 'success') {
+        if (!citaMensaje) {
+            return;
+        }
+
+        citaMensaje.textContent = texto;
+        citaMensaje.classList.remove('cita-alert--success', 'cita-alert--error', 'is-visible');
+
+        const clase = tipo === 'success' ? 'cita-alert--success' : 'cita-alert--error';
+        citaMensaje.classList.add(clase, 'is-visible');
+        citaMensaje.hidden = false;
+
+        window.clearTimeout(mostrarMensajeCita.timeoutId);
+        mostrarMensajeCita.timeoutId = window.setTimeout(() => {
+            if (!citaMensaje) {
+                return;
+            }
+
+            citaMensaje.classList.remove('is-visible', 'cita-alert--success', 'cita-alert--error');
+            citaMensaje.hidden = true;
+        }, 4000);
+    }
+
+    function limpiarDatosHistoriaEnCita() {
+        ['propietarioNombre', 'propietarioDni', 'propietarioTelefono', 'mascotaNombre'].forEach(clave => {
+            const campo = citaCampos[clave];
+            if (campo) {
+                campo.value = '';
+            }
+        });
+    }
+
+    function poblarHistoriasParaCitas(lista = []) {
+        if (!historiaSelectCita) {
+            return;
+        }
+
+        const valorActual = historiaSelectCita.value;
+        historiaSelectCita.innerHTML = '<option value="">Selecciona una historia clínica</option>';
+
+        lista.forEach(historia => {
+            if (!historia || !historia.id) {
+                return;
+            }
+
+            const opcion = document.createElement('option');
+            opcion.value = historia.id;
+            const mascota = historia.mascota || 'Mascota sin nombre';
+            opcion.textContent = `${historia.numero_historia || 'Sin código'} · ${mascota}`;
+            historiaSelectCita.appendChild(opcion);
+        });
+
+        const existeValorPrevio = lista.some(historia => String(historia?.id ?? '') === valorActual);
+        if (existeValorPrevio) {
+            historiaSelectCita.value = valorActual;
+        } else {
+            historiaSelectCita.value = '';
+            historiaSeleccionadaParaCita = null;
+            limpiarDatosHistoriaEnCita();
+        }
+    }
+
+    async function obtenerHistoriaDetallada(id) {
+        if (!historiaBaseUrl || !id) {
+            throw new Error('Seleccione una historia clínica válida.');
+        }
+
+        const response = await fetch(`${historiaBaseUrl}/${id}`, {
+            headers: { Accept: 'application/json' },
+        });
+
+        if (!response.ok) {
+            throw new Error('No se pudo obtener la información de la historia clínica.');
+        }
+
+        const data = await response.json();
+        if (!data?.historia) {
+            throw new Error('No se encontró la historia clínica seleccionada.');
+        }
+
+        return data.historia;
+    }
+
+    function rellenarDatosHistoriaEnCita(historia) {
+        if (!historia) {
+            limpiarDatosHistoriaEnCita();
+            historiaSeleccionadaParaCita = null;
+            return;
+        }
+
+        historiaSeleccionadaParaCita = historia;
+
+        if (citaCampos.propietarioNombre) {
+            citaCampos.propietarioNombre.value = historia.nombrePropietario ?? '';
+        }
+        if (citaCampos.propietarioDni) {
+            citaCampos.propietarioDni.value = historia.dni ?? '';
+        }
+        if (citaCampos.propietarioTelefono) {
+            citaCampos.propietarioTelefono.value = historia.telefono ?? '';
+        }
+        if (citaCampos.mascotaNombre) {
+            citaCampos.mascotaNombre.value = historia.nombreMascota ?? '';
+        }
+    }
+
     function crearFilaHistoria(historia) {
         const fila = document.createElement('tr');
         fila.dataset.historiaId = historia.id ?? '';
@@ -733,6 +918,8 @@
     }
 
     function renderHistorias(lista = []) {
+        poblarHistoriasParaCitas(Array.isArray(lista) ? lista : []);
+
         if (!tablaHistorias) {
             return;
         }
@@ -763,7 +950,7 @@
     }
 
     async function cargarHistorias() {
-        if (!historiaListUrl || !tablaHistorias) {
+        if (!historiaListUrl) {
             return;
         }
 
@@ -781,6 +968,7 @@
         } catch (error) {
             console.error(error);
             mostrarMensajeHistoria('No se pudieron cargar las historias clínicas.', 'error');
+            mostrarMensajeCita('No se pudieron cargar las historias clínicas.', 'error');
             renderHistorias();
         }
     }
@@ -809,6 +997,26 @@
 
             showSection('historias');
             cargarHistorias();
+        });
+    }
+
+    if (historiaSelectCita) {
+        historiaSelectCita.addEventListener('change', async event => {
+            const id = event.target.value;
+
+            if (!id) {
+                rellenarDatosHistoriaEnCita(null);
+                return;
+            }
+
+            try {
+                const historia = await obtenerHistoriaDetallada(id);
+                rellenarDatosHistoriaEnCita(historia);
+            } catch (error) {
+                console.error(error);
+                mostrarMensajeCita(error.message || 'No se pudo cargar la historia clínica seleccionada.', 'error');
+                rellenarDatosHistoriaEnCita(null);
+            }
         });
     }
 
@@ -932,6 +1140,76 @@
                 if (id) {
                     abrirConfirmacionPara(id);
                 }
+            }
+        });
+    }
+
+    if (formularioCita) {
+        formularioCita.addEventListener('submit', async event => {
+            event.preventDefault();
+
+            if (!citasStoreUrl) {
+                mostrarMensajeCita('No se pudo determinar la ruta para guardar la cita.', 'error');
+                return;
+            }
+
+            const motivo = (citaCampos.motivo?.value || '').trim();
+            const fecha = citaCampos.fecha?.value || '';
+
+            if (!historiaSeleccionadaParaCita?.id_mascota) {
+                mostrarMensajeCita('Selecciona una historia clínica antes de registrar la cita.', 'error');
+                return;
+            }
+
+            if (!motivo) {
+                mostrarMensajeCita('El motivo de la cita es obligatorio.', 'error');
+                citaCampos.motivo?.focus();
+                return;
+            }
+
+            if (!fecha) {
+                mostrarMensajeCita('Selecciona la fecha de la cita.', 'error');
+                citaCampos.fecha?.focus();
+                return;
+            }
+
+            const payload = {
+                id_mascota: historiaSeleccionadaParaCita.id_mascota,
+                fecha_cita: fecha,
+                motivo,
+            };
+
+            try {
+                const response = await fetch(citasStoreUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: JSON.stringify(payload),
+                });
+
+                const data = await response.json().catch(() => null);
+
+                if (response.status === 422) {
+                    const errores = Object.values(data?.errors ?? {}).flat();
+                    const mensaje = errores.join(' ') || 'Verifica los datos ingresados.';
+                    mostrarMensajeCita(mensaje, 'error');
+                    return;
+                }
+
+                if (!response.ok) {
+                    throw new Error(data?.message || 'No se pudo registrar la cita.');
+                }
+
+                mostrarMensajeCita('Cita registrada correctamente.');
+                formularioCita.reset();
+                limpiarDatosHistoriaEnCita();
+                historiaSeleccionadaParaCita = null;
+            } catch (error) {
+                console.error(error);
+                mostrarMensajeCita(error.message || 'No se pudo registrar la cita.', 'error');
             }
         });
     }
