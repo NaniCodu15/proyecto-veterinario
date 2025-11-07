@@ -27,7 +27,7 @@ class CitaController extends Controller
             'fecha_cita' => ['required', 'date'],
             'hora_cita' => ['nullable', 'date_format:H:i'],
             'motivo' => ['required', 'string', 'max:255'],
-            'id_mascota' => ['required', 'exists:mascotas,id_mascota'],
+            'id_historia' => ['required', 'exists:historia_clinicas,id_historia'],
         ]);
 
         $hora = $validated['hora_cita'] ?? '00:00';
@@ -39,7 +39,7 @@ class CitaController extends Controller
             'fecha_cita' => $validated['fecha_cita'],
             'hora_cita' => $hora,
             'motivo' => $validated['motivo'],
-            'id_mascota' => $validated['id_mascota'],
+            'id_historia' => $validated['id_historia'],
             'estado' => 'Pendiente',
         ]);
 
@@ -72,13 +72,13 @@ class CitaController extends Controller
         $request->validate([
             'fecha_cita' => 'required|date',
             'hora_cita' => 'required',
-            'id_mascota' => 'required|integer',
+            'id_historia' => ['required', 'exists:historia_clinicas,id_historia'],
         ]);
 
         $cita->update([
             'fecha_cita' => $request->fecha_cita,
             'hora_cita' => $request->hora_cita,
-            'id_mascota' => $request->id_mascota,
+            'id_historia' => $request->id_historia,
         ]);
 
         return redirect()->route('citas.index')->with('success', 'Cita actualizada correctamente.');
