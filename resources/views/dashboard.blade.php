@@ -11,6 +11,17 @@
         <ul class="sidebar-menu">
             <li><a href="#" class="nav-link active" data-section="inicio"><i class="fas fa-home"></i><span>Inicio</span></a></li>
             <li class="sidebar-item sidebar-item--has-submenu">
+                <a href="#" class="nav-link" data-section="historias"><i class="fas fa-notes-medical"></i><span>Historias Clínicas</span></a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a href="#" class="nav-link nav-link--sublayer" data-section="historias-registradas" data-parent="historias">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>Historias Registradas</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="sidebar-item sidebar-item--has-submenu">
                 <a href="#" class="nav-link" data-section="citas"><i class="fas fa-calendar-alt"></i><span>Citas</span></a>
                 <ul class="sidebar-submenu">
                     <li>
@@ -21,7 +32,6 @@
                     </li>
                 </ul>
             </li>
-            <li><a href="#" class="nav-link" data-section="historias"><i class="fas fa-notes-medical"></i><span>Historias Clínicas</span></a></li>
             <li><a href="#" class="nav-link" data-section="mascotas"><i class="fas fa-dog"></i><span>Mascotas</span></a></li>
             <li><a href="#" class="nav-link" data-section="propietarios"><i class="fas fa-user"></i><span>Propietarios</span></a></li>
             <li><a href="#" class="nav-link" data-section="consultas"><i class="fas fa-stethoscope"></i><span>Consultas</span></a></li>
@@ -261,7 +271,10 @@
         <div id="section-historias" class="section">
             <div class="historias-wrapper">
                 <div class="historias-header">
-                    <h1 class="titulo">Historias Clínicas</h1>
+                    <div>
+                        <h1 class="titulo">Historias Clínicas</h1>
+                        <p>Registra una nueva historia clínica para tus pacientes desde este panel principal.</p>
+                    </div>
 
                     <!-- BOTÓN NUEVA HISTORIA -->
                     <button id="btnNuevaHistoria" class="btn btn-primary">
@@ -269,9 +282,26 @@
                     </button>
                 </div>
 
-                <div id="historiaMensaje" class="alert" role="status" aria-live="polite" hidden></div>
+                <div id="historiaMensaje" class="alert" role="status" aria-live="polite" data-historia-mensaje hidden></div>
 
-                <!-- TABLA DE HISTORIAS -->
+                <div class="historias-intro">
+                    <p>Completa los datos de la mascota, su propietario y la consulta inicial utilizando el formulario del modal. Una vez guardada, la información quedará disponible para coordinar citas y seguimientos.</p>
+                    <p>Para revisar o editar los registros existentes, accede al submenú <strong>Historias Registradas</strong> ubicado en la barra lateral.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="section-historias-registradas" class="section">
+            <div class="historias-wrapper">
+                <div class="historias-header">
+                    <div>
+                        <h1 class="titulo">Historias Registradas</h1>
+                        <p>Consulta y gestiona todas las historias clínicas que ya fueron creadas.</p>
+                    </div>
+                </div>
+
+                <div class="alert" role="status" aria-live="polite" data-historia-mensaje hidden></div>
+
                 <div class="tabla-wrapper">
                     <table class="tabla-consultas">
                         <thead>
@@ -290,9 +320,10 @@
                     </table>
                 </div>
             </div>
+        </div>
 
-            <!-- MODAL NUEVA/EDITAR HISTORIA -->
-            <div id="modalHistoria" class="modal">
+        <!-- MODAL NUEVA/EDITAR HISTORIA -->
+        <div id="modalHistoria" class="modal">
                 <div class="modal-content">
                     <span class="close">&times;</span>
                     <h2 id="modalTitulo">Nueva Historia Clínica</h2>
@@ -766,7 +797,7 @@
         setActiveLink(link);
         showSection(key);
 
-        if (key === 'historias') {
+        if (key === 'historias' || key === 'historias-registradas') {
             cargarHistorias();
         }
 
@@ -798,7 +829,7 @@
     const especieOtroGroup    = document.getElementById('grupoEspecieOtro');
     const especieOtroInput    = document.getElementById('especieOtro');
     const tablaHistorias      = document.getElementById('tablaHistorias');
-    const mensajeHistorias    = document.getElementById('historiaMensaje');
+    const mensajesHistorias   = Array.from(document.querySelectorAll('[data-historia-mensaje]'));
     const btnGuardar          = form?.querySelector('.btn-guardar');
     const btnAccesoRapido     = document.getElementById('btnAccesoRapido');
     const btnIrHistorias      = document.querySelector('.btn-ir-historias');
@@ -1007,18 +1038,27 @@
     }
 
     function mostrarMensajeHistoria(texto, tipo = 'success') {
-        if (!mensajeHistorias) {
+        if (!mensajesHistorias.length) {
             return;
         }
 
-        mensajeHistorias.textContent = texto;
-        mensajeHistorias.classList.remove('alert--success', 'alert--error');
-        mensajeHistorias.classList.add(`alert--${tipo}`);
-        mensajeHistorias.hidden = false;
+        const seccionActiva = document.querySelector('#main-content .section.active');
+
+        mensajesHistorias.forEach(mensaje => {
+            mensaje.textContent = texto;
+            mensaje.classList.remove('alert--success', 'alert--error');
+            mensaje.classList.add(`alert--${tipo}`);
+
+            const seccionContenedora = mensaje.closest('.section');
+            const mostrarEnSeccion = !seccionContenedora || seccionContenedora === seccionActiva;
+            mensaje.hidden = !mostrarEnSeccion;
+        });
 
         window.clearTimeout(mostrarMensajeHistoria.timeoutId);
         mostrarMensajeHistoria.timeoutId = window.setTimeout(() => {
-            mensajeHistorias.hidden = true;
+            mensajesHistorias.forEach(mensaje => {
+                mensaje.hidden = true;
+            });
         }, 4000);
     }
 
@@ -2287,6 +2327,42 @@
             padding: 12px;
             font-size: 0.85rem;
             color: #6c7a91;
+        }
+
+        .historias-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .historias-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .historias-header > div p {
+            margin-top: 8px;
+            color: #63739b;
+            line-height: 1.5;
+        }
+
+        .historias-intro {
+            background: linear-gradient(135deg, rgba(232, 240, 255, 0.9) 0%, rgba(255, 255, 255, 0.95) 100%);
+            border-radius: 20px;
+            padding: 24px 28px;
+            box-shadow: 0 20px 45px rgba(109, 128, 176, 0.12);
+            color: #3d4f73;
+            line-height: 1.7;
+        }
+
+        .historias-intro p + p {
+            margin-top: 12px;
+        }
+
+        #section-historias-registradas .historias-header {
+            align-items: flex-end;
         }
     </style>
 @endpush
