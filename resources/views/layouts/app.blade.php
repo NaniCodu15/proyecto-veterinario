@@ -11,6 +11,7 @@
         <link rel="stylesheet" href="{{ asset('css/login.css') }}">
     @else
         <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css">
     @endif
 
     <!-- Font Awesome -->
@@ -18,5 +19,9 @@
 </head>
 <body class="dashboard-layout">
     @yield('content')
+
+    @if (!Request::is('login'))
+        <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+    @endif
 </body>
 </html>

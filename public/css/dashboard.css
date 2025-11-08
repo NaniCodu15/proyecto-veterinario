@@ -916,6 +916,110 @@ img {
     resize: vertical;
 }
 
+.cita-form__group .ts-wrapper.select-historia {
+    width: 100%;
+}
+
+.ts-wrapper.select-historia .ts-control {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(122, 168, 255, 0.3);
+    border-radius: var(--radius-md);
+    min-height: 48px;
+    padding: 10px 14px;
+    font-family: 'Poppins', 'Inter', sans-serif;
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    box-shadow: inset 0 1px 2px rgba(122, 168, 255, 0.1);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ts-wrapper.select-historia.focus .ts-control,
+.ts-wrapper.select-historia .ts-control:focus {
+    border-color: var(--primary-dark);
+    box-shadow: 0 0 0 4px rgba(122, 168, 255, 0.18);
+}
+
+.ts-wrapper.select-historia .ts-control input {
+    color: inherit;
+}
+
+.ts-wrapper.select-historia .ts-control::placeholder,
+.ts-wrapper.select-historia .ts-control input::placeholder {
+    color: var(--text-muted);
+    opacity: 0.75;
+}
+
+.ts-wrapper.select-historia .ts-dropdown {
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(122, 168, 255, 0.28);
+    box-shadow: 0 24px 40px rgba(122, 168, 255, 0.2);
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.98);
+}
+
+.ts-wrapper.select-historia .ts-dropdown .historia-option {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.ts-wrapper.select-historia .ts-dropdown .historia-option__codigo {
+    font-weight: 600;
+    color: var(--primary-dark);
+    font-size: 0.9rem;
+}
+
+.ts-wrapper.select-historia .ts-dropdown .historia-option__mascota {
+    font-size: 0.9rem;
+    color: var(--text-dark);
+}
+
+.ts-wrapper.select-historia .ts-dropdown .historia-option__propietario {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.ts-wrapper.select-historia .ts-dropdown .option:hover,
+.ts-wrapper.select-historia .ts-dropdown .option.active {
+    background: var(--primary-soft);
+    transform: translateX(2px);
+}
+
+.ts-wrapper.select-historia.single .ts-control .item {
+    background: var(--primary-soft);
+    color: var(--primary-dark);
+    border-radius: var(--radius-sm);
+    padding: 6px 10px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.ts-wrapper.select-historia .historia-item {
+    font-weight: 600;
+    color: var(--primary-dark);
+}
+
+.ts-wrapper.select-historia .ts-control .clear-button,
+.ts-wrapper.select-historia .ts-control .remove {
+    color: var(--primary-dark);
+}
+
+.ts-wrapper.select-historia .ts-dropdown [data-selectable] {
+    cursor: pointer;
+}
+
+.ts-wrapper.select-historia .ts-dropdown .no-results,
+.ts-wrapper.select-historia .ts-dropdown .spinner {
+    padding: 12px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
 .cita-form__grid {
     display: grid;
     gap: 16px;
