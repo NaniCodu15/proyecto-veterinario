@@ -32,19 +32,14 @@ class HistoriaClinicaController extends Controller
             'nombreMascota' => ['required', 'string', 'max:100'],
             'especie' => ['required', Rule::in(['perro', 'gato', 'otro'])],
             'especieOtro' => ['required_if:especie,otro', 'nullable', 'string', 'max:100'],
-            'raza' => ['nullable', 'string', 'max:100'],
+            'raza' => ['required', 'string', 'max:100'],
             'sexo' => ['required', Rule::in(['macho', 'hembra'])],
             'edad' => ['nullable', 'integer', 'min:0', 'max:60'],
+            'peso' => ['required', 'numeric', 'min:0'],
             'nombrePropietario' => ['required', 'string', 'max:200'],
             'telefono' => ['required', 'string', 'max:20'],
             'direccion' => ['required', 'string', 'max:200'],
             'dni' => ['required', 'string', 'max:15'],
-            'peso' => ['nullable', 'numeric', 'min:0'],
-            'temperatura' => ['nullable', 'numeric'],
-            'sintomas' => ['nullable', 'string'],
-            'diagnostico' => ['nullable', 'string'],
-            'vacunas' => ['nullable', 'string'],
-            'tratamientos' => ['nullable', 'string'],
         ], [
             'especieOtro.required_if' => 'Debe especificar la especie de la mascota.',
         ]);
@@ -64,8 +59,8 @@ class HistoriaClinicaController extends Controller
                 [
                     'nombres' => $nombresPropietario,
                     'apellidos' => $apellidosPropietario,
-                    'telefono' => $validated['telefono'] ?? null,
-                    'direccion' => $validated['direccion'] ?? null,
+                    'telefono' => $validated['telefono'],
+                    'direccion' => $validated['direccion'],
                 ]
             );
 
@@ -76,7 +71,7 @@ class HistoriaClinicaController extends Controller
                 ],
                 [
                     'especie' => $especieNormalizada,
-                    'raza' => $validated['raza'] ?? null,
+                    'raza' => $validated['raza'],
                     'sexo' => $sexoNormalizado,
                     'fecha_nacimiento' => $this->calcularFechaNacimiento($validated['edad'] ?? null),
                     'fecha_registro' => Carbon::now(),
@@ -85,7 +80,7 @@ class HistoriaClinicaController extends Controller
 
             $mascota->fill([
                 'especie' => $especieNormalizada,
-                'raza' => $validated['raza'] ?? null,
+                'raza' => $validated['raza'],
                 'sexo' => $sexoNormalizado,
             ]);
 
@@ -104,11 +99,6 @@ class HistoriaClinicaController extends Controller
                 'numero_historia' => $numeroHistoria,
                 'fecha_apertura' => Carbon::now(),
                 'peso' => $validated['peso'] ?? null,
-                'temperatura' => $validated['temperatura'] ?? null,
-                'sintomas' => $validated['sintomas'] ?? null,
-                'diagnostico' => $validated['diagnostico'] ?? null,
-                'vacunas' => $validated['vacunas'] ?? null,
-                'tratamientos' => $validated['tratamientos'] ?? null,
                 'created_by' => Auth::id(),
             ]);
 
@@ -124,10 +114,18 @@ class HistoriaClinicaController extends Controller
     // ✅ Obtener 1 registro (para editar)
     public function show($id)
     {
-        $historia = HistoriaClinica::with(['mascota.propietario'])->findOrFail($id);
+        $historia = HistoriaClinica::with([
+            'mascota.propietario',
+            'consultas' => fn ($query) => $query
+                ->orderByDesc('fecha_consulta')
+                ->orderByDesc('id_consulta'),
+        ])->findOrFail($id);
 
         return response()->json([
             'historia' => $this->formatearHistoriaParaFormulario($historia),
+            'consultas' => $historia->consultas
+                ->map(fn ($consulta) => $this->formatearConsulta($consulta))
+                ->values(),
         ]);
     }
 
@@ -138,19 +136,14 @@ class HistoriaClinicaController extends Controller
             'nombreMascota' => ['required', 'string', 'max:100'],
             'especie' => ['required', Rule::in(['perro', 'gato', 'otro'])],
             'especieOtro' => ['required_if:especie,otro', 'nullable', 'string', 'max:100'],
-            'raza' => ['nullable', 'string', 'max:100'],
+            'raza' => ['required', 'string', 'max:100'],
             'sexo' => ['required', Rule::in(['macho', 'hembra'])],
             'edad' => ['nullable', 'integer', 'min:0', 'max:60'],
+            'peso' => ['required', 'numeric', 'min:0'],
             'nombrePropietario' => ['required', 'string', 'max:200'],
             'telefono' => ['required', 'string', 'max:20'],
             'direccion' => ['required', 'string', 'max:200'],
             'dni' => ['required', 'string', 'max:15'],
-            'peso' => ['nullable', 'numeric', 'min:0'],
-            'temperatura' => ['nullable', 'numeric'],
-            'sintomas' => ['nullable', 'string'],
-            'diagnostico' => ['nullable', 'string'],
-            'vacunas' => ['nullable', 'string'],
-            'tratamientos' => ['nullable', 'string'],
         ], [
             'especieOtro.required_if' => 'Debe especificar la especie de la mascota.',
         ]);
@@ -172,15 +165,15 @@ class HistoriaClinicaController extends Controller
                 [
                     'nombres' => $nombresPropietario,
                     'apellidos' => $apellidosPropietario,
-                    'telefono' => $validated['telefono'] ?? null,
-                    'direccion' => $validated['direccion'] ?? null,
+                    'telefono' => $validated['telefono'],
+                    'direccion' => $validated['direccion'],
                 ]
             );
 
             $mascota = $historia->mascota ?? new Mascota();
             $mascota->nombre = $validated['nombreMascota'];
             $mascota->especie = $especieNormalizada;
-            $mascota->raza = $validated['raza'] ?? null;
+            $mascota->raza = $validated['raza'];
             $mascota->sexo = $sexoNormalizado;
             $mascota->propietario_id = $propietario->id_propietario;
             $mascota->fecha_registro = $mascota->fecha_registro ?? Carbon::now();
@@ -195,11 +188,6 @@ class HistoriaClinicaController extends Controller
 
             $historia->id_mascota = $mascota->id_mascota;
             $historia->peso = $validated['peso'] ?? null;
-            $historia->temperatura = $validated['temperatura'] ?? null;
-            $historia->sintomas = $validated['sintomas'] ?? null;
-            $historia->diagnostico = $validated['diagnostico'] ?? null;
-            $historia->vacunas = $validated['vacunas'] ?? null;
-            $historia->tratamientos = $validated['tratamientos'] ?? null;
 
             $historia->save();
 
@@ -293,11 +281,23 @@ class HistoriaClinicaController extends Controller
             'direccion' => $propietario->direccion ?? '',
             'dni' => $propietario->dni ?? '',
             'peso' => $historia->peso,
-            'temperatura' => $historia->temperatura,
-            'sintomas' => $historia->sintomas,
-            'diagnostico' => $historia->diagnostico,
-            'vacunas' => $historia->vacunas,
-            'tratamientos' => $historia->tratamientos,
+            'fecha_apertura' => optional($historia->fecha_apertura)->format('d/m/Y'),
+        ];
+    }
+
+    private function formatearConsulta($consulta): array
+    {
+        return [
+            'id' => $consulta->id_consulta,
+            'fecha' => optional($consulta->fecha_consulta)->toDateString(),
+            'fecha_legible' => optional($consulta->fecha_consulta)->format('d/m/Y'),
+            'motivo' => $consulta->motivo,
+            'sintomas' => $consulta->sintomas,
+            'diagnostico' => $consulta->diagnostico,
+            'tratamiento' => $consulta->tratamiento,
+            'observaciones' => $consulta->observaciones,
+            'peso' => $consulta->peso,
+            'temperatura' => $consulta->temperatura,
         ];
     }
 
