@@ -11,15 +11,21 @@ class Consulta extends Model
 
     protected $table = 'consultas';
     protected $primaryKey = 'id_consulta';
-    public $timestamps = false;
 
     protected $fillable = [
         'id_historia',
         'fecha_consulta',
+        'motivo',
         'sintomas',
         'diagnostico',
         'tratamiento',
         'observaciones',
+        'peso',
+        'temperatura',
+    ];
+
+    protected $casts = [
+        'fecha_consulta' => 'datetime',
     ];
 
     // Relación: una consulta pertenece a una historia clínica

@@ -32,9 +32,6 @@
                     </li>
                 </ul>
             </li>
-            <li><a href="#" class="nav-link" data-section="mascotas"><i class="fas fa-dog"></i><span>Mascotas</span></a></li>
-            <li><a href="#" class="nav-link" data-section="propietarios"><i class="fas fa-user"></i><span>Propietarios</span></a></li>
-            <li><a href="#" class="nav-link" data-section="consultas"><i class="fas fa-stethoscope"></i><span>Consultas</span></a></li>
         </ul>
 
         <form action="{{ route('logout') }}" method="POST" class="logout-form">
@@ -373,8 +370,8 @@
                             </div>
 
                             <div class="form-group">
-                                <label>Peso (kg):</label>
-                                <input type="number" id="peso" name="peso" step="0.01">
+                                <label>Peso inicial (kg):</label>
+                                <input type="number" id="peso" name="peso" step="0.01" min="0" required>
                             </div>
                         </div>
                     </div>
@@ -389,47 +386,17 @@
 
                             <div class="form-group">
                                 <label>Teléfono:</label>
-                                <input type="text" id="telefono" name="telefono">
+                                <input type="text" id="telefono" name="telefono" required>
                             </div>
 
                             <div class="form-group">
                                 <label>Dirección:</label>
-                                <input type="text" id="direccion" name="direccion">
+                                <input type="text" id="direccion" name="direccion" required>
                             </div>
 
                             <div class="form-group">
                                 <label>DNI:</label>
-                                <input type="text" id="dni" name="dni">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-section">
-                        <h3 class="form-section__title"><span>🩺</span>Información clínica</h3>
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label>Temperatura (°C):</label>
-                                <input type="number" id="temperatura" name="temperatura" step="0.1">
-                            </div>
-
-                            <div class="form-group full-width">
-                                <label>Síntomas:</label>
-                                <textarea id="sintomas" name="sintomas" rows="3"></textarea>
-                            </div>
-
-                            <div class="form-group full-width">
-                                <label>Diagnóstico:</label>
-                                <textarea id="diagnostico" name="diagnostico" rows="3"></textarea>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Vacunas:</label>
-                                <textarea id="vacunas" name="vacunas" rows="3"></textarea>
-                            </div>
-
-                            <div class="form-group full-width">
-                                <label>Tratamientos:</label>
-                                <textarea id="tratamientos" name="tratamientos" rows="3"></textarea>
+                                <input type="text" id="dni" name="dni" required>
                             </div>
                         </div>
                     </div>
@@ -438,6 +405,115 @@
                         <button type="submit" class="btn btn-success btn-guardar">Guardar</button>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        <!-- MODAL DETALLE DE HISTORIA Y CONSULTAS -->
+        <div id="modalConsultas" class="modal modal--historia" aria-hidden="true">
+            <div class="modal-content modal-content--historia">
+                <span class="close" data-close="consultas">&times;</span>
+                <div class="historia-detalle">
+                    <div class="historia-detalle__header">
+                        <div>
+                            <span class="historia-detalle__badge"><i class="fas fa-notes-medical"></i> Historia clínica</span>
+                            <h2 class="historia-detalle__title" data-detalle-historia="titulo">Historia clínica</h2>
+                            <p class="historia-detalle__subtitle" data-detalle-historia="subtitulo">—</p>
+                        </div>
+                    </div>
+
+                    <div class="historia-detalle__info-grid">
+                        <div class="historia-detalle__info-item">
+                            <span>Propietario</span>
+                            <strong data-detalle-historia="propietario">—</strong>
+                            <small data-detalle-historia="dni">DNI —</small>
+                        </div>
+                        <div class="historia-detalle__info-item">
+                            <span>Contacto</span>
+                            <strong data-detalle-historia="telefono">—</strong>
+                            <small data-detalle-historia="direccion">—</small>
+                        </div>
+                        <div class="historia-detalle__info-item">
+                            <span>Mascota</span>
+                            <strong data-detalle-historia="mascota">—</strong>
+                            <small data-detalle-historia="especie">—</small>
+                        </div>
+                        <div class="historia-detalle__info-item">
+                            <span>Peso inicial</span>
+                            <strong data-detalle-historia="peso">—</strong>
+                            <small data-detalle-historia="fecha_apertura">Apertura —</small>
+                        </div>
+                    </div>
+
+                    <div class="historia-detalle__body">
+                        <section class="historia-detalle__timeline">
+                            <div class="historia-detalle__section-header">
+                                <h3>Consultas registradas</h3>
+                                <p>Seguimiento cronológico de la atención brindada.</p>
+                            </div>
+                            <div id="consultasVacias" class="historia-detalle__empty" hidden>
+                                <i class="fas fa-stethoscope"></i>
+                                <p>Aún no hay consultas registradas para esta historia clínica.</p>
+                            </div>
+                            <ul id="listaConsultas" class="historia-detalle__timeline-list"></ul>
+                        </section>
+
+                        <section class="historia-detalle__form">
+                            <div class="historia-detalle__section-header">
+                                <h3>Registrar nueva consulta</h3>
+                                <p>Documenta el motivo y la evolución del paciente en cada visita.</p>
+                            </div>
+                            <div id="consultaMensaje" class="consulta-alert" role="status" aria-live="polite" hidden></div>
+                            <form id="formConsulta" class="consulta-form" novalidate>
+                                <input type="hidden" id="consultaHistoriaId" name="id_historia">
+                                <div class="consulta-form__grid">
+                                    <div class="form-group">
+                                        <label for="consultaFecha">Fecha de la consulta</label>
+                                        <input type="date" id="consultaFecha" name="fecha_consulta" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="consultaMotivo">Motivo</label>
+                                        <input type="text" id="consultaMotivo" name="motivo" placeholder="Describe el motivo principal" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="consultaPeso">Peso (kg)</label>
+                                        <input type="number" id="consultaPeso" name="peso" step="0.01" min="0">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="consultaTemperatura">Temperatura (°C)</label>
+                                        <input type="number" id="consultaTemperatura" name="temperatura" step="0.1">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="consultaSintomas">Síntomas</label>
+                                    <textarea id="consultaSintomas" name="sintomas" rows="2" placeholder="Describe signos clínicos observados"></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="consultaDiagnostico">Diagnóstico</label>
+                                    <textarea id="consultaDiagnostico" name="diagnostico" rows="2" placeholder="Resumen del diagnóstico"></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="consultaTratamiento">Tratamiento</label>
+                                    <textarea id="consultaTratamiento" name="tratamiento" rows="2" placeholder="Medicaciones o procedimientos indicados"></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="consultaObservaciones">Observaciones</label>
+                                    <textarea id="consultaObservaciones" name="observaciones" rows="2" placeholder="Notas adicionales sobre la atención"></textarea>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="fas fa-save"></i>
+                                        Guardar consulta
+                                    </button>
+                                </div>
+                            </form>
+                        </section>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -564,24 +640,6 @@
             </section>
         </div>
 
-        <!-- SECCIÓN MASCOTAS -->
-        <div id="section-mascotas" class="section">
-            <h1 class="titulo">Mascotas</h1>
-            <p>Listado de mascotas registradas.</p>
-        </div>
-
-        <!-- SECCIÓN PROPIETARIOS -->
-        <div id="section-propietarios" class="section">
-            <h1 class="titulo">Propietarios</h1>
-            <p>Datos de los dueños de las mascotas.</p>
-        </div>
-
-        <!-- SECCIÓN CONSULTAS -->
-        <div id="section-consultas" class="section">
-            <h1 class="titulo">Consultas</h1>
-            <p>Registros de consultas realizadas.</p>
-        </div>
-
     </div>
 </div>
 
@@ -654,6 +712,7 @@
     const historiaListUrl   = "{{ route('historia_clinicas.list') }}";
     const historiaStoreUrl  = "{{ route('historia_clinicas.store') }}";
     const historiaBaseUrl   = "{{ url('historia_clinicas') }}";
+    const consultaStoreUrl  = "{{ route('consultas.store') }}";
     const citasStoreUrl     = "{{ route('citas.store') }}";
     const citasListUrl      = "{{ route('citas.list') }}";
     const citasEstadoBaseUrl = "{{ url('citas') }}";
@@ -865,11 +924,6 @@
         direccion: document.getElementById('direccion'),
         dni: document.getElementById('dni'),
         peso: document.getElementById('peso'),
-        temperatura: document.getElementById('temperatura'),
-        sintomas: document.getElementById('sintomas'),
-        diagnostico: document.getElementById('diagnostico'),
-        vacunas: document.getElementById('vacunas'),
-        tratamientos: document.getElementById('tratamientos'),
     };
 
     const formularioCita = document.getElementById('formRegistrarCita');
@@ -885,9 +939,42 @@
     };
     const citaMensaje = document.getElementById('citaMensaje');
 
+    const modalConsultas = document.getElementById('modalConsultas');
+    const modalConsultasClose = modalConsultas?.querySelector('[data-close="consultas"]');
+    const listaConsultas = document.getElementById('listaConsultas');
+    const consultasVacias = document.getElementById('consultasVacias');
+    const formConsulta = document.getElementById('formConsulta');
+    const consultaMensaje = document.getElementById('consultaMensaje');
+    const consultaHistoriaId = document.getElementById('consultaHistoriaId');
+    const consultaCampos = {
+        fecha: document.getElementById('consultaFecha'),
+        motivo: document.getElementById('consultaMotivo'),
+        peso: document.getElementById('consultaPeso'),
+        temperatura: document.getElementById('consultaTemperatura'),
+        sintomas: document.getElementById('consultaSintomas'),
+        diagnostico: document.getElementById('consultaDiagnostico'),
+        tratamiento: document.getElementById('consultaTratamiento'),
+        observaciones: document.getElementById('consultaObservaciones'),
+    };
+
+    const detalleHistoriaCampos = {
+        titulo: document.querySelector('[data-detalle-historia="titulo"]'),
+        subtitulo: document.querySelector('[data-detalle-historia="subtitulo"]'),
+        propietario: document.querySelector('[data-detalle-historia="propietario"]'),
+        dni: document.querySelector('[data-detalle-historia="dni"]'),
+        telefono: document.querySelector('[data-detalle-historia="telefono"]'),
+        direccion: document.querySelector('[data-detalle-historia="direccion"]'),
+        mascota: document.querySelector('[data-detalle-historia="mascota"]'),
+        especie: document.querySelector('[data-detalle-historia="especie"]'),
+        peso: document.querySelector('[data-detalle-historia="peso"]'),
+        fecha_apertura: document.querySelector('[data-detalle-historia="fecha_apertura"]'),
+    };
+
     let historiaSeleccionadaParaCita = null;
     let tomSelectHistoria = null;
     let historiasDisponibles = [];
+    let historiaDetalleActual = null;
+    let consultasDetalleActual = [];
 
     function ocultarEspecieOtro() {
         if (!especieOtroGroup || !especieOtroInput) {
@@ -1075,6 +1162,224 @@
             citaMensaje.classList.remove('is-visible', 'cita-alert--success', 'cita-alert--error');
             citaMensaje.hidden = true;
         }, 4000);
+    }
+
+    function mostrarMensajeConsulta(texto, tipo = 'success') {
+        if (!consultaMensaje) {
+            return;
+        }
+
+        consultaMensaje.textContent = texto;
+        consultaMensaje.classList.remove('consulta-alert--success', 'consulta-alert--error', 'is-visible');
+        const clase = tipo === 'success' ? 'consulta-alert--success' : 'consulta-alert--error';
+        consultaMensaje.classList.add(clase, 'is-visible');
+        consultaMensaje.hidden = false;
+
+        window.clearTimeout(mostrarMensajeConsulta.timeoutId);
+        mostrarMensajeConsulta.timeoutId = window.setTimeout(() => {
+            if (!consultaMensaje) {
+                return;
+            }
+
+            consultaMensaje.classList.remove('is-visible', 'consulta-alert--success', 'consulta-alert--error');
+            consultaMensaje.hidden = true;
+        }, 4000);
+    }
+
+    function limpiarFormularioConsulta() {
+        if (!formConsulta) {
+            return;
+        }
+
+        formConsulta.reset();
+
+        if (consultaHistoriaId && historiaDetalleActual?.id) {
+            consultaHistoriaId.value = historiaDetalleActual.id;
+        }
+    }
+
+    function crearEtiquetaConsulta(icono, texto) {
+        const span = document.createElement('span');
+        span.className = 'consulta-item__meta-tag';
+        span.innerHTML = `<i class="fas ${icono}"></i> ${texto}`;
+        return span;
+    }
+
+    function crearNodoConsulta(consulta = {}) {
+        const item = document.createElement('li');
+        item.className = 'consulta-item';
+
+        const header = document.createElement('div');
+        header.className = 'consulta-item__header';
+
+        const fecha = document.createElement('span');
+        fecha.className = 'consulta-item__date';
+        fecha.textContent = consulta.fecha_legible || 'Sin fecha';
+
+        const motivo = document.createElement('h4');
+        motivo.className = 'consulta-item__motivo';
+        motivo.textContent = consulta.motivo || 'Consulta sin motivo';
+
+        header.append(fecha, motivo);
+
+        const meta = document.createElement('div');
+        meta.className = 'consulta-item__meta';
+
+        if (consulta.peso !== undefined && consulta.peso !== null) {
+            meta.appendChild(crearEtiquetaConsulta('fa-weight', `${parseFloat(consulta.peso).toFixed(2)} kg`));
+        }
+
+        if (consulta.temperatura !== undefined && consulta.temperatura !== null) {
+            meta.appendChild(crearEtiquetaConsulta('fa-thermometer-half', `${parseFloat(consulta.temperatura).toFixed(1)} °C`));
+        }
+
+        const cuerpo = document.createElement('div');
+        cuerpo.className = 'consulta-item__body';
+
+        const secciones = [
+            { etiqueta: 'Síntomas', valor: consulta.sintomas },
+            { etiqueta: 'Diagnóstico', valor: consulta.diagnostico },
+            { etiqueta: 'Tratamiento', valor: consulta.tratamiento },
+            { etiqueta: 'Observaciones', valor: consulta.observaciones },
+        ];
+
+        secciones.forEach(({ etiqueta, valor }) => {
+            if (!valor) {
+                return;
+            }
+
+            const bloque = document.createElement('div');
+            bloque.className = 'consulta-item__block';
+
+            const titulo = document.createElement('span');
+            titulo.className = 'consulta-item__block-title';
+            titulo.textContent = etiqueta;
+
+            const contenido = document.createElement('p');
+            contenido.className = 'consulta-item__block-text';
+            contenido.textContent = valor;
+
+            bloque.append(titulo, contenido);
+            cuerpo.appendChild(bloque);
+        });
+
+        item.append(header);
+
+        if (meta.children.length) {
+            item.appendChild(meta);
+        }
+
+        if (cuerpo.children.length) {
+            item.appendChild(cuerpo);
+        }
+
+        return item;
+    }
+
+    function renderConsultas(lista = []) {
+        if (!listaConsultas || !consultasVacias) {
+            return;
+        }
+
+        listaConsultas.innerHTML = '';
+
+        if (!Array.isArray(lista) || lista.length === 0) {
+            consultasVacias.hidden = false;
+            return;
+        }
+
+        consultasVacias.hidden = true;
+        const fragment = document.createDocumentFragment();
+        lista.forEach(consulta => {
+            fragment.appendChild(crearNodoConsulta(consulta));
+        });
+
+        listaConsultas.appendChild(fragment);
+    }
+
+    function actualizarDetalleHistoria(historia = {}) {
+        historiaDetalleActual = historia;
+
+        if (detalleHistoriaCampos.titulo) {
+            const numero = historia.numero_historia ? `#${historia.numero_historia}` : 'Historia clínica';
+            detalleHistoriaCampos.titulo.textContent = `${historia.nombreMascota || 'Mascota sin nombre'} ${numero}`;
+        }
+
+        if (detalleHistoriaCampos.subtitulo) {
+            detalleHistoriaCampos.subtitulo.textContent = historia.nombrePropietario
+                ? `A cargo de ${historia.nombrePropietario}`
+                : 'Propietario no registrado';
+        }
+
+        if (detalleHistoriaCampos.propietario) {
+            detalleHistoriaCampos.propietario.textContent = historia.nombrePropietario || '—';
+        }
+
+        if (detalleHistoriaCampos.dni) {
+            detalleHistoriaCampos.dni.textContent = historia.dni ? `DNI ${historia.dni}` : 'DNI —';
+        }
+
+        if (detalleHistoriaCampos.telefono) {
+            detalleHistoriaCampos.telefono.textContent = historia.telefono || '—';
+        }
+
+        if (detalleHistoriaCampos.direccion) {
+            detalleHistoriaCampos.direccion.textContent = historia.direccion || 'Sin dirección registrada';
+        }
+
+        if (detalleHistoriaCampos.mascota) {
+            detalleHistoriaCampos.mascota.textContent = historia.nombreMascota || '—';
+        }
+
+        if (detalleHistoriaCampos.especie) {
+            const especieBase = historia.especie === 'otro' && historia.especieOtro
+                ? historia.especieOtro
+                : historia.especie;
+            const especieFormateada = especieBase
+                ? `${especieBase.charAt(0).toUpperCase()}${especieBase.slice(1)}`
+                : '';
+            const raza = historia.raza ? ` · ${historia.raza}` : '';
+            detalleHistoriaCampos.especie.textContent = especieFormateada
+                ? `${especieFormateada}${raza}`
+                : raza.replace(' · ', '') || '—';
+        }
+
+        if (detalleHistoriaCampos.peso) {
+            detalleHistoriaCampos.peso.textContent = historia.peso ? `${parseFloat(historia.peso).toFixed(2)} kg` : '—';
+        }
+
+        if (detalleHistoriaCampos.fecha_apertura) {
+            detalleHistoriaCampos.fecha_apertura.textContent = historia.fecha_apertura
+                ? `Apertura ${historia.fecha_apertura}`
+                : 'Apertura —';
+        }
+
+        if (consultaHistoriaId && historia.id) {
+            consultaHistoriaId.value = historia.id;
+        }
+    }
+
+    async function mostrarDetalleHistoria(id) {
+        try {
+            const data = await obtenerHistoriaDetallada(id);
+            const historia = data.historia ?? {};
+            const consultas = Array.isArray(data.consultas) ? data.consultas : [];
+
+            actualizarDetalleHistoria(historia);
+            consultasDetalleActual = consultas;
+            renderConsultas(consultasDetalleActual);
+            limpiarFormularioConsulta();
+
+            if (consultaCampos.fecha) {
+                const hoy = new Date().toISOString().split('T')[0];
+                consultaCampos.fecha.value = hoy;
+            }
+
+            abrirModalGenerico(modalConsultas);
+        } catch (error) {
+            console.error(error);
+            mostrarMensajeHistoria(error.message || 'No se pudo cargar el historial clínico.', 'error');
+        }
     }
 
     function mostrarMensajeListadoCitas(texto, tipo = 'info') {
@@ -1621,7 +1926,7 @@
             throw new Error('No se encontró la historia clínica seleccionada.');
         }
 
-        return data.historia;
+        return data;
     }
 
     function rellenarDatosHistoriaEnCita(historia) {
@@ -1693,6 +1998,11 @@
         const acciones = document.createElement('div');
         acciones.className = 'historia-card__actions';
 
+        const btnVerConsultas = document.createElement('button');
+        btnVerConsultas.className = 'btn btn-primary btn-sm btnConsultas';
+        btnVerConsultas.title = 'Ver historial clínico';
+        btnVerConsultas.innerHTML = '<i class="fas fa-stream"></i> Consultas';
+
         const btnEditar = document.createElement('button');
         btnEditar.className = 'btn btn-warning btn-sm btnEditar';
         btnEditar.title = 'Editar historia';
@@ -1703,7 +2013,7 @@
         btnEliminar.title = 'Eliminar historia';
         btnEliminar.innerHTML = '<i class="fas fa-trash"></i> Eliminar';
 
-        acciones.append(btnEditar, btnEliminar);
+        acciones.append(btnVerConsultas, btnEditar, btnEliminar);
 
         card.append(header, body, acciones);
 
@@ -1973,7 +2283,7 @@
             }
 
             try {
-                const historia = await obtenerHistoriaDetallada(id);
+                const { historia } = await obtenerHistoriaDetallada(id);
                 rellenarDatosHistoriaEnCita(historia);
             } catch (error) {
                 console.error(error);
@@ -1990,10 +2300,22 @@
         });
     }
 
+    if (modalConsultasClose) {
+        modalConsultasClose.addEventListener('click', () => {
+            cerrarModalGenerico(modalConsultas);
+            limpiarFormularioConsulta();
+        });
+    }
+
     window.addEventListener('click', event => {
         if (event.target === modal) {
             cerrarModal();
             reiniciarFormulario();
+        }
+
+        if (event.target === modalConsultas) {
+            cerrarModalGenerico(modalConsultas);
+            limpiarFormularioConsulta();
         }
     });
 
@@ -2097,12 +2419,26 @@
             cerrarModalGenerico(modalDetalleCita);
             citaDetalleSeleccionada = null;
         }
+
+        if (modalConsultas && modalConsultas.style.display === 'block') {
+            cerrarModalGenerico(modalConsultas);
+            limpiarFormularioConsulta();
+        }
     });
 
     if (tablaHistorias) {
         tablaHistorias.addEventListener('click', event => {
+            const botonConsultas = event.target.closest('.btnConsultas');
             const botonEditar = event.target.closest('.btnEditar');
             const botonEliminar = event.target.closest('.btnEliminar');
+
+            if (botonConsultas) {
+                const tarjeta = botonConsultas.closest('.historia-card');
+                const id = tarjeta?.dataset.historiaId;
+                if (id) {
+                    mostrarDetalleHistoria(id);
+                }
+            }
 
             if (botonEditar) {
                 const tarjeta = botonEditar.closest('.historia-card');
@@ -2202,6 +2538,104 @@
         });
     }
 
+    if (formConsulta) {
+        formConsulta.addEventListener('submit', async event => {
+            event.preventDefault();
+
+            if (!consultaStoreUrl) {
+                mostrarMensajeConsulta('No se pudo determinar la ruta para guardar la consulta.', 'error');
+                return;
+            }
+
+            const historiaId = consultaHistoriaId?.value || historiaDetalleActual?.id;
+            const fecha = consultaCampos.fecha?.value || '';
+            const motivo = (consultaCampos.motivo?.value || '').trim();
+
+            if (!historiaId) {
+                mostrarMensajeConsulta('Selecciona una historia clínica válida antes de registrar la consulta.', 'error');
+                return;
+            }
+
+            if (!fecha) {
+                mostrarMensajeConsulta('La fecha de la consulta es obligatoria.', 'error');
+                consultaCampos.fecha?.focus();
+                return;
+            }
+
+            if (!motivo) {
+                mostrarMensajeConsulta('Indica el motivo de la consulta.', 'error');
+                consultaCampos.motivo?.focus();
+                return;
+            }
+
+            const payload = {
+                id_historia: parseInt(historiaId, 10),
+                fecha_consulta: fecha,
+                motivo,
+                sintomas: consultaCampos.sintomas?.value || null,
+                diagnostico: consultaCampos.diagnostico?.value || null,
+                tratamiento: consultaCampos.tratamiento?.value || null,
+                observaciones: consultaCampos.observaciones?.value || null,
+                peso: consultaCampos.peso?.value || null,
+                temperatura: consultaCampos.temperatura?.value || null,
+            };
+
+            Object.keys(payload).forEach(clave => {
+                if (payload[clave] === '' || payload[clave] === null) {
+                    delete payload[clave];
+                }
+            });
+
+            const botonGuardarConsulta = formConsulta.querySelector('button[type="submit"]');
+            if (botonGuardarConsulta) {
+                botonGuardarConsulta.disabled = true;
+            }
+
+            try {
+                const response = await fetch(consultaStoreUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: JSON.stringify(payload),
+                });
+
+                const data = await response.json().catch(() => null);
+
+                if (response.status === 422) {
+                    const errores = Object.values(data?.errors ?? {}).flat();
+                    const mensaje = errores.join(' ') || 'Revisa los datos de la consulta.';
+                    mostrarMensajeConsulta(mensaje, 'error');
+                    return;
+                }
+
+                if (!response.ok) {
+                    throw new Error(data?.message || 'No se pudo guardar la consulta.');
+                }
+
+                if (data?.consulta) {
+                    consultasDetalleActual = [data.consulta, ...consultasDetalleActual];
+                    renderConsultas(consultasDetalleActual);
+                }
+
+                mostrarMensajeConsulta('Consulta registrada correctamente.');
+                limpiarFormularioConsulta();
+                if (consultaCampos.fecha) {
+                    consultaCampos.fecha.value = fecha;
+                }
+            } catch (error) {
+                console.error(error);
+                mostrarMensajeConsulta(error.message || 'No se pudo guardar la consulta.', 'error');
+            } finally {
+                if (botonGuardarConsulta) {
+                    botonGuardarConsulta.disabled = false;
+                }
+            }
+        });
+    }
+
     if (form) {
         form.addEventListener('submit', async event => {
             event.preventDefault();
@@ -2228,7 +2662,7 @@
                 }
             });
 
-            ['especieOtro', 'edad', 'peso', 'temperatura', 'sintomas', 'diagnostico', 'vacunas', 'tratamientos'].forEach(campo => {
+            ['especieOtro', 'edad', 'peso'].forEach(campo => {
                 if (payload[campo] === '' || payload[campo] === undefined) {
                     delete payload[campo];
                 }
@@ -2360,6 +2794,294 @@
             padding: 12px;
             font-size: 0.85rem;
             color: #6c7a91;
+        }
+
+        .modal--historia .modal-content--historia {
+            max-width: 1100px;
+            background: linear-gradient(135deg, rgba(244, 248, 255, 0.98), rgba(255, 255, 255, 0.98));
+            border-radius: 28px;
+            border: 1px solid rgba(134, 165, 255, 0.2);
+            padding: 32px 36px;
+            box-shadow: 0 40px 80px rgba(132, 160, 255, 0.18);
+        }
+
+        .historia-detalle {
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        .historia-detalle__header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 24px;
+        }
+
+        .historia-detalle__badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--primary-dark);
+            background: rgba(156, 194, 255, 0.18);
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-weight: 600;
+        }
+
+        .historia-detalle__title {
+            font-size: 1.75rem;
+            color: var(--text-dark);
+            margin: 10px 0 6px;
+        }
+
+        .historia-detalle__subtitle {
+            color: rgba(43, 57, 144, 0.7);
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        .historia-detalle__info-grid {
+            display: grid;
+            gap: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            background: rgba(237, 244, 255, 0.65);
+            border-radius: 22px;
+            padding: 18px 22px;
+        }
+
+        .historia-detalle__info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            color: var(--text-dark);
+        }
+
+        .historia-detalle__info-item > span {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(43, 57, 144, 0.55);
+        }
+
+        .historia-detalle__info-item > strong {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .historia-detalle__info-item > small {
+            font-size: 0.85rem;
+            color: rgba(43, 57, 144, 0.6);
+        }
+
+        .historia-detalle__body {
+            display: grid;
+            gap: 28px;
+            grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+            align-items: start;
+        }
+
+        @media (max-width: 992px) {
+            .historia-detalle__body {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .historia-detalle__section-header {
+            margin-bottom: 18px;
+        }
+
+        .historia-detalle__section-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--text-dark);
+        }
+
+        .historia-detalle__section-header p {
+            margin: 6px 0 0;
+            color: rgba(43, 57, 144, 0.65);
+            font-size: 0.95rem;
+        }
+
+        .historia-detalle__timeline {
+            background: rgba(255, 255, 255, 0.78);
+            border-radius: 24px;
+            padding: 24px;
+            border: 1px solid rgba(156, 194, 255, 0.25);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+        }
+
+        .historia-detalle__empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(43, 57, 144, 0.55);
+        }
+
+        .historia-detalle__empty i {
+            font-size: 2.4rem;
+            margin-bottom: 12px;
+            color: rgba(122, 168, 255, 0.6);
+        }
+
+        .historia-detalle__timeline-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .consulta-item {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(241, 247, 255, 0.95));
+            border-radius: 20px;
+            padding: 20px 22px;
+            border: 1px solid rgba(156, 194, 255, 0.22);
+            box-shadow: 0 14px 30px rgba(140, 173, 255, 0.12);
+        }
+
+        .consulta-item__header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .consulta-item__date {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: rgba(43, 57, 144, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .consulta-item__motivo {
+            font-size: 1.15rem;
+            margin: 0;
+            color: var(--text-dark);
+        }
+
+        .consulta-item__meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .consulta-item__meta-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(156, 194, 255, 0.22);
+            color: var(--primary-dark);
+            font-weight: 600;
+            border-radius: 999px;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+        }
+
+        .consulta-item__body {
+            display: grid;
+            gap: 14px;
+        }
+
+        .consulta-item__block {
+            background: rgba(237, 244, 255, 0.6);
+            border-radius: 16px;
+            padding: 12px 14px;
+        }
+
+        .consulta-item__block-title {
+            display: block;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(43, 57, 144, 0.55);
+            margin-bottom: 6px;
+        }
+
+        .consulta-item__block-text {
+            margin: 0;
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+
+        .historia-detalle__form {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 24px;
+            padding: 24px 26px;
+            border: 1px solid rgba(156, 194, 255, 0.22);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+
+        .consulta-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .consulta-form__grid {
+            display: grid;
+            gap: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        }
+
+        .consulta-form .form-group label {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .consulta-form .form-group input,
+        .consulta-form .form-group textarea {
+            width: 100%;
+            border: 1px solid rgba(122, 168, 255, 0.3);
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
+            font-size: 0.95rem;
+            background: rgba(255, 255, 255, 0.92);
+            color: var(--text-dark);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .consulta-form .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .consulta-form .form-group input:focus,
+        .consulta-form .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-dark);
+            box-shadow: 0 0 0 4px rgba(156, 194, 255, 0.2);
+        }
+
+        .consulta-alert {
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .consulta-alert.is-visible {
+            display: block;
+        }
+
+        .consulta-alert--success {
+            background: rgba(138, 199, 174, 0.18);
+            color: rgba(23, 120, 88, 0.95);
+            border: 1px solid rgba(138, 199, 174, 0.45);
+        }
+
+        .consulta-alert--error {
+            background: rgba(255, 179, 179, 0.18);
+            color: rgba(186, 30, 30, 0.95);
+            border: 1px solid rgba(255, 179, 179, 0.45);
         }
     </style>
 @endpush
