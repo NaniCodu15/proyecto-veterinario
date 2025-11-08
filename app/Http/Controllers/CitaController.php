@@ -3,11 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use App\Models\Cita;
 use Carbon\Carbon;
 
 class CitaController extends Controller
 {
+    private const ESTADOS_PERMITIDOS = ['Pendiente', 'Atendida', 'Cancelada', 'Reprogramada'];
+
     public function list(Request $request)
     {
         $search = trim((string) $request->input('q', ''));
@@ -61,15 +65,12 @@ class CitaController extends Controller
     {
         $validated = $request->validate([
             'fecha_cita' => ['required', 'date'],
-            'hora_cita' => ['nullable', 'date_format:H:i'],
+            'hora_cita' => ['required', 'date_format:H:i'],
             'motivo' => ['required', 'string', 'max:255'],
             'id_historia' => ['required', 'exists:historia_clinicas,id_historia'],
         ]);
 
-        $hora = $validated['hora_cita'] ?? '00:00';
-        if (strlen($hora) === 5) {
-            $hora .= ':00';
-        }
+        $hora = $this->normalizarHora($validated['hora_cita'] ?? null) ?? '00:00:00';
 
         $cita = Cita::create([
             'fecha_cita' => $validated['fecha_cita'],
@@ -130,10 +131,49 @@ class CitaController extends Controller
     public function updateEstado(Request $request, Cita $cita)
     {
         $validated = $request->validate([
-            'estado' => ['required', 'string', 'max:50'],
+            'estado' => ['required', 'string', Rule::in(self::ESTADOS_PERMITIDOS)],
+            'fecha_cita' => ['nullable', 'date'],
+            'hora_cita' => ['nullable', 'date_format:H:i'],
         ]);
 
-        $cita->estado = $validated['estado'];
+        $estadoActual = $cita->estado ?? 'Pendiente';
+        $nuevoEstado = $validated['estado'];
+
+        if ($estadoActual === 'Atendida' && $nuevoEstado !== 'Atendida') {
+            throw ValidationException::withMessages([
+                'estado' => ['Las citas atendidas no se pueden modificar.'],
+            ]);
+        }
+
+        if ($estadoActual === 'Atendida' && $nuevoEstado === 'Atendida') {
+            return response()->json([
+                'message' => 'La cita ya se encuentra marcada como atendida.',
+                'cita' => $this->transformCita($cita->fresh(['historiaClinica.mascota.propietario'])),
+            ]);
+        }
+
+        if ($nuevoEstado === 'Reprogramada') {
+            $nuevaFecha = $validated['fecha_cita'] ?? null;
+            $nuevaHora = $validated['hora_cita'] ?? null;
+
+            $errores = [];
+            if (!$nuevaFecha) {
+                $errores['fecha_cita'] = ['Selecciona la nueva fecha de la cita.'];
+            }
+
+            if (!$nuevaHora) {
+                $errores['hora_cita'] = ['Selecciona la nueva hora de la cita.'];
+            }
+
+            if (!empty($errores)) {
+                throw ValidationException::withMessages($errores);
+            }
+
+            $cita->fecha_cita = $nuevaFecha;
+            $cita->hora_cita = $this->normalizarHora($nuevaHora) ?? $cita->hora_cita;
+        }
+
+        $cita->estado = $nuevoEstado;
         $cita->save();
 
         return response()->json([
@@ -172,5 +212,20 @@ class CitaController extends Controller
             'motivo' => $cita->motivo,
             'estado' => $cita->estado ?? 'Pendiente',
         ];
+    }
+
+    private function normalizarHora(?string $hora): ?string
+    {
+        if ($hora === null || $hora === '') {
+            return null;
+        }
+
+        $hora = trim($hora);
+
+        if (strlen($hora) === 5) {
+            return $hora . ':00';
+        }
+
+        return $hora;
     }
 }

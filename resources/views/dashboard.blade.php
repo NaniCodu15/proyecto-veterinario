@@ -10,7 +10,17 @@
 
         <ul class="sidebar-menu">
             <li><a href="#" class="nav-link active" data-section="inicio"><i class="fas fa-home"></i><span>Inicio</span></a></li>
-            <li><a href="#" class="nav-link" data-section="citas"><i class="fas fa-calendar-alt"></i><span>Citas</span></a></li>
+            <li class="sidebar-item sidebar-item--has-submenu">
+                <a href="#" class="nav-link" data-section="citas"><i class="fas fa-calendar-alt"></i><span>Citas</span></a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a href="#" class="nav-link nav-link--sublayer" data-section="citas-agendadas" data-parent="citas">
+                            <i class="fas fa-calendar-check"></i>
+                            <span>Citas Agendadas</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
             <li><a href="#" class="nav-link" data-section="historias"><i class="fas fa-notes-medical"></i><span>Historias Clínicas</span></a></li>
             <li><a href="#" class="nav-link" data-section="mascotas"><i class="fas fa-dog"></i><span>Mascotas</span></a></li>
             <li><a href="#" class="nav-link" data-section="propietarios"><i class="fas fa-user"></i><span>Propietarios</span></a></li>
@@ -152,7 +162,7 @@
                                 <p class="schedule-list__pet">Luna · Control preventivo</p>
                                 <span class="schedule-list__owner">Propietario: Ana Pérez</span>
                             </div>
-                            <span class="schedule-list__status schedule-list__status--check"><i class="fas fa-check"></i>Confirmada</span>
+                            <span class="schedule-list__status schedule-list__status--check"><i class="fas fa-check"></i>Atendida</span>
                         </li>
                         <li>
                             <div class="schedule-list__time">10:15</div>
@@ -411,7 +421,7 @@
                 <p>Coordina las citas con información actualizada de cada paciente y su familia en pocos pasos.</p>
             </div>
 
-            <div class="citas-grid">
+            <div class="citas-grid citas-grid--single">
                 <section class="citas-card" id="registrarCitaCard">
                     <div class="citas-card__header">
                         <div>
@@ -463,6 +473,11 @@
                             <input type="date" id="citaFecha" name="fecha_cita" required>
                         </div>
 
+                        <div class="cita-form__group">
+                            <label for="citaHora">Hora de la cita</label>
+                            <input type="time" id="citaHora" name="hora_cita" required>
+                        </div>
+
                         <div class="cita-form__actions">
                             <button type="submit" class="btn btn-success">
                                 <i class="fas fa-save"></i>
@@ -471,48 +486,55 @@
                         </div>
                     </form>
                 </section>
-
-                <section class="citas-card citas-card--list" id="listadoCitasCard">
-                    <div class="citas-card__header">
-                        <div>
-                            <h2>Agenda de citas</h2>
-                            <p>Visualiza y gestiona cada cita registrada en el sistema.</p>
-                        </div>
-                        <div class="citas-card__icon" aria-hidden="true"><i class="fas fa-clipboard-list"></i></div>
-                    </div>
-
-                    <div id="citasListadoMensaje" class="citas-alert" role="status" aria-live="polite" hidden></div>
-
-                    <div class="citas-toolbar">
-                        <label for="buscarCitas" class="citas-search">
-                            <i class="fas fa-search"></i>
-                            <input type="search" id="buscarCitas" placeholder="Buscar por mascota o propietario">
-                        </label>
-                    </div>
-
-                    <div class="citas-table-wrapper">
-                        <table class="citas-table">
-                            <thead>
-                                <tr>
-                                    <th>🆔 ID de la cita</th>
-                                    <th>🐾 Nombre de la mascota</th>
-                                    <th>🧍‍♀️ Nombre del propietario</th>
-                                    <th>📅 Fecha de la cita</th>
-                                    <th>⏰ Hora de la cita</th>
-                                    <th>💬 Motivo</th>
-                                    <th>🔖 Estado</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tablaCitas">
-                                <tr class="citas-table__empty">
-                                    <td colspan="8">No hay citas registradas todavía.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
             </div>
+        </div>
+
+        <div id="section-citas-agendadas" class="section">
+            <div class="citas-header">
+                <h1 class="titulo">Citas Agendadas</h1>
+                <p>Visualiza y gestiona cada cita registrada en el sistema.</p>
+            </div>
+
+            <section class="citas-card citas-card--list" id="listadoCitasCard">
+                <div class="citas-card__header">
+                    <div>
+                        <h2>Agenda de citas</h2>
+                        <p>Controla el estado y seguimiento de cada cita programada.</p>
+                    </div>
+                    <div class="citas-card__icon" aria-hidden="true"><i class="fas fa-clipboard-list"></i></div>
+                </div>
+
+                <div id="citasListadoMensaje" class="citas-alert" role="status" aria-live="polite" hidden></div>
+
+                <div class="citas-toolbar">
+                    <label for="buscarCitas" class="citas-search">
+                        <i class="fas fa-search"></i>
+                        <input type="search" id="buscarCitas" placeholder="Buscar por mascota o propietario">
+                    </label>
+                </div>
+
+                <div class="citas-table-wrapper">
+                    <table class="citas-table">
+                        <thead>
+                            <tr>
+                                <th>🆔 ID de la cita</th>
+                                <th>🐾 Nombre de la mascota</th>
+                                <th>🧍‍♀️ Nombre del propietario</th>
+                                <th>📅 Fecha de la cita</th>
+                                <th>⏰ Hora de la cita</th>
+                                <th>💬 Motivo</th>
+                                <th>🔖 Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaCitas">
+                            <tr class="citas-table__empty">
+                                <td colspan="8">No hay citas registradas todavía.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
         </div>
 
         <!-- SECCIÓN MASCOTAS -->
@@ -574,11 +596,21 @@
                 <label for="selectEstadoCita">Estado</label>
                 <select id="selectEstadoCita" required>
                     <option value="Pendiente">Pendiente</option>
-                    <option value="Confirmada">Confirmada</option>
                     <option value="Atendida">Atendida</option>
                     <option value="Reprogramada">Reprogramada</option>
                     <option value="Cancelada">Cancelada</option>
                 </select>
+            </div>
+
+            <div id="reprogramarCampos" class="reprogramar-campos" hidden>
+                <div class="form-group">
+                    <label for="citaReprogramadaFecha">Nueva fecha</label>
+                    <input type="date" id="citaReprogramadaFecha">
+                </div>
+                <div class="form-group">
+                    <label for="citaReprogramadaHora">Nueva hora</label>
+                    <input type="time" id="citaReprogramadaHora">
+                </div>
             </div>
             <div class="cita-estado-actions">
                 <button type="button" class="btn btn-outline" data-close="estadoCita">Cancelar</button>
@@ -589,7 +621,7 @@
 </div>
 
 <script>
-    const links    = document.querySelectorAll('.sidebar-menu a.nav-link');
+    const links    = Array.from(document.querySelectorAll('.sidebar-menu a.nav-link'));
     const sections = Array.from(document.querySelectorAll('#main-content .section'));
 
     const historiaListUrl   = "{{ route('historia_clinicas.list') }}";
@@ -652,6 +684,46 @@
         };
     }
 
+    function resetCamposReprogramar() {
+        if (reprogramarCampos) {
+            reprogramarCampos.hidden = true;
+        }
+
+        if (reprogramarFechaInput) {
+            reprogramarFechaInput.value = '';
+            reprogramarFechaInput.removeAttribute('required');
+        }
+
+        if (reprogramarHoraInput) {
+            reprogramarHoraInput.value = '';
+            reprogramarHoraInput.removeAttribute('required');
+        }
+    }
+
+    function toggleCamposReprogramar(estado) {
+        const esReprogramada = String(estado || '').toLowerCase() === 'reprogramada';
+
+        if (reprogramarCampos) {
+            reprogramarCampos.hidden = !esReprogramada;
+        }
+
+        if (reprogramarFechaInput) {
+            if (esReprogramada) {
+                reprogramarFechaInput.setAttribute('required', 'required');
+            } else {
+                reprogramarFechaInput.removeAttribute('required');
+            }
+        }
+
+        if (reprogramarHoraInput) {
+            if (esReprogramada) {
+                reprogramarHoraInput.setAttribute('required', 'required');
+            } else {
+                reprogramarHoraInput.removeAttribute('required');
+            }
+        }
+    }
+
     function showSection(key) {
         sections.forEach(sec => {
             const activa = sec.id === `section-${key}`;
@@ -660,29 +732,59 @@
         });
     }
 
+    function clearActiveLinks() {
+        links.forEach(link => link.classList.remove('active', 'nav-link--parent-active'));
+    }
+
+    function setActiveLink(link) {
+        if (!link) {
+            return;
+        }
+
+        clearActiveLinks();
+        link.classList.add('active');
+
+        const parentSection = link.dataset.parent;
+        if (parentSection) {
+            const parentLink = document.querySelector(`.sidebar-menu a.nav-link[data-section="${parentSection}"]`);
+            parentLink?.classList.add('nav-link--parent-active');
+        } else if (link.closest('.sidebar-item--has-submenu')) {
+            link.classList.add('nav-link--parent-active');
+        }
+    }
+
+    function manejarNavegacion(link) {
+        if (!link) {
+            return;
+        }
+
+        const key = link.dataset.section;
+        if (!key) {
+            return;
+        }
+
+        setActiveLink(link);
+        showSection(key);
+
+        if (key === 'historias') {
+            cargarHistorias();
+        }
+
+        if (key === 'citas' || key === 'citas-agendadas') {
+            cargarCitas(citasBusquedaActual);
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
-        showSection('inicio');
+        manejarNavegacion(document.querySelector('.sidebar-menu a[data-section="inicio"]'));
         cargarHistorias();
         cargarCitas();
     });
 
     links.forEach(link => {
-        link.addEventListener('click', function (event) {
+        link.addEventListener('click', event => {
             event.preventDefault();
-
-            links.forEach(l => l.classList.remove('active'));
-            this.classList.add('active');
-
-            const key = this.dataset.section;
-            showSection(key);
-
-            if (key === 'historias') {
-                cargarHistorias();
-            }
-
-            if (key === 'citas') {
-                cargarCitas(citasBusquedaActual);
-            }
+            manejarNavegacion(link);
         });
     });
 
@@ -710,6 +812,9 @@
     const modalEstadoCita     = document.getElementById('modalEstadoCita');
     const formEstadoCita      = document.getElementById('formEstadoCita');
     const selectEstadoCita    = document.getElementById('selectEstadoCita');
+    const reprogramarCampos   = document.getElementById('reprogramarCampos');
+    const reprogramarFechaInput = document.getElementById('citaReprogramadaFecha');
+    const reprogramarHoraInput  = document.getElementById('citaReprogramadaHora');
     const detalleCamposCita   = modalDetalleCita ? {
         id: modalDetalleCita.querySelector('[data-detalle="id"]'),
         numero_historia: modalDetalleCita.querySelector('[data-detalle="numero_historia"]'),
@@ -748,6 +853,7 @@
         mascotaNombre: document.getElementById('citaMascotaNombre'),
         motivo: document.getElementById('citaMotivo'),
         fecha: document.getElementById('citaFecha'),
+        hora: document.getElementById('citaHora'),
     };
     const citaMensaje = document.getElementById('citaMensaje');
 
@@ -985,8 +1091,6 @@
         switch (normalizado) {
             case 'atendida':
                 return 'cita-status--success';
-            case 'confirmada':
-                return 'cita-status--info';
             case 'reprogramada':
                 return 'cita-status--warning';
             case 'cancelada':
@@ -1062,6 +1166,13 @@
         btnEstado.type = 'button';
         btnEstado.className = 'btn btn-warning btn-sm btnEstadoCita';
         btnEstado.innerHTML = '<i class="fas fa-exchange-alt"></i> Cambiar estado';
+
+        if (String(cita.estado || '').trim().toLowerCase() === 'atendida') {
+            btnEstado.disabled = true;
+            btnEstado.classList.add('is-disabled');
+            btnEstado.setAttribute('aria-disabled', 'true');
+            btnEstado.title = 'Las citas atendidas no pueden modificarse.';
+        }
 
         accionesWrapper.appendChild(whatsappLink);
         accionesWrapper.appendChild(btnDetalles);
@@ -1167,14 +1278,35 @@
             return;
         }
 
+        const estadoActual = String(cita.estado ?? 'Pendiente').trim().toLowerCase();
+
+        if (estadoActual === 'atendida') {
+            mostrarMensajeListadoCitas('Las citas marcadas como atendidas no se pueden modificar.', 'info');
+            return;
+        }
+
+        resetCamposReprogramar();
         citaSeleccionadaParaEstado = cita;
 
         if (selectEstadoCita) {
-            const estadoActual = cita.estado ?? 'Pendiente';
-            selectEstadoCita.value = estadoActual;
-            if (selectEstadoCita.value !== estadoActual) {
+            const estadoTexto = cita.estado ?? 'Pendiente';
+            selectEstadoCita.value = estadoTexto;
+            if (selectEstadoCita.value !== estadoTexto) {
                 selectEstadoCita.value = 'Pendiente';
             }
+            toggleCamposReprogramar(selectEstadoCita.value);
+        }
+
+        if (reprogramarFechaInput) {
+            reprogramarFechaInput.value = cita.fecha ?? '';
+        }
+
+        if (reprogramarHoraInput) {
+            reprogramarHoraInput.value = cita.hora ?? '';
+        }
+
+        if (!selectEstadoCita) {
+            toggleCamposReprogramar(cita.estado);
         }
 
         abrirModalGenerico(modalEstadoCita);
@@ -1217,10 +1349,12 @@
         }
     }
 
-    async function actualizarEstadoCita(id, nuevoEstado) {
+    async function actualizarEstadoCita(id, cambios = {}) {
         if (!id || !citasEstadoBaseUrl) {
             throw new Error('No se pudo identificar la cita seleccionada.');
         }
+
+        const payload = { ...cambios };
 
         const response = await fetch(`${citasEstadoBaseUrl}/${id}/estado`, {
             method: 'PATCH',
@@ -1229,7 +1363,7 @@
                 Accept: 'application/json',
                 'X-CSRF-TOKEN': csrfToken,
             },
-            body: JSON.stringify({ estado: nuevoEstado }),
+            body: JSON.stringify(payload),
         });
 
         const data = await response.json().catch(() => null);
@@ -1448,13 +1582,7 @@
             event.preventDefault();
 
             const linkHistorias = document.querySelector('.sidebar-menu a[data-section="historias"]');
-            if (linkHistorias) {
-                links.forEach(l => l.classList.remove('active'));
-                linkHistorias.classList.add('active');
-            }
-
-            showSection('historias');
-            cargarHistorias();
+            manejarNavegacion(linkHistorias);
         });
     }
 
@@ -1498,6 +1626,10 @@
                 return;
             }
 
+            if (botonEstado?.disabled) {
+                return;
+            }
+
             if (botonEstado && cita) {
                 prepararModalEstado(cita);
             }
@@ -1514,6 +1646,7 @@
     document.querySelectorAll('[data-close="estadoCita"]').forEach(elemento => {
         elemento.addEventListener('click', () => {
             cerrarModalGenerico(modalEstadoCita);
+            resetCamposReprogramar();
             citaSeleccionadaParaEstado = null;
         });
     });
@@ -1531,8 +1664,15 @@
         modalEstadoCita.addEventListener('click', event => {
             if (event.target === modalEstadoCita) {
                 cerrarModalGenerico(modalEstadoCita);
+                resetCamposReprogramar();
                 citaSeleccionadaParaEstado = null;
             }
+        });
+    }
+
+    if (selectEstadoCita) {
+        selectEstadoCita.addEventListener('change', () => {
+            toggleCamposReprogramar(selectEstadoCita.value);
         });
     }
 
@@ -1546,10 +1686,33 @@
             }
 
             const nuevoEstado = selectEstadoCita?.value || 'Pendiente';
+            const esReprogramada = String(nuevoEstado).toLowerCase() === 'reprogramada';
+            const payload = { estado: nuevoEstado };
+
+            if (esReprogramada) {
+                const nuevaFecha = reprogramarFechaInput?.value || '';
+                const nuevaHora = reprogramarHoraInput?.value || '';
+
+                if (!nuevaFecha) {
+                    mostrarMensajeListadoCitas('Selecciona la nueva fecha para la cita reprogramada.', 'error');
+                    reprogramarFechaInput?.focus();
+                    return;
+                }
+
+                if (!nuevaHora) {
+                    mostrarMensajeListadoCitas('Selecciona la nueva hora para la cita reprogramada.', 'error');
+                    reprogramarHoraInput?.focus();
+                    return;
+                }
+
+                payload.fecha_cita = nuevaFecha;
+                payload.hora_cita = nuevaHora;
+            }
 
             try {
-                const citaActualizada = await actualizarEstadoCita(citaSeleccionadaParaEstado.id, nuevoEstado);
+                const citaActualizada = await actualizarEstadoCita(citaSeleccionadaParaEstado.id, payload);
                 cerrarModalGenerico(modalEstadoCita);
+                resetCamposReprogramar();
                 citaSeleccionadaParaEstado = null;
 
                 await cargarCitas(citasBusquedaActual);
@@ -1693,6 +1856,7 @@
 
         if (modalEstadoCita && modalEstadoCita.style.display === 'block') {
             cerrarModalGenerico(modalEstadoCita);
+            resetCamposReprogramar();
             citaSeleccionadaParaEstado = null;
         }
 
@@ -1736,6 +1900,7 @@
 
             const motivo = (citaCampos.motivo?.value || '').trim();
             const fecha = citaCampos.fecha?.value || '';
+            const hora = citaCampos.hora?.value || '';
 
             if (!historiaSeleccionadaParaCita?.id) {
                 mostrarMensajeCita('Selecciona una historia clínica antes de registrar la cita.', 'error');
@@ -1754,9 +1919,16 @@
                 return;
             }
 
+            if (!hora) {
+                mostrarMensajeCita('Selecciona la hora de la cita.', 'error');
+                citaCampos.hora?.focus();
+                return;
+            }
+
             const payload = {
                 id_historia: historiaSeleccionadaParaCita.id,
                 fecha_cita: fecha,
+                hora_cita: hora,
                 motivo,
             };
 
