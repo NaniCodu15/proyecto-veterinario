@@ -11,6 +11,18 @@
         <ul class="sidebar-menu">
             <li><a href="#" class="nav-link active" data-section="inicio"><i class="fas fa-home"></i><span>Inicio</span></a></li>
             <li class="sidebar-item sidebar-item--has-submenu">
+                <a href="#" class="nav-link" data-section="historias"><i class="fas fa-notes-medical"></i><span>Historias Clínicas</span></a>
+                <ul class="sidebar-submenu" id="sidebarHistoriasSubmenu">
+                    <li>
+                        <a href="#" class="nav-link nav-link--sublayer" data-section="historias" data-parent="historias" data-action="ver-listado-historias">
+                            <i class="fas fa-list-ul"></i>
+                            <span>Listado general</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-submenu__empty">No hay historias clínicas registradas.</li>
+                </ul>
+            </li>
+            <li class="sidebar-item sidebar-item--has-submenu">
                 <a href="#" class="nav-link" data-section="citas"><i class="fas fa-calendar-alt"></i><span>Citas</span></a>
                 <ul class="sidebar-submenu">
                     <li>
@@ -21,7 +33,6 @@
                     </li>
                 </ul>
             </li>
-            <li><a href="#" class="nav-link" data-section="historias"><i class="fas fa-notes-medical"></i><span>Historias Clínicas</span></a></li>
             <li><a href="#" class="nav-link" data-section="mascotas"><i class="fas fa-dog"></i><span>Mascotas</span></a></li>
             <li><a href="#" class="nav-link" data-section="propietarios"><i class="fas fa-user"></i><span>Propietarios</span></a></li>
             <li><a href="#" class="nav-link" data-section="consultas"><i class="fas fa-stethoscope"></i><span>Consultas</span></a></li>
@@ -261,12 +272,20 @@
         <div id="section-historias" class="section">
             <div class="historias-wrapper">
                 <div class="historias-header">
-                    <h1 class="titulo">Historias Clínicas</h1>
+                    <div class="historias-header__content">
+                        <h1 class="titulo">Historias Clínicas</h1>
+                        <p class="historias-header__description">Crea nuevas historias clínicas y mantén el seguimiento de cada paciente.</p>
+                    </div>
 
                     <!-- BOTÓN NUEVA HISTORIA -->
-                    <button id="btnNuevaHistoria" class="btn btn-primary">
+                    <button id="btnNuevaHistoria" class="btn btn-primary" data-action="abrir-modal-historia">
                         <i class="fas fa-plus"></i> Nueva Historia Clínica
                     </button>
+                </div>
+
+                <div class="historias-tip">
+                    <i class="fas fa-lightbulb"></i>
+                    <span>Selecciona una historia desde el submenú lateral para abrirla y editarla al instante.</span>
                 </div>
 
                 <div id="historiaMensaje" class="alert" role="status" aria-live="polite" hidden></div>
@@ -621,8 +640,8 @@
 </div>
 
 <script>
-    const links    = Array.from(document.querySelectorAll('.sidebar-menu a.nav-link'));
-    const sections = Array.from(document.querySelectorAll('#main-content .section'));
+    const sidebarMenu = document.querySelector('.sidebar-menu');
+    const sections    = Array.from(document.querySelectorAll('#main-content .section'));
 
     const historiaListUrl   = "{{ route('historia_clinicas.list') }}";
     const historiaStoreUrl  = "{{ route('historia_clinicas.store') }}";
@@ -733,7 +752,9 @@
     }
 
     function clearActiveLinks() {
-        links.forEach(link => link.classList.remove('active', 'nav-link--parent-active'));
+        document.querySelectorAll('.sidebar-menu a.nav-link').forEach(link => {
+            link.classList.remove('active', 'nav-link--parent-active');
+        });
     }
 
     function setActiveLink(link) {
@@ -753,7 +774,7 @@
         }
     }
 
-    function manejarNavegacion(link) {
+    function manejarNavegacion(link, opciones = {}) {
         if (!link) {
             return;
         }
@@ -766,7 +787,9 @@
         setActiveLink(link);
         showSection(key);
 
-        if (key === 'historias') {
+        const { recargarHistorias = true } = opciones;
+
+        if (key === 'historias' && recargarHistorias) {
             cargarHistorias();
         }
 
@@ -781,15 +804,40 @@
         cargarCitas();
     });
 
-    links.forEach(link => {
-        link.addEventListener('click', event => {
+    if (sidebarMenu) {
+        sidebarMenu.addEventListener('click', event => {
+            const link = event.target.closest('a.nav-link');
+            if (!link || !sidebarMenu.contains(link)) {
+                return;
+            }
+
             event.preventDefault();
-            manejarNavegacion(link);
+
+            const accion = link.dataset.action;
+            const opciones = {};
+
+            if (link.dataset.section === 'historias' && accion === 'abrir-historia') {
+                opciones.recargarHistorias = false;
+            }
+
+            manejarNavegacion(link, opciones);
+
+            if (accion === 'ver-listado-historias') {
+                window.requestAnimationFrame(() => {
+                    desplazarAListadoHistorias();
+                });
+            } else if (accion === 'abrir-historia' && link.dataset.historiaId) {
+                const historiaId = link.dataset.historiaId;
+                window.requestAnimationFrame(() => {
+                    resaltarHistoriaEnTabla(historiaId);
+                });
+                cargarHistoriaParaEditar(historiaId);
+            }
         });
-    });
+    }
 
     const modal               = document.getElementById('modalHistoria');
-    const btnNueva            = document.getElementById('btnNuevaHistoria');
+    const botonesNuevaHistoria = Array.from(document.querySelectorAll('[data-action="abrir-modal-historia"]'));
     const spanClose           = document.querySelector('#modalHistoria .close');
     const form                = document.getElementById('formHistoria');
     const titulo              = document.getElementById('modalTitulo');
@@ -802,6 +850,7 @@
     const btnGuardar          = form?.querySelector('.btn-guardar');
     const btnAccesoRapido     = document.getElementById('btnAccesoRapido');
     const btnIrHistorias      = document.querySelector('.btn-ir-historias');
+    const submenuHistorias    = document.getElementById('sidebarHistoriasSubmenu');
     const confirmModal        = document.getElementById('confirmModal');
     const confirmAcceptButton = confirmModal?.querySelector('[data-confirm="accept"]');
     const confirmCancelButton = confirmModal?.querySelector('[data-confirm="cancel"]');
@@ -860,6 +909,112 @@
     let historiaSeleccionadaParaCita = null;
     let tomSelectHistoria = null;
     let historiasDisponibles = [];
+
+    function desplazarAListadoHistorias() {
+        if (!tablaHistorias) {
+            return;
+        }
+
+        const contenedorTabla = tablaHistorias.closest('.tabla-wrapper');
+        if (contenedorTabla) {
+            contenedorTabla.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    function resaltarHistoriaEnTabla(id) {
+        if (!tablaHistorias || !id) {
+            return;
+        }
+
+        const filas = tablaHistorias.querySelectorAll('tr');
+        filas.forEach(fila => fila.classList.remove('tabla-consultas__row--highlight'));
+
+        const filaObjetivo = tablaHistorias.querySelector(`tr[data-historia-id="${id}"]`);
+        if (!filaObjetivo) {
+            return;
+        }
+
+        filaObjetivo.classList.add('tabla-consultas__row--highlight');
+        filaObjetivo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        window.setTimeout(() => {
+            filaObjetivo.classList.remove('tabla-consultas__row--highlight');
+        }, 2000);
+    }
+
+    function crearElementoSubmenuHistoria(historia) {
+        if (!historia || !submenuHistorias) {
+            return null;
+        }
+
+        const numero = (historia.numero_historia ?? '').toString().trim() || 'Sin código';
+        const mascota = (historia.mascota ?? '').toString().trim() || 'Mascota sin nombre';
+
+        const item = document.createElement('li');
+        const enlace = document.createElement('a');
+        enlace.href = '#';
+        enlace.className = 'nav-link nav-link--sublayer';
+        enlace.dataset.section = 'historias';
+        enlace.dataset.parent = 'historias';
+        enlace.dataset.action = 'abrir-historia';
+        enlace.dataset.historiaId = historia.id ?? '';
+        enlace.title = `Abrir ${numero} · ${mascota}`;
+
+        const icono = document.createElement('i');
+        icono.className = 'fas fa-file-medical';
+
+        const texto = document.createElement('span');
+        texto.textContent = `${numero} · ${mascota}`;
+
+        enlace.append(icono, texto);
+        item.appendChild(enlace);
+
+        return item;
+    }
+
+    function actualizarSubmenuHistorias(lista = []) {
+        if (!submenuHistorias) {
+            return;
+        }
+
+        submenuHistorias.innerHTML = '';
+
+        const itemListado = document.createElement('li');
+        const enlaceListado = document.createElement('a');
+        enlaceListado.href = '#';
+        enlaceListado.className = 'nav-link nav-link--sublayer';
+        enlaceListado.dataset.section = 'historias';
+        enlaceListado.dataset.parent = 'historias';
+        enlaceListado.dataset.action = 'ver-listado-historias';
+
+        const iconoListado = document.createElement('i');
+        iconoListado.className = 'fas fa-list-ul';
+
+        const textoListado = document.createElement('span');
+        textoListado.textContent = 'Listado general';
+
+        enlaceListado.append(iconoListado, textoListado);
+        itemListado.appendChild(enlaceListado);
+        submenuHistorias.appendChild(itemListado);
+
+        if (!Array.isArray(lista) || lista.length === 0) {
+            const itemVacio = document.createElement('li');
+            itemVacio.className = 'sidebar-submenu__empty';
+            itemVacio.textContent = 'No hay historias clínicas registradas.';
+            submenuHistorias.appendChild(itemVacio);
+            return;
+        }
+
+        const fragment = document.createDocumentFragment();
+        lista.forEach(historia => {
+            const elemento = crearElementoSubmenuHistoria(historia);
+            if (elemento) {
+                fragment.appendChild(elemento);
+            }
+        });
+
+        submenuHistorias.appendChild(fragment);
+    }
 
     function ocultarEspecieOtro() {
         if (!especieOtroGroup || !especieOtroInput) {
@@ -1671,6 +1826,7 @@
 
     function renderHistorias(lista = []) {
         poblarHistoriasParaCitas(Array.isArray(lista) ? lista : []);
+        actualizarSubmenuHistorias(Array.isArray(lista) ? lista : []);
 
         if (!tablaHistorias) {
             return;
@@ -1725,9 +1881,11 @@
         }
     }
 
-    if (btnNueva) {
-        btnNueva.addEventListener('click', () => {
-            abrirModalParaCrear();
+    if (botonesNuevaHistoria.length) {
+        botonesNuevaHistoria.forEach(boton => {
+            boton.addEventListener('click', () => {
+                abrirModalParaCrear();
+            });
         });
     }
 
