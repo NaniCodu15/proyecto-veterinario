@@ -21,7 +21,17 @@
                     </li>
                 </ul>
             </li>
-            <li><a href="#" class="nav-link" data-section="historias"><i class="fas fa-notes-medical"></i><span>Historias Clínicas</span></a></li>
+            <li class="sidebar-item sidebar-item--has-submenu">
+                <a href="#" class="nav-link" data-section="historias"><i class="fas fa-notes-medical"></i><span>Historias Clínicas</span></a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a href="#" class="nav-link nav-link--sublayer" data-section="historias-registradas" data-parent="historias">
+                            <i class="fas fa-folder-open"></i>
+                            <span>Historias Registradas</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
             <li><a href="#" class="nav-link" data-section="mascotas"><i class="fas fa-dog"></i><span>Mascotas</span></a></li>
             <li><a href="#" class="nav-link" data-section="propietarios"><i class="fas fa-user"></i><span>Propietarios</span></a></li>
             <li><a href="#" class="nav-link" data-section="consultas"><i class="fas fa-stethoscope"></i><span>Consultas</span></a></li>
@@ -259,158 +269,175 @@
 
         <!-- SECCIÓN HISTORIAS CLÍNICAS -->
         <div id="section-historias" class="section">
-            <div class="historias-wrapper">
-                <div class="historias-header">
-                    <h1 class="titulo">Historias Clínicas</h1>
+            <div class="historias-create">
+                <div class="historias-create__content">
+                    <span class="historias-create__badge"><i class="fas fa-star"></i> Registro clínico</span>
+                    <h1 class="titulo historias-create__title">Historias Clínicas</h1>
+                    <p class="historias-create__text">
+                        Genera nuevas historias clínicas para cada paciente y mantén un seguimiento cálido y organizado de su bienestar.
+                    </p>
+                    <div class="historias-create__actions">
+                        <button id="btnNuevaHistoria" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Crear nueva historia
+                        </button>
+                    </div>
+                    <div class="alert historias-create__alert" role="status" aria-live="polite" data-historia-mensaje hidden></div>
+                </div>
+                <div class="historias-create__panel">
+                    <h2 class="historias-create__panel-title">Una gestión moderna y humana</h2>
+                    <ul class="historias-create__benefits">
+                        <li><i class="fas fa-heartbeat"></i><span>Seguimiento integral de cada visita y control preventivo.</span></li>
+                        <li><i class="fas fa-user-friends"></i><span>Datos del propietario siempre a mano para comunicar novedades.</span></li>
+                        <li><i class="fas fa-shield-alt"></i><span>Historial clínico seguro, centralizado y fácil de actualizar.</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
 
-                    <!-- BOTÓN NUEVA HISTORIA -->
-                    <button id="btnNuevaHistoria" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Nueva Historia Clínica
+        <div id="section-historias-registradas" class="section">
+            <div class="historias-registradas">
+                <div class="historias-registradas__header">
+                    <div>
+                        <h1 class="titulo">Historias Registradas</h1>
+                        <p>Consulta, edita y coordina la información clínica de tus pacientes en una vista cuidada y cómoda.</p>
+                    </div>
+                    <button type="button" class="btn btn-outline" id="btnIrCrearHistoria">
+                        <i class="fas fa-plus-circle"></i>
+                        Crear nueva historia
                     </button>
                 </div>
 
-                <div id="historiaMensaje" class="alert" role="status" aria-live="polite" hidden></div>
+                <div class="alert historias-registradas__alert" role="status" aria-live="polite" data-historia-mensaje hidden></div>
 
-                <!-- TABLA DE HISTORIAS -->
-                <div class="tabla-wrapper">
-                    <table class="tabla-consultas">
-                        <thead>
-                            <tr>
-                                <th>N° Historia</th>
-                                <th>Mascota</th>
-                                <th>Fecha Apertura</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tablaHistorias">
-                            <tr class="tabla-historias__empty">
-                                <td colspan="4">No hay historias clínicas registradas todavía.</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="historias-registradas__grid" id="tablaHistorias">
+                    <div class="historias-registradas__empty">
+                        <i class="fas fa-folder-open"></i>
+                        <p>No hay historias clínicas registradas todavía.</p>
+                    </div>
                 </div>
             </div>
+        </div>
 
-            <!-- MODAL NUEVA/EDITAR HISTORIA -->
-            <div id="modalHistoria" class="modal">
-                <div class="modal-content">
-                    <span class="close">&times;</span>
-                    <h2 id="modalTitulo">Nueva Historia Clínica</h2>
-                    <form id="formHistoria">
-                        <div class="form-section">
-                            <h3 class="form-section__title"><span>🐶</span>Datos de la mascota</h3>
-                            <div class="form-grid">
-                                <div class="form-group full-width">
-                                    <label>ID de Historia Clínica:</label>
-                                    <input type="text" id="numero_historia" name="numero_historia" readonly>
-                                </div>
+        <!-- MODAL NUEVA/EDITAR HISTORIA -->
+        <div id="modalHistoria" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2 id="modalTitulo">Nueva Historia Clínica</h2>
+                <form id="formHistoria">
+                    <div class="form-section">
+                        <h3 class="form-section__title"><span>🐶</span>Datos de la mascota</h3>
+                        <div class="form-grid">
+                            <div class="form-group full-width">
+                                <label>ID de Historia Clínica:</label>
+                                <input type="text" id="numero_historia" name="numero_historia" readonly>
+                            </div>
 
-                                <div class="form-group">
-                                    <label>Nombre de la Mascota:</label>
-                                    <input type="text" id="nombreMascota" name="nombreMascota" required>
-                                </div>
+                            <div class="form-group">
+                                <label>Nombre de la Mascota:</label>
+                                <input type="text" id="nombreMascota" name="nombreMascota" required>
+                            </div>
 
-                                <div class="form-group">
-                                    <label>Especie:</label>
-                                    <select id="especie" name="especie" required>
-                                        <option value="" selected disabled>Seleccione una opción</option>
-                                        <option value="perro">Perro</option>
-                                        <option value="gato">Gato</option>
-                                        <option value="otro">Otros</option>
-                                    </select>
-                                </div>
+                            <div class="form-group">
+                                <label>Especie:</label>
+                                <select id="especie" name="especie" required>
+                                    <option value="" selected disabled>Seleccione una opción</option>
+                                    <option value="perro">Perro</option>
+                                    <option value="gato">Gato</option>
+                                    <option value="otro">Otros</option>
+                                </select>
+                            </div>
 
-                                <div class="form-group full-width" id="grupoEspecieOtro" style="display: none;">
-                                    <label>Especifique la especie:</label>
-                                    <input type="text" id="especieOtro" name="especieOtro">
-                                </div>
+                            <div class="form-group full-width" id="grupoEspecieOtro" style="display: none;">
+                                <label>Especifique la especie:</label>
+                                <input type="text" id="especieOtro" name="especieOtro">
+                            </div>
 
-                                <div class="form-group">
-                                    <label>Edad (años):</label>
-                                    <input type="number" id="edad" name="edad" min="0">
-                                </div>
+                            <div class="form-group">
+                                <label>Edad (años):</label>
+                                <input type="number" id="edad" name="edad" min="0">
+                            </div>
 
-                                <div class="form-group">
-                                    <label>Raza:</label>
-                                    <input type="text" id="raza" name="raza" required>
-                                </div>
+                            <div class="form-group">
+                                <label>Raza:</label>
+                                <input type="text" id="raza" name="raza" required>
+                            </div>
 
-                                <div class="form-group">
-                                    <label>Sexo:</label>
-                                    <select id="sexo" name="sexo" required>
-                                        <option value="" selected disabled>Seleccione una opción</option>
-                                        <option value="macho">Macho</option>
-                                        <option value="hembra">Hembra</option>
-                                    </select>
-                                </div>
+                            <div class="form-group">
+                                <label>Sexo:</label>
+                                <select id="sexo" name="sexo" required>
+                                    <option value="" selected disabled>Seleccione una opción</option>
+                                    <option value="macho">Macho</option>
+                                    <option value="hembra">Hembra</option>
+                                </select>
+                            </div>
 
-                                <div class="form-group">
-                                    <label>Peso (kg):</label>
-                                    <input type="number" id="peso" name="peso" step="0.01">
-                                </div>
+                            <div class="form-group">
+                                <label>Peso (kg):</label>
+                                <input type="number" id="peso" name="peso" step="0.01">
                             </div>
                         </div>
+                    </div>
 
-                        <div class="form-section">
-                            <h3 class="form-section__title"><span>👤</span>Datos del propietario</h3>
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label>Nombre del Propietario:</label>
-                                    <input type="text" id="nombrePropietario" name="nombrePropietario" required>
-                                </div>
+                    <div class="form-section">
+                        <h3 class="form-section__title"><span>👤</span>Datos del propietario</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Nombre del Propietario:</label>
+                                <input type="text" id="nombrePropietario" name="nombrePropietario" required>
+                            </div>
 
-                                <div class="form-group">
-                                    <label>Teléfono:</label>
-                                    <input type="tel" id="telefono" name="telefono" required>
-                                </div>
+                            <div class="form-group">
+                                <label>Teléfono:</label>
+                                <input type="text" id="telefono" name="telefono">
+                            </div>
 
-                                <div class="form-group">
-                                    <label>Dirección:</label>
-                                    <input type="text" id="direccion" name="direccion" required>
-                                </div>
+                            <div class="form-group">
+                                <label>Dirección:</label>
+                                <input type="text" id="direccion" name="direccion">
+                            </div>
 
-                                <div class="form-group">
-                                    <label>DNI:</label>
-                                    <input type="text" id="dni" name="dni" required>
-                                </div>
+                            <div class="form-group">
+                                <label>DNI:</label>
+                                <input type="text" id="dni" name="dni">
                             </div>
                         </div>
+                    </div>
 
-                        <div class="form-section">
-                            <h3 class="form-section__title"><span>🩺</span>Consulta</h3>
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label>Temperatura (°C):</label>
-                                    <input type="number" id="temperatura" name="temperatura" step="0.1">
-                                </div>
+                    <div class="form-section">
+                        <h3 class="form-section__title"><span>🩺</span>Información clínica</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Temperatura (°C):</label>
+                                <input type="number" id="temperatura" name="temperatura" step="0.1">
+                            </div>
 
-                                <div class="form-group full-width">
-                                    <label>Síntomas:</label>
-                                    <textarea id="sintomas" name="sintomas" rows="3"></textarea>
-                                </div>
+                            <div class="form-group full-width">
+                                <label>Síntomas:</label>
+                                <textarea id="sintomas" name="sintomas" rows="3"></textarea>
+                            </div>
 
-                                <div class="form-group full-width">
-                                    <label>Diagnóstico:</label>
-                                    <textarea id="diagnostico" name="diagnostico" rows="3"></textarea>
-                                </div>
+                            <div class="form-group full-width">
+                                <label>Diagnóstico:</label>
+                                <textarea id="diagnostico" name="diagnostico" rows="3"></textarea>
+                            </div>
 
-                                <div class="form-group full-width">
-                                    <label>Vacunas:</label>
-                                    <textarea id="vacunas" name="vacunas" rows="3"></textarea>
-                                </div>
+                            <div class="form-group">
+                                <label>Vacunas:</label>
+                                <textarea id="vacunas" name="vacunas" rows="3"></textarea>
+                            </div>
 
-                                <div class="form-group full-width">
-                                    <label>Tratamientos:</label>
-                                    <textarea id="tratamientos" name="tratamientos" rows="3"></textarea>
-                                </div>
+                            <div class="form-group full-width">
+                                <label>Tratamientos:</label>
+                                <textarea id="tratamientos" name="tratamientos" rows="3"></textarea>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="form-actions">
-                            <button type="submit" class="btn btn-success btn-guardar">Guardar</button>
-                        </div>
-                    </form>
-                </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success btn-guardar">Guardar</button>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -766,7 +793,7 @@
         setActiveLink(link);
         showSection(key);
 
-        if (key === 'historias') {
+        if (key === 'historias' || key === 'historias-registradas') {
             cargarHistorias();
         }
 
@@ -798,10 +825,11 @@
     const especieOtroGroup    = document.getElementById('grupoEspecieOtro');
     const especieOtroInput    = document.getElementById('especieOtro');
     const tablaHistorias      = document.getElementById('tablaHistorias');
-    const mensajeHistorias    = document.getElementById('historiaMensaje');
+    const mensajesHistoria    = Array.from(document.querySelectorAll('[data-historia-mensaje]'));
     const btnGuardar          = form?.querySelector('.btn-guardar');
     const btnAccesoRapido     = document.getElementById('btnAccesoRapido');
     const btnIrHistorias      = document.querySelector('.btn-ir-historias');
+    const btnIrCrearHistoria  = document.getElementById('btnIrCrearHistoria');
     const confirmModal        = document.getElementById('confirmModal');
     const confirmAcceptButton = confirmModal?.querySelector('[data-confirm="accept"]');
     const confirmCancelButton = confirmModal?.querySelector('[data-confirm="cancel"]');
@@ -1007,18 +1035,22 @@
     }
 
     function mostrarMensajeHistoria(texto, tipo = 'success') {
-        if (!mensajeHistorias) {
+        if (!mensajesHistoria.length) {
             return;
         }
 
-        mensajeHistorias.textContent = texto;
-        mensajeHistorias.classList.remove('alert--success', 'alert--error');
-        mensajeHistorias.classList.add(`alert--${tipo}`);
-        mensajeHistorias.hidden = false;
+        mensajesHistoria.forEach(mensaje => {
+            mensaje.textContent = texto;
+            mensaje.classList.remove('alert--success', 'alert--error');
+            mensaje.classList.add(`alert--${tipo}`);
+            mensaje.hidden = false;
+        });
 
         window.clearTimeout(mostrarMensajeHistoria.timeoutId);
         mostrarMensajeHistoria.timeoutId = window.setTimeout(() => {
-            mensajeHistorias.hidden = true;
+            mensajesHistoria.forEach(mensaje => {
+                mensaje.hidden = true;
+            });
         }, 4000);
     }
 
@@ -1615,36 +1647,67 @@
         }
     }
 
-    function crearFilaHistoria(historia) {
-        const fila = document.createElement('tr');
-        fila.dataset.historiaId = historia.id ?? '';
+    function crearTarjetaHistoria(historia) {
+        const card = document.createElement('article');
+        card.className = 'historia-card';
+        card.dataset.historiaId = historia.id ?? '';
 
-        const numeroCell = document.createElement('td');
-        numeroCell.textContent = historia.numero_historia || '—';
+        const header = document.createElement('div');
+        header.className = 'historia-card__header';
 
-        const mascotaCell = document.createElement('td');
-        mascotaCell.textContent = historia.mascota || 'Sin nombre';
+        const badge = document.createElement('span');
+        badge.className = 'historia-card__badge';
+        badge.textContent = historia.numero_historia || 'Sin código';
 
-        const fechaCell = document.createElement('td');
-        fechaCell.textContent = historia.fecha_apertura || '—';
+        const fecha = document.createElement('span');
+        fecha.className = 'historia-card__date';
+        fecha.innerHTML = `<i class="fas fa-calendar-day"></i> ${historia.fecha_apertura || 'Sin fecha'}`;
 
-        const accionesCell = document.createElement('td');
-        accionesCell.classList.add('acciones');
+        header.append(badge, fecha);
+
+        const body = document.createElement('div');
+        body.className = 'historia-card__body';
+
+        const detalles = [
+            { icono: 'fa-paw', etiqueta: 'Mascota', valor: historia.mascota || 'Sin nombre' },
+            { icono: 'fa-user', etiqueta: 'Propietario', valor: historia.propietario || 'Sin registrar' },
+            { icono: 'fa-id-card', etiqueta: 'DNI', valor: historia.propietario_dni || '—' },
+        ];
+
+        detalles.forEach(({ icono, etiqueta, valor }) => {
+            const filaDetalle = document.createElement('div');
+            filaDetalle.className = 'historia-card__row';
+
+            const label = document.createElement('span');
+            label.className = 'historia-card__label';
+            label.innerHTML = `<i class="fas ${icono}"></i> ${etiqueta}`;
+
+            const value = document.createElement('span');
+            value.className = 'historia-card__value';
+            value.textContent = valor;
+
+            filaDetalle.append(label, value);
+            body.appendChild(filaDetalle);
+        });
+
+        const acciones = document.createElement('div');
+        acciones.className = 'historia-card__actions';
 
         const btnEditar = document.createElement('button');
         btnEditar.className = 'btn btn-warning btn-sm btnEditar';
         btnEditar.title = 'Editar historia';
-        btnEditar.innerHTML = '<i class="fas fa-edit"></i>';
+        btnEditar.innerHTML = '<i class="fas fa-edit"></i> Editar';
 
         const btnEliminar = document.createElement('button');
         btnEliminar.className = 'btn btn-danger btn-sm btnEliminar';
         btnEliminar.title = 'Eliminar historia';
-        btnEliminar.innerHTML = '<i class="fas fa-trash"></i>';
+        btnEliminar.innerHTML = '<i class="fas fa-trash"></i> Eliminar';
 
-        accionesCell.append(btnEditar, btnEliminar);
-        fila.append(numeroCell, mascotaCell, fechaCell, accionesCell);
+        acciones.append(btnEditar, btnEliminar);
 
-        return fila;
+        card.append(header, body, acciones);
+
+        return card;
     }
 
     function actualizarProximoNumero(lista = []) {
@@ -1679,22 +1742,20 @@
         tablaHistorias.innerHTML = '';
 
         if (!Array.isArray(lista) || lista.length === 0) {
-            const filaVacia = document.createElement('tr');
-            filaVacia.classList.add('tabla-historias__empty');
-
-            const celda = document.createElement('td');
-            celda.colSpan = 4;
-            celda.textContent = 'No hay historias clínicas registradas todavía.';
-
-            filaVacia.appendChild(celda);
-            tablaHistorias.appendChild(filaVacia);
+            const vacio = document.createElement('div');
+            vacio.className = 'historias-registradas__empty';
+            vacio.innerHTML = `
+                <i class="fas fa-folder-open"></i>
+                <p>No hay historias clínicas registradas todavía.</p>
+            `;
+            tablaHistorias.appendChild(vacio);
             actualizarProximoNumero([]);
             return;
         }
 
         const fragment = document.createDocumentFragment();
         lista.forEach(historia => {
-            fragment.appendChild(crearFilaHistoria(historia));
+            fragment.appendChild(crearTarjetaHistoria(historia));
         });
 
         tablaHistorias.appendChild(fragment);
@@ -1725,6 +1786,11 @@
         }
     }
 
+    function navegarAHistorias() {
+        const linkHistorias = document.querySelector('.sidebar-menu a[data-section="historias"]');
+        manejarNavegacion(linkHistorias);
+    }
+
     if (btnNueva) {
         btnNueva.addEventListener('click', () => {
             abrirModalParaCrear();
@@ -1741,8 +1807,15 @@
         btnIrHistorias.addEventListener('click', event => {
             event.preventDefault();
 
-            const linkHistorias = document.querySelector('.sidebar-menu a[data-section="historias"]');
-            manejarNavegacion(linkHistorias);
+            navegarAHistorias();
+        });
+    }
+
+    if (btnIrCrearHistoria) {
+        btnIrCrearHistoria.addEventListener('click', event => {
+            event.preventDefault();
+
+            navegarAHistorias();
         });
     }
 
@@ -2032,16 +2105,16 @@
             const botonEliminar = event.target.closest('.btnEliminar');
 
             if (botonEditar) {
-                const fila = botonEditar.closest('tr');
-                const id = fila?.dataset.historiaId;
+                const tarjeta = botonEditar.closest('.historia-card');
+                const id = tarjeta?.dataset.historiaId;
                 if (id) {
                     cargarHistoriaParaEditar(id);
                 }
             }
 
             if (botonEliminar) {
-                const fila = botonEliminar.closest('tr');
-                const id = fila?.dataset.historiaId;
+                const tarjeta = botonEliminar.closest('.historia-card');
+                const id = tarjeta?.dataset.historiaId;
                 if (id) {
                     abrirConfirmacionPara(id);
                 }
