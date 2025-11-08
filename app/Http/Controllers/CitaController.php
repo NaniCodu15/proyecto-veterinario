@@ -2,11 +2,47 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request; 
+use Illuminate\Http\Request;
 use App\Models\Cita;
+use Carbon\Carbon;
 
 class CitaController extends Controller
 {
+    public function list(Request $request)
+    {
+        $search = trim((string) $request->input('q', ''));
+
+        $citasQuery = Cita::with(['historiaClinica.mascota.propietario']);
+
+        if ($search !== '') {
+            $citasQuery->where(function ($query) use ($search) {
+                $query
+                    ->whereHas('historiaClinica.mascota', function ($mascotaQuery) use ($search) {
+                        $mascotaQuery->where('nombre', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('historiaClinica.mascota.propietario', function ($propietarioQuery) use ($search) {
+                        $propietarioQuery->where(function ($propietarioSubQuery) use ($search) {
+                            $propietarioSubQuery
+                                ->where('nombres', 'like', "%{$search}%")
+                                ->orWhere('apellidos', 'like', "%{$search}%")
+                                ->orWhereRaw("CONCAT(COALESCE(nombres, ''), ' ', COALESCE(apellidos, '')) LIKE ?", ["%{$search}%"]);
+                        });
+                    });
+            });
+        }
+
+        $citas = $citasQuery
+            ->orderBy('fecha_cita', 'desc')
+            ->orderBy('hora_cita')
+            ->get()
+            ->map(fn ($cita) => $this->transformCita($cita))
+            ->values();
+
+        return response()->json([
+            'data' => $citas,
+        ]);
+    }
+
     // Mostrar todas las citas
     public function index()
     {
@@ -89,5 +125,52 @@ class CitaController extends Controller
     {
         $cita->delete();
         return redirect()->route('citas.index')->with('success', 'Cita eliminada correctamente.');
+    }
+
+    public function updateEstado(Request $request, Cita $cita)
+    {
+        $validated = $request->validate([
+            'estado' => ['required', 'string', 'max:50'],
+        ]);
+
+        $cita->estado = $validated['estado'];
+        $cita->save();
+
+        return response()->json([
+            'message' => 'Estado de la cita actualizado correctamente.',
+            'cita' => $this->transformCita($cita->fresh(['historiaClinica.mascota.propietario'])),
+        ]);
+    }
+
+    private function transformCita(Cita $cita): array
+    {
+        $cita->loadMissing(['historiaClinica.mascota.propietario']);
+
+        $historia = $cita->historiaClinica;
+        $mascota = $historia?->mascota;
+        $propietario = $mascota?->propietario;
+
+        $nombrePropietario = trim(collect([$propietario?->nombres, $propietario?->apellidos])->filter()->implode(' '));
+        $telefono = (string) ($propietario->telefono ?? '');
+        $telefonoWhatsapp = preg_replace('/\D+/', '', $telefono) ?? '';
+
+        $fecha = $cita->fecha_cita ? Carbon::parse($cita->fecha_cita) : null;
+        $hora = $cita->hora_cita ? substr($cita->hora_cita, 0, 5) : null;
+
+        return [
+            'id' => $cita->id_cita,
+            'historia_id' => $historia->id_historia ?? null,
+            'numero_historia' => $historia->numero_historia ?? null,
+            'mascota' => $mascota->nombre ?? null,
+            'propietario' => $nombrePropietario !== '' ? $nombrePropietario : null,
+            'propietario_dni' => $propietario->dni ?? null,
+            'propietario_telefono' => $telefono !== '' ? $telefono : null,
+            'propietario_whatsapp' => $telefonoWhatsapp !== '' ? $telefonoWhatsapp : null,
+            'fecha' => $fecha?->toDateString(),
+            'fecha_legible' => $fecha?->format('d/m/Y'),
+            'hora' => $hora,
+            'motivo' => $cita->motivo,
+            'estado' => $cita->estado ?? 'Pendiente',
+        ];
     }
 }

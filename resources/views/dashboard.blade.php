@@ -471,6 +471,47 @@
                         </div>
                     </form>
                 </section>
+
+                <section class="citas-card citas-card--list" id="listadoCitasCard">
+                    <div class="citas-card__header">
+                        <div>
+                            <h2>Agenda de citas</h2>
+                            <p>Visualiza y gestiona cada cita registrada en el sistema.</p>
+                        </div>
+                        <div class="citas-card__icon" aria-hidden="true"><i class="fas fa-clipboard-list"></i></div>
+                    </div>
+
+                    <div id="citasListadoMensaje" class="citas-alert" role="status" aria-live="polite" hidden></div>
+
+                    <div class="citas-toolbar">
+                        <label for="buscarCitas" class="citas-search">
+                            <i class="fas fa-search"></i>
+                            <input type="search" id="buscarCitas" placeholder="Buscar por mascota o propietario">
+                        </label>
+                    </div>
+
+                    <div class="citas-table-wrapper">
+                        <table class="citas-table">
+                            <thead>
+                                <tr>
+                                    <th>🆔 ID de la cita</th>
+                                    <th>🐾 Nombre de la mascota</th>
+                                    <th>🧍‍♀️ Nombre del propietario</th>
+                                    <th>📅 Fecha de la cita</th>
+                                    <th>⏰ Hora de la cita</th>
+                                    <th>💬 Motivo</th>
+                                    <th>🔖 Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaCitas">
+                                <tr class="citas-table__empty">
+                                    <td colspan="8">No hay citas registradas todavía.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
             </div>
         </div>
 
@@ -505,20 +546,111 @@
     </div>
 </div>
 
+<div id="modalDetalleCita" class="modal modal--cita" aria-hidden="true">
+    <div class="modal-content modal-content--cita">
+        <span class="close" data-close="detalleCita">&times;</span>
+        <h2>Detalle de la cita</h2>
+        <div class="cita-detalle">
+            <div class="cita-detalle__row"><span class="cita-detalle__label">ID</span><span class="cita-detalle__value" data-detalle="id">—</span></div>
+            <div class="cita-detalle__row"><span class="cita-detalle__label">Historia clínica</span><span class="cita-detalle__value" data-detalle="numero_historia">—</span></div>
+            <div class="cita-detalle__row"><span class="cita-detalle__label">Mascota</span><span class="cita-detalle__value" data-detalle="mascota">—</span></div>
+            <div class="cita-detalle__row"><span class="cita-detalle__label">Propietario</span><span class="cita-detalle__value" data-detalle="propietario">—</span></div>
+            <div class="cita-detalle__row"><span class="cita-detalle__label">Teléfono</span><span class="cita-detalle__value" data-detalle="propietario_telefono">—</span></div>
+            <div class="cita-detalle__row"><span class="cita-detalle__label">Fecha</span><span class="cita-detalle__value" data-detalle="fecha_legible">—</span></div>
+            <div class="cita-detalle__row"><span class="cita-detalle__label">Hora</span><span class="cita-detalle__value" data-detalle="hora">—</span></div>
+            <div class="cita-detalle__row"><span class="cita-detalle__label">Estado</span><span class="cita-detalle__value" data-detalle="estado">—</span></div>
+            <div class="cita-detalle__row cita-detalle__row--full"><span class="cita-detalle__label">Motivo</span><span class="cita-detalle__value" data-detalle="motivo">—</span></div>
+        </div>
+    </div>
+</div>
+
+<div id="modalEstadoCita" class="modal modal--cita" aria-hidden="true">
+    <div class="modal-content modal-content--cita">
+        <span class="close" data-close="estadoCita">&times;</span>
+        <h2>Actualizar estado de la cita</h2>
+        <p class="cita-estado__subtitle">Selecciona el estado que refleje el seguimiento actual de la cita.</p>
+        <form id="formEstadoCita" class="cita-estado-form">
+            <div class="form-group">
+                <label for="selectEstadoCita">Estado</label>
+                <select id="selectEstadoCita" required>
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="Confirmada">Confirmada</option>
+                    <option value="Atendida">Atendida</option>
+                    <option value="Reprogramada">Reprogramada</option>
+                    <option value="Cancelada">Cancelada</option>
+                </select>
+            </div>
+            <div class="cita-estado-actions">
+                <button type="button" class="btn btn-outline" data-close="estadoCita">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Guardar cambios</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
     const links    = document.querySelectorAll('.sidebar-menu a.nav-link');
     const sections = Array.from(document.querySelectorAll('#main-content .section'));
 
-    const historiaListUrl  = "{{ route('historia_clinicas.list') }}";
-    const historiaStoreUrl = "{{ route('historia_clinicas.store') }}";
-    const historiaBaseUrl  = "{{ url('historia_clinicas') }}";
-    const citasStoreUrl    = "{{ route('citas.store') }}";
+    const historiaListUrl   = "{{ route('historia_clinicas.list') }}";
+    const historiaStoreUrl  = "{{ route('historia_clinicas.store') }}";
+    const historiaBaseUrl   = "{{ url('historia_clinicas') }}";
+    const citasStoreUrl     = "{{ route('citas.store') }}";
+    const citasListUrl      = "{{ route('citas.list') }}";
+    const citasEstadoBaseUrl = "{{ url('citas') }}";
     const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
     const csrfToken        = csrfTokenElement ? csrfTokenElement.getAttribute('content') : '';
 
     let historiaEditandoId = null;
     let historiaPorEliminarId = null;
     let proximoNumeroHistoria = 'HC-00001';
+    let citasBusquedaActual = '';
+    let citasCache = [];
+    let citaDetalleSeleccionada = null;
+    let citaSeleccionadaParaEstado = null;
+
+    function hayModalVisible() {
+        return Array.from(document.querySelectorAll('.modal')).some(modalEl => modalEl.style.display === 'block');
+    }
+
+    function actualizarEstadoBodyModal() {
+        if (hayModalVisible()) {
+            document.body.classList.add('modal-open');
+        } else {
+            document.body.classList.remove('modal-open');
+        }
+    }
+
+    function abrirModalGenerico(modalElement) {
+        if (!modalElement) {
+            return;
+        }
+
+        modalElement.style.display = 'block';
+        modalElement.setAttribute('aria-hidden', 'false');
+        actualizarEstadoBodyModal();
+    }
+
+    function cerrarModalGenerico(modalElement) {
+        if (!modalElement) {
+            return;
+        }
+
+        modalElement.style.display = 'none';
+        modalElement.setAttribute('aria-hidden', 'true');
+        actualizarEstadoBodyModal();
+    }
+
+    function debounce(fn, delay = 300) {
+        let timeoutId;
+
+        return (...args) => {
+            window.clearTimeout(timeoutId);
+            timeoutId = window.setTimeout(() => {
+                fn.apply(null, args);
+            }, delay);
+        };
+    }
 
     function showSection(key) {
         sections.forEach(sec => {
@@ -531,6 +663,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         showSection('inicio');
         cargarHistorias();
+        cargarCitas();
     });
 
     links.forEach(link => {
@@ -545,6 +678,10 @@
 
             if (key === 'historias') {
                 cargarHistorias();
+            }
+
+            if (key === 'citas') {
+                cargarCitas(citasBusquedaActual);
             }
         });
     });
@@ -566,6 +703,24 @@
     const confirmModal        = document.getElementById('confirmModal');
     const confirmAcceptButton = confirmModal?.querySelector('[data-confirm="accept"]');
     const confirmCancelButton = confirmModal?.querySelector('[data-confirm="cancel"]');
+    const tablaCitas          = document.getElementById('tablaCitas');
+    const buscarCitasInput    = document.getElementById('buscarCitas');
+    const citasListadoMensaje = document.getElementById('citasListadoMensaje');
+    const modalDetalleCita    = document.getElementById('modalDetalleCita');
+    const modalEstadoCita     = document.getElementById('modalEstadoCita');
+    const formEstadoCita      = document.getElementById('formEstadoCita');
+    const selectEstadoCita    = document.getElementById('selectEstadoCita');
+    const detalleCamposCita   = modalDetalleCita ? {
+        id: modalDetalleCita.querySelector('[data-detalle="id"]'),
+        numero_historia: modalDetalleCita.querySelector('[data-detalle="numero_historia"]'),
+        mascota: modalDetalleCita.querySelector('[data-detalle="mascota"]'),
+        propietario: modalDetalleCita.querySelector('[data-detalle="propietario"]'),
+        propietario_telefono: modalDetalleCita.querySelector('[data-detalle="propietario_telefono"]'),
+        fecha_legible: modalDetalleCita.querySelector('[data-detalle="fecha_legible"]'),
+        hora: modalDetalleCita.querySelector('[data-detalle="hora"]'),
+        estado: modalDetalleCita.querySelector('[data-detalle="estado"]'),
+        motivo: modalDetalleCita.querySelector('[data-detalle="motivo"]'),
+    } : {};
 
     const campos = {
         nombreMascota: document.getElementById('nombreMascota'),
@@ -637,7 +792,8 @@
         }
 
         modal.style.display = 'block';
-        document.body.classList.add('modal-open');
+        modal.setAttribute('aria-hidden', 'false');
+        actualizarEstadoBodyModal();
     }
 
     function cerrarModal() {
@@ -646,7 +802,8 @@
         }
 
         modal.style.display = 'none';
-        document.body.classList.remove('modal-open');
+        modal.setAttribute('aria-hidden', 'true');
+        actualizarEstadoBodyModal();
     }
 
     function abrirConfirmacionPara(id) {
@@ -780,6 +937,39 @@
         }, 4000);
     }
 
+    function mostrarMensajeListadoCitas(texto, tipo = 'info') {
+        if (!citasListadoMensaje) {
+            return;
+        }
+
+        citasListadoMensaje.textContent = texto;
+        citasListadoMensaje.classList.remove('citas-alert--info', 'citas-alert--error', 'citas-alert--success', 'is-visible');
+
+        const clase = tipo === 'error'
+            ? 'citas-alert--error'
+            : tipo === 'success'
+                ? 'citas-alert--success'
+                : 'citas-alert--info';
+
+        citasListadoMensaje.classList.add(clase, 'is-visible');
+        citasListadoMensaje.hidden = false;
+
+        window.clearTimeout(mostrarMensajeListadoCitas.timeoutId);
+        mostrarMensajeListadoCitas.timeoutId = window.setTimeout(() => {
+            limpiarMensajeListadoCitas();
+        }, 5000);
+    }
+
+    function limpiarMensajeListadoCitas() {
+        if (!citasListadoMensaje) {
+            return;
+        }
+
+        citasListadoMensaje.hidden = true;
+        citasListadoMensaje.classList.remove('is-visible', 'citas-alert--info', 'citas-alert--error', 'citas-alert--success');
+        citasListadoMensaje.textContent = '';
+    }
+
     function limpiarDatosHistoriaEnCita() {
         ['propietarioNombre', 'propietarioDni', 'propietarioTelefono', 'mascotaNombre'].forEach(clave => {
             const campo = citaCampos[clave];
@@ -787,6 +977,274 @@
                 campo.value = '';
             }
         });
+    }
+
+    function obtenerClaseEstadoCita(estado = '') {
+        const normalizado = String(estado || '').trim().toLowerCase();
+
+        switch (normalizado) {
+            case 'atendida':
+                return 'cita-status--success';
+            case 'confirmada':
+                return 'cita-status--info';
+            case 'reprogramada':
+                return 'cita-status--warning';
+            case 'cancelada':
+                return 'cita-status--danger';
+            case 'pendiente':
+            default:
+                return 'cita-status--pending';
+        }
+    }
+
+    function crearFilaCita(cita = {}) {
+        const fila = document.createElement('tr');
+        fila.dataset.citaId = cita.id ?? '';
+
+        const crearCeldaTexto = (valor, clase = '') => {
+            const celda = document.createElement('td');
+            if (clase) {
+                celda.classList.add(clase);
+            }
+            celda.textContent = valor ?? '—';
+            return celda;
+        };
+
+        fila.appendChild(crearCeldaTexto(cita.id ?? '—'));
+        fila.appendChild(crearCeldaTexto(cita.mascota ?? '—'));
+        fila.appendChild(crearCeldaTexto(cita.propietario ?? '—'));
+        fila.appendChild(crearCeldaTexto(cita.fecha_legible ?? cita.fecha ?? '—'));
+        fila.appendChild(crearCeldaTexto(cita.hora ?? '—'));
+
+        const motivoCell = crearCeldaTexto(cita.motivo ?? '—', 'citas-table__motivo');
+        if (cita.motivo) {
+            motivoCell.title = cita.motivo;
+        }
+        fila.appendChild(motivoCell);
+
+        const estadoCell = document.createElement('td');
+        const estadoPill = document.createElement('span');
+        estadoPill.className = `cita-status ${obtenerClaseEstadoCita(cita.estado)}`;
+        estadoPill.textContent = cita.estado ?? 'Pendiente';
+        estadoCell.appendChild(estadoPill);
+        fila.appendChild(estadoCell);
+
+        const accionesCell = document.createElement('td');
+        accionesCell.classList.add('citas-table__acciones');
+
+        const accionesWrapper = document.createElement('div');
+        accionesWrapper.className = 'citas-actions';
+
+        const whatsappLink = document.createElement('a');
+        whatsappLink.className = 'citas-accion__whatsapp';
+        whatsappLink.innerHTML = '<i class="fab fa-whatsapp"></i>';
+        whatsappLink.setAttribute('aria-label', 'Contactar por WhatsApp');
+
+        if (cita.propietario_whatsapp) {
+            const mensajeWhatsapp = `Hola ${cita.propietario ?? ''}, te contactamos de la veterinaria respecto a la cita de ${cita.mascota ?? 'tu mascota'}.`;
+            whatsappLink.href = `https://wa.me/${cita.propietario_whatsapp}?text=${encodeURIComponent(mensajeWhatsapp)}`;
+            whatsappLink.target = '_blank';
+            whatsappLink.rel = 'noopener noreferrer';
+            whatsappLink.title = 'Contactar por WhatsApp';
+        } else {
+            whatsappLink.href = '#';
+            whatsappLink.classList.add('is-disabled');
+            whatsappLink.setAttribute('aria-disabled', 'true');
+            whatsappLink.title = 'Teléfono no disponible';
+        }
+
+        const btnDetalles = document.createElement('button');
+        btnDetalles.type = 'button';
+        btnDetalles.className = 'btn btn-outline btn-sm btnVerCita';
+        btnDetalles.innerHTML = '<i class="fas fa-eye"></i> Ver detalles';
+
+        const btnEstado = document.createElement('button');
+        btnEstado.type = 'button';
+        btnEstado.className = 'btn btn-warning btn-sm btnEstadoCita';
+        btnEstado.innerHTML = '<i class="fas fa-exchange-alt"></i> Cambiar estado';
+
+        accionesWrapper.appendChild(whatsappLink);
+        accionesWrapper.appendChild(btnDetalles);
+        accionesWrapper.appendChild(btnEstado);
+        accionesCell.appendChild(accionesWrapper);
+        fila.appendChild(accionesCell);
+
+        return fila;
+    }
+
+    function renderCitas(lista = []) {
+        if (!tablaCitas) {
+            return;
+        }
+
+        citasCache = Array.isArray(lista) ? lista : [];
+
+        tablaCitas.innerHTML = '';
+
+        if (!Array.isArray(citasCache) || citasCache.length === 0) {
+            const filaVacia = document.createElement('tr');
+            filaVacia.classList.add('citas-table__empty');
+
+            const celda = document.createElement('td');
+            celda.colSpan = 8;
+            celda.textContent = citasBusquedaActual
+                ? 'No se encontraron citas para la búsqueda ingresada.'
+                : 'No hay citas registradas todavía.';
+
+            filaVacia.appendChild(celda);
+            tablaCitas.appendChild(filaVacia);
+            return;
+        }
+
+        const fragment = document.createDocumentFragment();
+        citasCache.forEach(cita => {
+            fragment.appendChild(crearFilaCita(cita));
+        });
+
+        tablaCitas.appendChild(fragment);
+    }
+
+    function obtenerCitaPorId(id) {
+        if (!id) {
+            return null;
+        }
+
+        return citasCache.find(cita => String(cita?.id ?? '') === String(id)) ?? null;
+    }
+
+    function escribirDetalleCita(cita) {
+        if (!cita) {
+            return;
+        }
+
+        Object.entries(detalleCamposCita).forEach(([clave, elemento]) => {
+            if (!elemento) {
+                return;
+            }
+
+            let valor = cita[clave];
+
+            if (clave === 'fecha_legible') {
+                valor = cita.fecha_legible ?? cita.fecha ?? '—';
+            } else if (clave === 'propietario_telefono') {
+                valor = cita.propietario_telefono ?? 'Sin teléfono registrado';
+            } else if (clave === 'motivo') {
+                valor = cita.motivo ?? '—';
+            } else if (!valor) {
+                valor = '—';
+            }
+
+            elemento.textContent = valor;
+        });
+    }
+
+    function mostrarDetalleCita(cita) {
+        if (!cita || !modalDetalleCita) {
+            return;
+        }
+
+        citaDetalleSeleccionada = cita;
+        escribirDetalleCita(cita);
+        abrirModalGenerico(modalDetalleCita);
+    }
+
+    function actualizarDetalleCitaSiCorresponde(cita) {
+        if (!citaDetalleSeleccionada || !modalDetalleCita) {
+            return;
+        }
+
+        const coincide = String(citaDetalleSeleccionada.id ?? '') === String(cita?.id ?? '');
+        const modalVisible = modalDetalleCita.style.display === 'block';
+
+        if (coincide && modalVisible) {
+            citaDetalleSeleccionada = cita;
+            escribirDetalleCita(cita);
+        }
+    }
+
+    function prepararModalEstado(cita) {
+        if (!cita || !modalEstadoCita) {
+            return;
+        }
+
+        citaSeleccionadaParaEstado = cita;
+
+        if (selectEstadoCita) {
+            const estadoActual = cita.estado ?? 'Pendiente';
+            selectEstadoCita.value = estadoActual;
+            if (selectEstadoCita.value !== estadoActual) {
+                selectEstadoCita.value = 'Pendiente';
+            }
+        }
+
+        abrirModalGenerico(modalEstadoCita);
+    }
+
+    async function cargarCitas(query = '') {
+        if (!citasListUrl) {
+            return;
+        }
+
+        try {
+            const url = new URL(citasListUrl, window.location.origin);
+
+            if (query) {
+                url.searchParams.set('q', query);
+            }
+
+            const response = await fetch(url.toString(), {
+                headers: { Accept: 'application/json' },
+            });
+
+            if (!response.ok) {
+                throw new Error('No se pudieron obtener las citas.');
+            }
+
+            const data = await response.json();
+            const lista = Array.isArray(data?.data) ? data.data : [];
+
+            renderCitas(lista);
+
+            if (lista.length === 0 && query) {
+                mostrarMensajeListadoCitas('No se encontraron citas para la búsqueda ingresada.', 'info');
+            } else if (lista.length > 0) {
+                limpiarMensajeListadoCitas();
+            }
+        } catch (error) {
+            console.error(error);
+            mostrarMensajeListadoCitas(error.message || 'No se pudieron cargar las citas.', 'error');
+            renderCitas();
+        }
+    }
+
+    async function actualizarEstadoCita(id, nuevoEstado) {
+        if (!id || !citasEstadoBaseUrl) {
+            throw new Error('No se pudo identificar la cita seleccionada.');
+        }
+
+        const response = await fetch(`${citasEstadoBaseUrl}/${id}/estado`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+            },
+            body: JSON.stringify({ estado: nuevoEstado }),
+        });
+
+        const data = await response.json().catch(() => null);
+
+        if (response.status === 422) {
+            const errores = Object.values(data?.errors ?? {}).flat();
+            const mensaje = errores.join(' ') || 'Verifica el estado seleccionado.';
+            throw new Error(mensaje);
+        }
+
+        if (!response.ok) {
+            throw new Error(data?.message || 'No se pudo actualizar el estado de la cita.');
+        }
+
+        return data?.cita ?? null;
     }
 
     function poblarHistoriasParaCitas(lista = []) {
@@ -1000,6 +1458,115 @@
         });
     }
 
+    const buscarCitasDebounce = debounce(valor => {
+        cargarCitas(valor);
+    }, 350);
+
+    if (buscarCitasInput) {
+        buscarCitasInput.addEventListener('input', event => {
+            citasBusquedaActual = event.target.value.trim();
+            buscarCitasDebounce(citasBusquedaActual);
+        });
+    }
+
+    if (tablaCitas) {
+        tablaCitas.addEventListener('click', event => {
+            const whatsappLink = event.target.closest('.citas-accion__whatsapp');
+            if (whatsappLink && whatsappLink.classList.contains('is-disabled')) {
+                event.preventDefault();
+                mostrarMensajeListadoCitas('El propietario no tiene un teléfono registrado para contactar por WhatsApp.', 'info');
+                return;
+            }
+
+            const botonDetalles = event.target.closest('.btnVerCita');
+            const botonEstado = event.target.closest('.btnEstadoCita');
+
+            if (!botonDetalles && !botonEstado) {
+                return;
+            }
+
+            const fila = event.target.closest('tr');
+            const id = fila?.dataset.citaId;
+            if (!id) {
+                return;
+            }
+
+            const cita = obtenerCitaPorId(id);
+
+            if (botonDetalles && cita) {
+                mostrarDetalleCita(cita);
+                return;
+            }
+
+            if (botonEstado && cita) {
+                prepararModalEstado(cita);
+            }
+        });
+    }
+
+    document.querySelectorAll('[data-close="detalleCita"]').forEach(elemento => {
+        elemento.addEventListener('click', () => {
+            cerrarModalGenerico(modalDetalleCita);
+            citaDetalleSeleccionada = null;
+        });
+    });
+
+    document.querySelectorAll('[data-close="estadoCita"]').forEach(elemento => {
+        elemento.addEventListener('click', () => {
+            cerrarModalGenerico(modalEstadoCita);
+            citaSeleccionadaParaEstado = null;
+        });
+    });
+
+    if (modalDetalleCita) {
+        modalDetalleCita.addEventListener('click', event => {
+            if (event.target === modalDetalleCita) {
+                cerrarModalGenerico(modalDetalleCita);
+                citaDetalleSeleccionada = null;
+            }
+        });
+    }
+
+    if (modalEstadoCita) {
+        modalEstadoCita.addEventListener('click', event => {
+            if (event.target === modalEstadoCita) {
+                cerrarModalGenerico(modalEstadoCita);
+                citaSeleccionadaParaEstado = null;
+            }
+        });
+    }
+
+    if (formEstadoCita) {
+        formEstadoCita.addEventListener('submit', async event => {
+            event.preventDefault();
+
+            if (!citaSeleccionadaParaEstado) {
+                mostrarMensajeListadoCitas('Selecciona una cita para actualizar su estado.', 'error');
+                return;
+            }
+
+            const nuevoEstado = selectEstadoCita?.value || 'Pendiente';
+
+            try {
+                const citaActualizada = await actualizarEstadoCita(citaSeleccionadaParaEstado.id, nuevoEstado);
+                cerrarModalGenerico(modalEstadoCita);
+                citaSeleccionadaParaEstado = null;
+
+                await cargarCitas(citasBusquedaActual);
+
+                if (citaActualizada) {
+                    const citaDesdeLista = obtenerCitaPorId(citaActualizada.id);
+                    actualizarDetalleCitaSiCorresponde(citaDesdeLista ?? citaActualizada);
+                }
+
+                mostrarMensajeListadoCitas('Estado actualizado correctamente.', 'success');
+            } catch (error) {
+                console.error(error);
+                mostrarMensajeListadoCitas(error.message || 'No se pudo actualizar el estado de la cita.', 'error');
+            }
+        });
+    }
+
     if (historiaSelectCita) {
         historiaSelectCita.addEventListener('change', async event => {
             const id = event.target.value;
@@ -1116,8 +1683,22 @@
     }
 
     document.addEventListener('keydown', event => {
-        if (event.key === 'Escape' && confirmModal?.classList.contains('is-visible')) {
+        if (event.key !== 'Escape') {
+            return;
+        }
+
+        if (confirmModal?.classList.contains('is-visible')) {
             cerrarConfirmacion();
+        }
+
+        if (modalEstadoCita && modalEstadoCita.style.display === 'block') {
+            cerrarModalGenerico(modalEstadoCita);
+            citaSeleccionadaParaEstado = null;
+        }
+
+        if (modalDetalleCita && modalDetalleCita.style.display === 'block') {
+            cerrarModalGenerico(modalDetalleCita);
+            citaDetalleSeleccionada = null;
         }
     });
 
@@ -1207,6 +1788,8 @@
                 formularioCita.reset();
                 limpiarDatosHistoriaEnCita();
                 historiaSeleccionadaParaCita = null;
+                await cargarCitas(citasBusquedaActual);
+                mostrarMensajeListadoCitas('Se registró una nueva cita en la agenda.', 'success');
             } catch (error) {
                 console.error(error);
                 mostrarMensajeCita(error.message || 'No se pudo registrar la cita.', 'error');
