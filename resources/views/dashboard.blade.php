@@ -1390,12 +1390,16 @@
 
         const numero = (historia.numero_historia ?? '').toString().trim() || 'Sin código';
         const mascota = (historia.mascota ?? '').toString().trim() || 'Mascota sin nombre';
+        const propietario = (historia.propietario ?? '').toString().trim() || 'Propietario sin registrar';
+        const propietarioDni = (historia.propietario_dni ?? '').toString().trim();
 
         return {
             value: String(historia.id),
             text: `${numero} · ${mascota}`,
             numero_historia: numero,
             mascota,
+            propietario,
+            propietario_dni: propietarioDni,
         };
     }
 
@@ -1489,7 +1493,7 @@
         tomSelectHistoria = new TomSelect(historiaSelectCita, {
             valueField: 'value',
             labelField: 'text',
-            searchField: ['text', 'numero_historia', 'mascota'],
+            searchField: ['text', 'numero_historia', 'mascota', 'propietario', 'propietario_dni'],
             allowEmptyOption: true,
             placeholder: 'Escribe al menos 2 caracteres para buscar...',
             loadThrottle: 250,
@@ -1508,7 +1512,15 @@
                     .filter(historia => {
                         const numero = (historia.numero_historia ?? '').toString().toLowerCase();
                         const mascota = (historia.mascota ?? '').toString().toLowerCase();
-                        return numero.includes(termino) || mascota.includes(termino);
+                        const propietario = (historia.propietario ?? '').toString().toLowerCase();
+                        const propietarioDni = (historia.propietario_dni ?? '').toString().toLowerCase();
+
+                        return (
+                            numero.includes(termino) ||
+                            mascota.includes(termino) ||
+                            propietario.includes(termino) ||
+                            propietarioDni.includes(termino)
+                        );
                     })
                     .slice(0, 25)
                     .map(formatearHistoriaParaOpcion)
@@ -1521,17 +1533,30 @@
                 option(item, escape) {
                     const numero = escape(item.numero_historia ?? 'Sin código');
                     const mascota = escape(item.mascota ?? 'Mascota sin nombre');
+                    const propietario = escape(item.propietario ?? 'Propietario sin registrar');
+                    const propietarioDni = escape(item.propietario_dni ?? '');
+                    const propietarioDetalle = propietarioDni
+                        ? `${propietario} · DNI ${propietarioDni}`
+                        : propietario;
                     return `
                         <div class="ts-option__content">
                             <span class="ts-option__numero">${numero}</span>
                             <span class="ts-option__mascota">${mascota}</span>
+                            <span class="ts-option__propietario">${propietarioDetalle}</span>
                         </div>
                     `;
                 },
                 item(item, escape) {
                     const numero = escape(item.numero_historia ?? 'Sin código');
                     const mascota = escape(item.mascota ?? 'Mascota sin nombre');
-                    return `<div class="ts-item__content">${numero} · ${mascota}</div>`;
+                    const propietario = escape(item.propietario ?? 'Propietario sin registrar');
+                    return `
+                        <div class="ts-item__content">
+                            <span class="ts-item__numero">${numero}</span>
+                            <span class="ts-item__mascota">${mascota}</span>
+                            <span class="ts-item__propietario">${propietario}</span>
+                        </div>
+                    `;
                 },
                 no_results() {
                     if (this.inputValue.length < 2) {
@@ -2222,28 +2247,40 @@
         .ts-option__content {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 6px;
+            padding: 4px 2px;
         }
 
-        .ts-option__numero {
+        .ts-option__numero,
+        .ts-item__numero {
             font-weight: 600;
             color: #3f5b96;
+            letter-spacing: 0.02em;
         }
 
-        .ts-option__mascota {
-            font-size: 0.85rem;
-            color: #5f6f94;
+        .ts-option__mascota,
+        .ts-item__mascota {
+            font-size: 0.9rem;
+            color: #4d5f87;
+        }
+
+        .ts-option__propietario,
+        .ts-item__propietario {
+            font-size: 0.8rem;
+            color: #6c7a91;
         }
 
         .ts-item__content {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 4px 8px;
-            border-radius: 999px;
-            background: linear-gradient(135deg, #e8f0ff 0%, #f6faff 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4px;
+            padding: 6px 10px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(232, 240, 255, 0.9) 0%, rgba(246, 250, 255, 0.95) 100%);
             color: #344563;
             font-weight: 600;
+            min-width: 0;
         }
 
         .ts-dropdown__message {

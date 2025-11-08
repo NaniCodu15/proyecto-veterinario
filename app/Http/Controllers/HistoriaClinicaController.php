@@ -16,7 +16,7 @@ class HistoriaClinicaController extends Controller
     // ✅ Listar historias para AJAX
     public function list()
     {
-        $historias = HistoriaClinica::with('mascota')
+        $historias = HistoriaClinica::with(['mascota.propietario'])
             ->orderByDesc('fecha_apertura')
             ->orderByDesc('created_at')
             ->get()
@@ -112,7 +112,7 @@ class HistoriaClinicaController extends Controller
                 'created_by' => Auth::id(),
             ]);
 
-            return $historia->load('mascota');
+            return $historia->load(['mascota.propietario']);
         });
 
         return response()->json([
@@ -203,7 +203,7 @@ class HistoriaClinicaController extends Controller
 
             $historia->save();
 
-            return $historia->load('mascota');
+            return $historia->load(['mascota.propietario']);
         });
 
         return response()->json([
@@ -256,10 +256,16 @@ class HistoriaClinicaController extends Controller
 
     private function formatearHistoria(HistoriaClinica $historia): array
     {
+        $mascota = $historia->mascota;
+        $propietario = $mascota?->propietario;
+        $nombrePropietario = trim(($propietario->nombres ?? '') . ' ' . ($propietario->apellidos ?? ''));
+
         return [
             'id' => $historia->id_historia,
             'numero_historia' => $historia->numero_historia,
-            'mascota' => optional($historia->mascota)->nombre ?? 'Sin nombre',
+            'mascota' => $mascota?->nombre ?? 'Sin nombre',
+            'propietario' => $nombrePropietario !== '' ? $nombrePropietario : 'Sin propietario',
+            'propietario_dni' => $propietario->dni ?? null,
             'fecha_apertura' => optional($historia->fecha_apertura)->format('d/m/Y'),
         ];
     }
