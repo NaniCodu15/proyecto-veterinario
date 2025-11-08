@@ -858,6 +858,8 @@
     const citaMensaje = document.getElementById('citaMensaje');
 
     let historiaSeleccionadaParaCita = null;
+    let tomSelectHistoria = null;
+    let historiasDisponibles = [];
 
     function ocultarEspecieOtro() {
         if (!especieOtroGroup || !especieOtroInput) {
@@ -1381,27 +1383,90 @@
         return data?.cita ?? null;
     }
 
+    function formatearHistoriaParaOpcion(historia) {
+        if (!historia || !historia.id) {
+            return null;
+        }
+
+        const numero = (historia.numero_historia ?? '').toString().trim() || 'Sin código';
+        const mascota = (historia.mascota ?? '').toString().trim() || 'Mascota sin nombre';
+
+        return {
+            value: String(historia.id),
+            text: `${numero} · ${mascota}`,
+            numero_historia: numero,
+            mascota,
+        };
+    }
+
+    function sincronizarTomSelectHistorias() {
+        if (!tomSelectHistoria) {
+            return;
+        }
+
+        const valorActual = tomSelectHistoria.getValue();
+        tomSelectHistoria.clearOptions();
+
+        if (valorActual) {
+            const historiaActual = historiasDisponibles.find(
+                historia => String(historia?.id ?? '') === String(valorActual)
+            );
+
+            if (historiaActual) {
+                const opcion = formatearHistoriaParaOpcion(historiaActual);
+                if (opcion) {
+                    tomSelectHistoria.addOption(opcion);
+                    tomSelectHistoria.setValue(opcion.value, true);
+                }
+            } else {
+                tomSelectHistoria.clear(true);
+                historiaSeleccionadaParaCita = null;
+                limpiarDatosHistoriaEnCita();
+            }
+        }
+
+        if (!historiasDisponibles.length) {
+            tomSelectHistoria.clear(true);
+            tomSelectHistoria.disable();
+            historiaSeleccionadaParaCita = null;
+            limpiarDatosHistoriaEnCita();
+        } else {
+            tomSelectHistoria.enable();
+        }
+
+        tomSelectHistoria.setTextboxValue('');
+        tomSelectHistoria.refreshOptions(false);
+    }
+
     function poblarHistoriasParaCitas(lista = []) {
         if (!historiaSelectCita) {
+            return;
+        }
+
+        historiasDisponibles = Array.isArray(lista)
+            ? lista.filter(historia => historia && historia.id)
+            : [];
+
+        if (tomSelectHistoria) {
+            sincronizarTomSelectHistorias();
             return;
         }
 
         const valorActual = historiaSelectCita.value;
         historiaSelectCita.innerHTML = '<option value="">Selecciona una historia clínica</option>';
 
-        lista.forEach(historia => {
-            if (!historia || !historia.id) {
-                return;
-            }
-
+        historiasDisponibles.forEach(historia => {
             const opcion = document.createElement('option');
             opcion.value = historia.id;
-            const mascota = historia.mascota || 'Mascota sin nombre';
-            opcion.textContent = `${historia.numero_historia || 'Sin código'} · ${mascota}`;
+            const formateada = formatearHistoriaParaOpcion(historia);
+            opcion.textContent = formateada?.text ?? '';
             historiaSelectCita.appendChild(opcion);
         });
 
-        const existeValorPrevio = lista.some(historia => String(historia?.id ?? '') === valorActual);
+        const existeValorPrevio = historiasDisponibles.some(
+            historia => String(historia?.id ?? '') === String(valorActual)
+        );
+
         if (existeValorPrevio) {
             historiaSelectCita.value = valorActual;
         } else {
@@ -1410,6 +1475,76 @@
             limpiarDatosHistoriaEnCita();
         }
     }
+
+    window.inicializarBuscadorHistorias = function inicializarBuscadorHistorias() {
+        if (!historiaSelectCita || typeof TomSelect === 'undefined') {
+            return;
+        }
+
+        if (tomSelectHistoria) {
+            tomSelectHistoria.destroy();
+            tomSelectHistoria = null;
+        }
+
+        tomSelectHistoria = new TomSelect(historiaSelectCita, {
+            valueField: 'value',
+            labelField: 'text',
+            searchField: ['text', 'numero_historia', 'mascota'],
+            allowEmptyOption: true,
+            placeholder: 'Escribe al menos 2 caracteres para buscar...',
+            loadThrottle: 250,
+            closeAfterSelect: true,
+            shouldLoad(query) {
+                return query.length >= 2;
+            },
+            load(query, callback) {
+                if (query.length < 2) {
+                    callback();
+                    return;
+                }
+
+                const termino = query.toLowerCase();
+                const coincidencias = historiasDisponibles
+                    .filter(historia => {
+                        const numero = (historia.numero_historia ?? '').toString().toLowerCase();
+                        const mascota = (historia.mascota ?? '').toString().toLowerCase();
+                        return numero.includes(termino) || mascota.includes(termino);
+                    })
+                    .slice(0, 25)
+                    .map(formatearHistoriaParaOpcion)
+                    .filter(Boolean);
+
+                // Para integrar AJAX en el futuro, reemplazar el filtro anterior por una solicitud fetch().
+                callback(coincidencias);
+            },
+            render: {
+                option(item, escape) {
+                    const numero = escape(item.numero_historia ?? 'Sin código');
+                    const mascota = escape(item.mascota ?? 'Mascota sin nombre');
+                    return `
+                        <div class="ts-option__content">
+                            <span class="ts-option__numero">${numero}</span>
+                            <span class="ts-option__mascota">${mascota}</span>
+                        </div>
+                    `;
+                },
+                item(item, escape) {
+                    const numero = escape(item.numero_historia ?? 'Sin código');
+                    const mascota = escape(item.mascota ?? 'Mascota sin nombre');
+                    return `<div class="ts-item__content">${numero} · ${mascota}</div>`;
+                },
+                no_results() {
+                    if (this.inputValue.length < 2) {
+                        return '<div class="ts-dropdown__message">Escribe al menos 2 caracteres para buscar.</div>';
+                    }
+
+                    return '<div class="ts-dropdown__message">No se encontraron coincidencias.</div>';
+                },
+            },
+        });
+
+        sincronizarTomSelectHistorias();
+    };
 
     async function obtenerHistoriaDetallada(id) {
         if (!historiaBaseUrl || !id) {
@@ -2051,4 +2186,88 @@
         });
     }
 </script>
+
+@push('styles')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.4.0/dist/css/tom-select.default.min.css">
+    <style>
+        .cita-form__group .ts-wrapper {
+            width: 100%;
+        }
+
+        .cita-form__group .ts-wrapper.single .ts-control {
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(122, 168, 255, 0.3);
+            padding: 12px 14px;
+            font-size: 0.95rem;
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--text-dark);
+            box-shadow: inset 0 1px 2px rgba(122, 168, 255, 0.1);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            min-height: 52px;
+        }
+
+        .cita-form__group .ts-wrapper.single.focus .ts-control,
+        .cita-form__group .ts-wrapper.single .ts-control:hover {
+            outline: none;
+            border-color: var(--primary-dark);
+            box-shadow: 0 0 0 4px rgba(156, 194, 255, 0.25);
+        }
+
+        .cita-form__group .ts-dropdown {
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(122, 168, 255, 0.25);
+            box-shadow: 0 18px 48px rgba(126, 142, 177, 0.18);
+        }
+
+        .ts-option__content {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .ts-option__numero {
+            font-weight: 600;
+            color: #3f5b96;
+        }
+
+        .ts-option__mascota {
+            font-size: 0.85rem;
+            color: #5f6f94;
+        }
+
+        .ts-item__content {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #e8f0ff 0%, #f6faff 100%);
+            color: #344563;
+            font-weight: 600;
+        }
+
+        .ts-dropdown__message {
+            padding: 12px;
+            font-size: 0.85rem;
+            color: #6c7a91;
+        }
+    </style>
+@endpush
+
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.4.0/dist/js/tom-select.complete.min.js"></script>
+    <script>
+        const iniciarBuscadorHistorias = () => {
+            if (typeof window.inicializarBuscadorHistorias === 'function') {
+                window.inicializarBuscadorHistorias();
+            }
+        };
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', iniciarBuscadorHistorias);
+        } else {
+            iniciarBuscadorHistorias();
+        }
+    </script>
+@endpush
 @endsection
