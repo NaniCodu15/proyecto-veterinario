@@ -21,7 +21,17 @@
                     </li>
                 </ul>
             </li>
-            <li><a href="#" class="nav-link" data-section="historias"><i class="fas fa-notes-medical"></i><span>Historias Clínicas</span></a></li>
+            <li class="sidebar-item sidebar-item--has-submenu">
+                <a href="#" class="nav-link" data-section="historias"><i class="fas fa-notes-medical"></i><span>Historias Clínicas</span></a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a href="#" class="nav-link nav-link--sublayer" data-section="historias-registradas" data-parent="historias">
+                            <i class="fas fa-folder-open"></i>
+                            <span>Historias Registradas</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
             <li><a href="#" class="nav-link" data-section="mascotas"><i class="fas fa-dog"></i><span>Mascotas</span></a></li>
             <li><a href="#" class="nav-link" data-section="propietarios"><i class="fas fa-user"></i><span>Propietarios</span></a></li>
             <li><a href="#" class="nav-link" data-section="consultas"><i class="fas fa-stethoscope"></i><span>Consultas</span></a></li>
@@ -261,7 +271,10 @@
         <div id="section-historias" class="section">
             <div class="historias-wrapper">
                 <div class="historias-header">
-                    <h1 class="titulo">Historias Clínicas</h1>
+                    <div class="historias-header__info">
+                        <h1 class="titulo">Historias Clínicas</h1>
+                        <p class="historias-header__subtitle">Genera nuevas historias clínicas para llevar el seguimiento integral de tus pacientes.</p>
+                    </div>
 
                     <!-- BOTÓN NUEVA HISTORIA -->
                     <button id="btnNuevaHistoria" class="btn btn-primary">
@@ -271,27 +284,46 @@
 
                 <div id="historiaMensaje" class="alert" role="status" aria-live="polite" hidden></div>
 
-                <!-- TABLA DE HISTORIAS -->
-                <div class="tabla-wrapper">
-                    <table class="tabla-consultas">
-                        <thead>
-                            <tr>
-                                <th>N° Historia</th>
-                                <th>Mascota</th>
-                                <th>Fecha Apertura</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tablaHistorias">
-                            <tr class="tabla-historias__empty">
-                                <td colspan="4">No hay historias clínicas registradas todavía.</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="historias-creacion">
+                    <article class="historias-creacion__card">
+                        <div class="historias-creacion__icon">
+                            <i class="fas fa-file-medical"></i>
+                        </div>
+                        <div class="historias-creacion__content">
+                            <h2 class="historias-creacion__title">Registro ágil y ordenado</h2>
+                            <p class="historias-creacion__description">
+                                Haz clic en &ldquo;Nueva Historia Clínica&rdquo; para documentar los datos de la mascota, su propietario y la consulta inicial con un flujo guiado.
+                            </p>
+                            <ul class="historias-creacion__list">
+                                <li><i class="fas fa-paw"></i> Identificación clara de la mascota y su especie.</li>
+                                <li><i class="fas fa-user-heart"></i> Información del propietario disponible para futuros seguimientos.</li>
+                                <li><i class="fas fa-stethoscope"></i> Registro de síntomas, diagnóstico y tratamientos en un mismo lugar.</li>
+                            </ul>
+                        </div>
+                    </article>
                 </div>
             </div>
+        </div>
 
-            <!-- MODAL NUEVA/EDITAR HISTORIA -->
+        <div id="section-historias-registradas" class="section">
+            <div class="historias-registradas">
+                <div class="historias-registradas__header">
+                    <div>
+                        <h1 class="titulo">Historias Registradas</h1>
+                        <p class="historias-registradas__subtitle">Consulta, edita o elimina las historias clínicas ya creadas con una vista moderna y ordenada.</p>
+                    </div>
+                </div>
+
+                <div id="historiasRegistradasEmpty" class="historias-registradas__empty" role="status">
+                    <div class="historias-registradas__empty-icon"><i class="fas fa-box-open"></i></div>
+                    <p>No hay historias clínicas registradas todavía.</p>
+                </div>
+
+                <div id="historiasRegistradasListado" class="historias-registradas__grid" role="list"></div>
+            </div>
+        </div>
+
+        <!-- MODAL NUEVA/EDITAR HISTORIA -->
             <div id="modalHistoria" class="modal">
                 <div class="modal-content">
                     <span class="close">&times;</span>
@@ -766,7 +798,7 @@
         setActiveLink(link);
         showSection(key);
 
-        if (key === 'historias') {
+        if (key === 'historias' || key === 'historias-registradas') {
             cargarHistorias();
         }
 
@@ -797,7 +829,8 @@
     const especieSelect       = document.getElementById('especie');
     const especieOtroGroup    = document.getElementById('grupoEspecieOtro');
     const especieOtroInput    = document.getElementById('especieOtro');
-    const tablaHistorias      = document.getElementById('tablaHistorias');
+    const contenedorHistorias = document.getElementById('historiasRegistradasListado');
+    const vacioHistorias      = document.getElementById('historiasRegistradasEmpty');
     const mensajeHistorias    = document.getElementById('historiaMensaje');
     const btnGuardar          = form?.querySelector('.btn-guardar');
     const btnAccesoRapido     = document.getElementById('btnAccesoRapido');
@@ -1615,21 +1648,21 @@
         }
     }
 
-    function crearFilaHistoria(historia) {
-        const fila = document.createElement('tr');
-        fila.dataset.historiaId = historia.id ?? '';
+    function crearTarjetaHistoria(historia) {
+        const card = document.createElement('article');
+        card.className = 'historia-card';
+        card.dataset.historiaId = historia.id ?? '';
+        card.setAttribute('role', 'listitem');
 
-        const numeroCell = document.createElement('td');
-        numeroCell.textContent = historia.numero_historia || '—';
+        const header = document.createElement('header');
+        header.className = 'historia-card__header';
 
-        const mascotaCell = document.createElement('td');
-        mascotaCell.textContent = historia.mascota || 'Sin nombre';
+        const badge = document.createElement('span');
+        badge.className = 'historia-card__badge';
+        badge.textContent = historia.numero_historia || '—';
 
-        const fechaCell = document.createElement('td');
-        fechaCell.textContent = historia.fecha_apertura || '—';
-
-        const accionesCell = document.createElement('td');
-        accionesCell.classList.add('acciones');
+        const actions = document.createElement('div');
+        actions.className = 'historia-card__actions';
 
         const btnEditar = document.createElement('button');
         btnEditar.className = 'btn btn-warning btn-sm btnEditar';
@@ -1641,10 +1674,36 @@
         btnEliminar.title = 'Eliminar historia';
         btnEliminar.innerHTML = '<i class="fas fa-trash"></i>';
 
-        accionesCell.append(btnEditar, btnEliminar);
-        fila.append(numeroCell, mascotaCell, fechaCell, accionesCell);
+        actions.append(btnEditar, btnEliminar);
+        header.append(badge, actions);
 
-        return fila;
+        const body = document.createElement('div');
+        body.className = 'historia-card__body';
+
+        const mascota = document.createElement('p');
+        mascota.className = 'historia-card__item';
+        mascota.innerHTML = `<i class="fas fa-paw"></i><span>${historia.mascota || 'Sin nombre'}</span>`;
+
+        const propietario = document.createElement('p');
+        propietario.className = 'historia-card__item';
+        propietario.innerHTML = `<i class="fas fa-user-heart"></i><span>${historia.propietario || 'Sin propietario'}</span>`;
+
+        const fecha = document.createElement('p');
+        fecha.className = 'historia-card__item';
+        fecha.innerHTML = `<i class="fas fa-calendar-day"></i><span>${historia.fecha_apertura || '—'}</span>`;
+
+        body.append(mascota, propietario, fecha);
+
+        if (historia.especie) {
+            const especie = document.createElement('p');
+            especie.className = 'historia-card__item historia-card__item--tag';
+            especie.innerHTML = `<i class="fas fa-tag"></i><span>${historia.especie}</span>`;
+            body.append(especie);
+        }
+
+        card.append(header, body);
+
+        return card;
     }
 
     function actualizarProximoNumero(lista = []) {
@@ -1672,32 +1731,30 @@
     function renderHistorias(lista = []) {
         poblarHistoriasParaCitas(Array.isArray(lista) ? lista : []);
 
-        if (!tablaHistorias) {
+        if (!contenedorHistorias) {
+            actualizarProximoNumero(Array.isArray(lista) ? lista : []);
             return;
         }
 
-        tablaHistorias.innerHTML = '';
+        contenedorHistorias.innerHTML = '';
 
-        if (!Array.isArray(lista) || lista.length === 0) {
-            const filaVacia = document.createElement('tr');
-            filaVacia.classList.add('tabla-historias__empty');
+        const hayHistorias = Array.isArray(lista) && lista.length > 0;
 
-            const celda = document.createElement('td');
-            celda.colSpan = 4;
-            celda.textContent = 'No hay historias clínicas registradas todavía.';
+        if (vacioHistorias) {
+            vacioHistorias.hidden = hayHistorias;
+        }
 
-            filaVacia.appendChild(celda);
-            tablaHistorias.appendChild(filaVacia);
+        if (!hayHistorias) {
             actualizarProximoNumero([]);
             return;
         }
 
         const fragment = document.createDocumentFragment();
         lista.forEach(historia => {
-            fragment.appendChild(crearFilaHistoria(historia));
+            fragment.appendChild(crearTarjetaHistoria(historia));
         });
 
-        tablaHistorias.appendChild(fragment);
+        contenedorHistorias.appendChild(fragment);
         actualizarProximoNumero(lista);
     }
 
@@ -2026,22 +2083,22 @@
         }
     });
 
-    if (tablaHistorias) {
-        tablaHistorias.addEventListener('click', event => {
+    if (contenedorHistorias) {
+        contenedorHistorias.addEventListener('click', event => {
             const botonEditar = event.target.closest('.btnEditar');
             const botonEliminar = event.target.closest('.btnEliminar');
 
             if (botonEditar) {
-                const fila = botonEditar.closest('tr');
-                const id = fila?.dataset.historiaId;
+                const tarjeta = botonEditar.closest('.historia-card');
+                const id = tarjeta?.dataset.historiaId;
                 if (id) {
                     cargarHistoriaParaEditar(id);
                 }
             }
 
             if (botonEliminar) {
-                const fila = botonEliminar.closest('tr');
-                const id = fila?.dataset.historiaId;
+                const tarjeta = botonEliminar.closest('.historia-card');
+                const id = tarjeta?.dataset.historiaId;
                 if (id) {
                     abrirConfirmacionPara(id);
                 }
