@@ -460,7 +460,7 @@
                         <section class="historia-detalle__form">
                             <div class="historia-detalle__section-header">
                                 <h3>Registrar nueva consulta</h3>
-                                <p>Documenta el motivo y la evolución del paciente en cada visita.</p>
+                                <p>Documenta la evolución del paciente en cada visita.</p>
                             </div>
                             <div id="consultaMensaje" class="consulta-alert" role="status" aria-live="polite" hidden></div>
                             <form id="formConsulta" class="consulta-form" novalidate>
@@ -469,10 +469,6 @@
                                     <div class="form-group">
                                         <label for="consultaFecha">Fecha de la consulta</label>
                                         <input type="date" id="consultaFecha" name="fecha_consulta" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="consultaMotivo">Motivo</label>
-                                        <input type="text" id="consultaMotivo" name="motivo" placeholder="Describe el motivo principal" required>
                                     </div>
                                     <div class="form-group">
                                         <label for="consultaPeso">Peso (kg)</label>
@@ -948,7 +944,6 @@
     const consultaHistoriaId = document.getElementById('consultaHistoriaId');
     const consultaCampos = {
         fecha: document.getElementById('consultaFecha'),
-        motivo: document.getElementById('consultaMotivo'),
         peso: document.getElementById('consultaPeso'),
         temperatura: document.getElementById('consultaTemperatura'),
         sintomas: document.getElementById('consultaSintomas'),
@@ -1216,11 +1211,12 @@
         fecha.className = 'consulta-item__date';
         fecha.textContent = consulta.fecha_legible || 'Sin fecha';
 
-        const motivo = document.createElement('h4');
-        motivo.className = 'consulta-item__motivo';
-        motivo.textContent = consulta.motivo || 'Consulta sin motivo';
+        const titulo = document.createElement('h4');
+        titulo.className = 'consulta-item__titulo';
+        const descripcionConsulta = consulta.diagnostico || consulta.sintomas || consulta.tratamiento || consulta.observaciones;
+        titulo.textContent = descripcionConsulta || 'Consulta registrada';
 
-        header.append(fecha, motivo);
+        header.append(fecha, titulo);
 
         const meta = document.createElement('div');
         meta.className = 'consulta-item__meta';
@@ -2549,7 +2545,6 @@
 
             const historiaId = consultaHistoriaId?.value || historiaDetalleActual?.id;
             const fecha = consultaCampos.fecha?.value || '';
-            const motivo = (consultaCampos.motivo?.value || '').trim();
 
             if (!historiaId) {
                 mostrarMensajeConsulta('Selecciona una historia clínica válida antes de registrar la consulta.', 'error');
@@ -2562,16 +2557,9 @@
                 return;
             }
 
-            if (!motivo) {
-                mostrarMensajeConsulta('Indica el motivo de la consulta.', 'error');
-                consultaCampos.motivo?.focus();
-                return;
-            }
-
             const payload = {
                 id_historia: parseInt(historiaId, 10),
                 fecha_consulta: fecha,
-                motivo,
                 sintomas: consultaCampos.sintomas?.value || null,
                 diagnostico: consultaCampos.diagnostico?.value || null,
                 tratamiento: consultaCampos.tratamiento?.value || null,
@@ -2961,7 +2949,7 @@
             letter-spacing: 0.08em;
         }
 
-        .consulta-item__motivo {
+        .consulta-item__titulo {
             font-size: 1.15rem;
             margin: 0;
             color: var(--text-dark);

@@ -291,7 +291,6 @@ class HistoriaClinicaController extends Controller
             'id' => $consulta->id_consulta,
             'fecha' => optional($consulta->fecha_consulta)->toDateString(),
             'fecha_legible' => optional($consulta->fecha_consulta)->format('d/m/Y'),
-            'motivo' => $consulta->motivo,
             'sintomas' => $consulta->sintomas,
             'diagnostico' => $consulta->diagnostico,
             'tratamiento' => $consulta->tratamiento,
