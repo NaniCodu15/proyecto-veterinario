@@ -99,7 +99,6 @@ class ConsultaController extends Controller
         return $request->validate([
             'id_historia' => ['required', 'integer', Rule::exists('historia_clinicas', 'id_historia')],
             'fecha_consulta' => ['required', 'date'],
-            'motivo' => ['required', 'string', 'max:255'],
             'sintomas' => ['nullable', 'string'],
             'diagnostico' => ['nullable', 'string'],
             'tratamiento' => ['nullable', 'string'],
@@ -121,7 +120,6 @@ class ConsultaController extends Controller
             'id_historia' => $consulta->id_historia,
             'fecha' => optional($consulta->fecha_consulta)->toDateString(),
             'fecha_legible' => optional($consulta->fecha_consulta)->format('d/m/Y'),
-            'motivo' => $consulta->motivo,
             'sintomas' => $consulta->sintomas,
             'diagnostico' => $consulta->diagnostico,
             'tratamiento' => $consulta->tratamiento,

@@ -15,7 +15,6 @@ class Consulta extends Model
     protected $fillable = [
         'id_historia',
         'fecha_consulta',
-        'motivo',
         'sintomas',
         'diagnostico',
         'tratamiento',
