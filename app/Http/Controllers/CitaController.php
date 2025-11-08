@@ -21,7 +21,10 @@ class CitaController extends Controller
         if ($search !== '') {
             $citasQuery->where(function ($query) use ($search) {
                 $query
-                    ->whereHas('historiaClinica.mascota', function ($mascotaQuery) use ($search) {
+                    ->whereHas('historiaClinica', function ($historiaQuery) use ($search) {
+                        $historiaQuery->where('numero_historia', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('historiaClinica.mascota', function ($mascotaQuery) use ($search) {
                         $mascotaQuery->where('nombre', 'like', "%{$search}%");
                     })
                     ->orWhereHas('historiaClinica.mascota.propietario', function ($propietarioQuery) use ($search) {

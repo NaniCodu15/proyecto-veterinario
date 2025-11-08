@@ -509,7 +509,7 @@
                 <div class="citas-toolbar">
                     <label for="buscarCitas" class="citas-search">
                         <i class="fas fa-search"></i>
-                        <input type="search" id="buscarCitas" placeholder="Buscar por mascota o propietario">
+                        <input type="search" id="buscarCitas" placeholder="Buscar por número de historia, mascota o propietario">
                     </label>
                 </div>
 
