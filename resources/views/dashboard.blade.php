@@ -1272,6 +1272,29 @@
         return item;
     }
 
+    function obtenerMarcaTiempoConsulta(consulta = {}) {
+        const posiblesFechas = [
+            consulta.fecha_consulta,
+            consulta.fechaConsulta,
+            consulta.fecha,
+            consulta.created_at,
+            consulta.updated_at,
+        ];
+
+        for (const valor of posiblesFechas) {
+            if (!valor) {
+                continue;
+            }
+
+            const fecha = new Date(valor);
+            if (!Number.isNaN(fecha.getTime())) {
+                return fecha.getTime();
+            }
+        }
+
+        return 0;
+    }
+
     function renderConsultas(lista = []) {
         if (!listaConsultas || !consultasVacias) {
             return;
@@ -1285,8 +1308,9 @@
         }
 
         consultasVacias.hidden = true;
+        const listaOrdenada = [...lista].sort((a, b) => obtenerMarcaTiempoConsulta(b) - obtenerMarcaTiempoConsulta(a));
         const fragment = document.createDocumentFragment();
-        lista.forEach(consulta => {
+        listaOrdenada.forEach(consulta => {
             fragment.appendChild(crearNodoConsulta(consulta));
         });
 
@@ -2901,12 +2925,20 @@
             padding: 24px;
             border: 1px solid rgba(156, 194, 255, 0.25);
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+            display: flex;
+            flex-direction: column;
+            height: 520px;
         }
 
         .historia-detalle__empty {
             text-align: center;
             padding: 40px 20px;
             color: rgba(43, 57, 144, 0.55);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
         }
 
         .historia-detalle__empty i {
@@ -2922,6 +2954,39 @@
             display: flex;
             flex-direction: column;
             gap: 18px;
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 8px;
+            scrollbar-width: thin;
+        }
+
+        .historia-detalle__timeline-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .historia-detalle__timeline-list::-webkit-scrollbar-thumb {
+            background: rgba(156, 194, 255, 0.6);
+            border-radius: 12px;
+        }
+
+        .historia-detalle__timeline-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        @media (max-width: 992px) {
+            .historia-detalle__timeline {
+                height: auto;
+            }
+
+            .historia-detalle__timeline-list {
+                max-height: none;
+                overflow: visible;
+                padding-right: 0;
+            }
+
+            .historia-detalle__empty {
+                padding: 32px 16px;
+            }
         }
 
         .consulta-item {
