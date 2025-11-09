@@ -511,10 +511,6 @@
                                 <p>Seguimiento cronológico de la atención brindada.</p>
                             </div>
                             <div class="historia-detalle__timeline">
-                                <div id="consultasVacias" class="historia-detalle__empty" hidden>
-                                    <i class="fas fa-stethoscope"></i>
-                                    <p>Aún no hay consultas registradas para esta historia clínica.</p>
-                                </div>
                                 <ul id="listaConsultas" class="historia-detalle__timeline-list"></ul>
                             </div>
                         </section>
@@ -948,7 +944,6 @@
     const modalConsultas = document.getElementById('modalConsultas');
     const modalConsultasClose = modalConsultas?.querySelector('[data-close="consultas"]');
     const listaConsultas = document.getElementById('listaConsultas');
-    const consultasVacias = document.getElementById('consultasVacias');
     const formConsulta = document.getElementById('formConsulta');
     const consultaMensaje = document.getElementById('consultaMensaje');
     const consultaHistoriaId = document.getElementById('consultaHistoriaId');
@@ -1352,18 +1347,12 @@
     }
 
     function renderConsultas(lista = []) {
-        if (!listaConsultas || !consultasVacias) {
+        if (!listaConsultas) {
             return;
         }
 
         listaConsultas.innerHTML = '';
 
-        if (!Array.isArray(lista) || lista.length === 0) {
-            consultasVacias.hidden = false;
-            return;
-        }
-
-        consultasVacias.hidden = true;
         const listaOrdenada = [...lista].sort((a, b) => obtenerMarcaTiempoConsulta(b) - obtenerMarcaTiempoConsulta(a));
         const fragment = document.createDocumentFragment();
         listaOrdenada.forEach(consulta => {
@@ -2997,11 +2986,6 @@
             display: block;
         }
 
-        .historia-detalle__panel--consultas .historia-detalle__timeline {
-            height: auto;
-            max-height: 520px;
-        }
-
         @media (max-width: 768px) {
             .historia-detalle__tabs {
                 width: 100%;
@@ -3040,23 +3024,6 @@
             height: 520px;
         }
 
-        .historia-detalle__empty {
-            text-align: center;
-            padding: 40px 20px;
-            color: rgba(43, 57, 144, 0.55);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            flex: 1;
-        }
-
-        .historia-detalle__empty i {
-            font-size: 2.4rem;
-            margin-bottom: 12px;
-            color: rgba(122, 168, 255, 0.6);
-        }
-
         .historia-detalle__timeline-list {
             list-style: none;
             margin: 0;
@@ -3085,17 +3052,11 @@
 
         @media (max-width: 992px) {
             .historia-detalle__timeline {
-                height: auto;
+                height: 420px;
             }
 
             .historia-detalle__timeline-list {
-                max-height: none;
-                overflow: visible;
-                padding-right: 0;
-            }
-
-            .historia-detalle__empty {
-                padding: 32px 16px;
+                padding-right: 4px;
             }
         }
 
