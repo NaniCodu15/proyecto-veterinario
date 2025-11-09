@@ -445,19 +445,16 @@
                     </div>
 
                     <div class="historia-detalle__body">
-                        <section class="historia-detalle__timeline">
-                            <div class="historia-detalle__section-header">
-                                <h3>Consultas registradas</h3>
-                                <p>Seguimiento cronológico de la atención brindada.</p>
-                            </div>
-                            <div id="consultasVacias" class="historia-detalle__empty" hidden>
-                                <i class="fas fa-stethoscope"></i>
-                                <p>Aún no hay consultas registradas para esta historia clínica.</p>
-                            </div>
-                            <ul id="listaConsultas" class="historia-detalle__timeline-list"></ul>
-                        </section>
+                        <div class="historia-detalle__tabs" role="tablist" aria-label="Secciones de la historia clínica">
+                            <button type="button" class="historia-detalle__tab is-active" id="tabRegistroConsultas" data-tab-target="registro" role="tab" aria-controls="panelRegistroConsultas" aria-selected="true" tabindex="0">
+                                Registrar consulta
+                            </button>
+                            <button type="button" class="historia-detalle__tab" id="tabListadoConsultas" data-tab-target="consultas" role="tab" aria-controls="panelListadoConsultas" aria-selected="false" tabindex="-1">
+                                Consultas registradas
+                            </button>
+                        </div>
 
-                        <section class="historia-detalle__form">
+                        <section id="panelRegistroConsultas" class="historia-detalle__form historia-detalle__panel is-active" data-tab-content="registro" role="tabpanel" aria-labelledby="tabRegistroConsultas">
                             <div class="historia-detalle__section-header">
                                 <h3>Registrar nueva consulta</h3>
                                 <p>Documenta la evolución del paciente en cada visita.</p>
@@ -507,6 +504,19 @@
                                     </button>
                                 </div>
                             </form>
+                        </section>
+                        <section id="panelListadoConsultas" class="historia-detalle__panel historia-detalle__panel--consultas" data-tab-content="consultas" role="tabpanel" aria-labelledby="tabListadoConsultas" hidden aria-hidden="true">
+                            <div class="historia-detalle__section-header">
+                                <h3>Consultas registradas</h3>
+                                <p>Seguimiento cronológico de la atención brindada.</p>
+                            </div>
+                            <div class="historia-detalle__timeline">
+                                <div id="consultasVacias" class="historia-detalle__empty" hidden>
+                                    <i class="fas fa-stethoscope"></i>
+                                    <p>Aún no hay consultas registradas para esta historia clínica.</p>
+                                </div>
+                                <ul id="listaConsultas" class="historia-detalle__timeline-list"></ul>
+                            </div>
                         </section>
                     </div>
                 </div>
@@ -952,6 +962,50 @@
         observaciones: document.getElementById('consultaObservaciones'),
     };
 
+    const consultaTabs = Array.from(document.querySelectorAll('[data-tab-target]'));
+    const consultaPanels = Array.from(document.querySelectorAll('[data-tab-content]'));
+
+    function activarTabConsulta(nombre = 'registro') {
+        if (!consultaTabs.length || !consultaPanels.length) {
+            return;
+        }
+
+        consultaTabs.forEach(tab => {
+            if (!tab) {
+                return;
+            }
+
+            const objetivo = tab.dataset.tabTarget;
+            const activo = objetivo === nombre;
+            tab.classList.toggle('is-active', activo);
+            tab.setAttribute('aria-selected', activo ? 'true' : 'false');
+            tab.setAttribute('tabindex', activo ? '0' : '-1');
+        });
+
+        consultaPanels.forEach(panel => {
+            if (!panel) {
+                return;
+            }
+
+            const objetivo = panel.dataset.tabContent;
+            const activo = objetivo === nombre;
+            panel.classList.toggle('is-active', activo);
+            panel.hidden = !activo;
+            panel.setAttribute('aria-hidden', activo ? 'false' : 'true');
+        });
+    }
+
+    consultaTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const objetivo = tab.dataset.tabTarget;
+            if (objetivo) {
+                activarTabConsulta(objetivo);
+            }
+        });
+    });
+
+    activarTabConsulta('registro');
+
     const detalleHistoriaCampos = {
         titulo: document.querySelector('[data-detalle-historia="titulo"]'),
         subtitulo: document.querySelector('[data-detalle-historia="subtitulo"]'),
@@ -1191,6 +1245,8 @@
         if (consultaHistoriaId && historiaDetalleActual?.id) {
             consultaHistoriaId.value = historiaDetalleActual.id;
         }
+
+        activarTabConsulta('registro');
     }
 
     function crearEtiquetaConsulta(icono, texto) {
@@ -2891,15 +2947,69 @@
         }
 
         .historia-detalle__body {
-            display: grid;
-            gap: 28px;
-            grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-            align-items: start;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
         }
 
-        @media (max-width: 992px) {
-            .historia-detalle__body {
-                grid-template-columns: 1fr;
+        .historia-detalle__tabs {
+            display: inline-flex;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.68);
+            border-radius: 999px;
+            padding: 6px;
+            border: 1px solid rgba(156, 194, 255, 0.35);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            align-self: flex-start;
+        }
+
+        .historia-detalle__tab {
+            border: none;
+            background: transparent;
+            color: rgba(43, 57, 144, 0.6);
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .historia-detalle__tab:hover {
+            color: var(--text-dark);
+        }
+
+        .historia-detalle__tab:focus-visible {
+            outline: 2px solid rgba(122, 168, 255, 0.6);
+            outline-offset: 2px;
+        }
+
+        .historia-detalle__tab.is-active {
+            background: linear-gradient(135deg, rgba(122, 168, 255, 0.28), rgba(178, 214, 255, 0.45));
+            color: var(--text-dark);
+            box-shadow: 0 6px 18px rgba(122, 168, 255, 0.25);
+        }
+
+        .historia-detalle__panel {
+            display: none;
+        }
+
+        .historia-detalle__panel.is-active {
+            display: block;
+        }
+
+        .historia-detalle__panel--consultas .historia-detalle__timeline {
+            height: auto;
+            max-height: 520px;
+        }
+
+        @media (max-width: 768px) {
+            .historia-detalle__tabs {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .historia-detalle__tab {
+                flex: 1;
             }
         }
 
