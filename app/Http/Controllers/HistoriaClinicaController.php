@@ -14,9 +14,31 @@ use Illuminate\Validation\Rule;
 class HistoriaClinicaController extends Controller
 {
     // ✅ Listar historias para AJAX
-    public function list()
+    public function list(Request $request)
     {
-        $historias = HistoriaClinica::with(['mascota.propietario'])
+        $search = trim((string) $request->input('q', ''));
+
+        $historiasQuery = HistoriaClinica::with(['mascota.propietario']);
+
+        if ($search !== '') {
+            $historiasQuery->where(function ($query) use ($search) {
+                $query
+                    ->where('numero_historia', 'like', "%{$search}%")
+                    ->orWhereHas('mascota', function ($mascotaQuery) use ($search) {
+                        $mascotaQuery->where('nombre', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('mascota.propietario', function ($propietarioQuery) use ($search) {
+                        $propietarioQuery->where(function ($propietarioSubQuery) use ($search) {
+                            $propietarioSubQuery
+                                ->where('nombres', 'like', "%{$search}%")
+                                ->orWhere('apellidos', 'like', "%{$search}%")
+                                ->orWhereRaw("CONCAT(COALESCE(nombres, ''), ' ', COALESCE(apellidos, '')) LIKE ?", ["%{$search}%"]);
+                        });
+                    });
+            });
+        }
+
+        $historias = $historiasQuery
             ->orderByDesc('fecha_apertura')
             ->orderByDesc('created_at')
             ->get()

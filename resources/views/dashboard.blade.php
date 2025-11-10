@@ -307,6 +307,17 @@
 
                 <div class="alert historias-registradas__alert" role="status" aria-live="polite" data-historia-mensaje hidden></div>
 
+                <div class="historias-registradas__toolbar">
+                    <x-history-search
+                        id="buscadorHistoriasRegistradas"
+                        container-class="citas-search historia-search historia-search--historias"
+                        mode="filter"
+                        target="historias"
+                        context="historias-registradas"
+                        placeholder="Buscar por historia, mascota o propietario"
+                    />
+                </div>
+
                 <div class="historias-registradas__grid" id="tablaHistorias">
                     <div class="historias-registradas__empty">
                         <i class="fas fa-folder-open"></i>
@@ -541,9 +552,16 @@
                     <form id="formRegistrarCita" class="cita-form" novalidate>
                         <div class="cita-form__group">
                             <label for="historiaSelectCitas">Historia clínica</label>
-                            <select id="historiaSelectCitas" name="historia" required>
-                                <option value="">Selecciona una historia clínica</option>
-                            </select>
+                            <x-history-search
+                                id="historiaSelectCitas"
+                                name="historia"
+                                :required="true"
+                                :show-icon="false"
+                                container-class="historia-search historia-search--form"
+                                mode="select"
+                                context="registrar-cita"
+                                placeholder="Buscar por historia, mascota o propietario"
+                            />
                         </div>
 
                         <div class="cita-form__grid" aria-live="polite">
@@ -612,10 +630,14 @@
                 <div id="citasListadoMensaje" class="citas-alert" role="status" aria-live="polite" hidden></div>
 
                 <div class="citas-toolbar">
-                    <label for="buscarCitas" class="citas-search">
-                        <i class="fas fa-search"></i>
-                        <input type="search" id="buscarCitas" placeholder="Buscar por mascota o propietario">
-                    </label>
+                    <x-history-search
+                        id="buscadorCitasAgendadas"
+                        container-class="citas-search historia-search historia-search--toolbar"
+                        mode="filter"
+                        target="citas"
+                        context="citas-agendadas"
+                        placeholder="Buscar por historia, mascota o propietario"
+                    />
                 </div>
 
                 <div class="citas-table-wrapper">
@@ -725,6 +747,7 @@
     let historiaPorEliminarId = null;
     let proximoNumeroHistoria = 'HC-00001';
     let citasBusquedaActual = '';
+    let historiasBusquedaActual = '';
     let citasCache = [];
     let citaDetalleSeleccionada = null;
     let citaSeleccionadaParaEstado = null;
@@ -855,7 +878,7 @@
         showSection(key);
 
         if (key === 'historias' || key === 'historias-registradas') {
-            cargarHistorias();
+            cargarHistorias(historiasBusquedaActual);
         }
 
         if (key === 'citas' || key === 'citas-agendadas') {
@@ -865,7 +888,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         manejarNavegacion(document.querySelector('.sidebar-menu a[data-section="inicio"]'));
-        cargarHistorias();
+        cargarHistorias(historiasBusquedaActual);
         cargarCitas();
     });
 
@@ -895,7 +918,6 @@
     const confirmAcceptButton = confirmModal?.querySelector('[data-confirm="accept"]');
     const confirmCancelButton = confirmModal?.querySelector('[data-confirm="cancel"]');
     const tablaCitas          = document.getElementById('tablaCitas');
-    const buscarCitasInput    = document.getElementById('buscarCitas');
     const citasListadoMensaje = document.getElementById('citasListadoMensaje');
     const modalDetalleCita    = document.getElementById('modalDetalleCita');
     const modalEstadoCita     = document.getElementById('modalEstadoCita');
@@ -904,6 +926,7 @@
     const reprogramarCampos   = document.getElementById('reprogramarCampos');
     const reprogramarFechaInput = document.getElementById('citaReprogramadaFecha');
     const reprogramarHoraInput  = document.getElementById('citaReprogramadaHora');
+    const historiaSearchElements = Array.from(document.querySelectorAll('.js-historia-search'));
     const detalleCamposCita   = modalDetalleCita ? {
         id: modalDetalleCita.querySelector('[data-detalle="id"]'),
         numero_historia: modalDetalleCita.querySelector('[data-detalle="numero_historia"]'),
@@ -1015,7 +1038,8 @@
     };
 
     let historiaSeleccionadaParaCita = null;
-    let tomSelectHistoria = null;
+    const tomSelectHistorias = new Map();
+    const historiasRepositorio = new Map();
     let historiasDisponibles = [];
     let historiaDetalleActual = null;
     let consultasDetalleActual = [];
@@ -1806,168 +1830,276 @@
     }
 
     function sincronizarTomSelectHistorias() {
-        if (!tomSelectHistoria) {
+        if (!tomSelectHistorias.size) {
             return;
         }
 
-        const valorActual = tomSelectHistoria.getValue();
-        tomSelectHistoria.clearOptions();
+        tomSelectHistorias.forEach((instancia, selectElement) => {
+            if (!instancia) {
+                return;
+            }
 
-        if (valorActual) {
-            const historiaActual = historiasDisponibles.find(
+            const valorActual = instancia.getValue();
+            instancia.clearOptions();
+
+            if (valorActual) {
+                const historiaActual = historiasDisponibles.find(
+                    historia => String(historia?.id ?? '') === String(valorActual)
+                );
+
+                if (historiaActual) {
+                    const opcion = formatearHistoriaParaOpcion(historiaActual);
+                    if (opcion) {
+                        instancia.addOption(opcion);
+                        instancia.setValue(opcion.value, true);
+                    }
+                } else {
+                    instancia.clear(true);
+                    if (selectElement === historiaSelectCita) {
+                        historiaSeleccionadaParaCita = null;
+                        limpiarDatosHistoriaEnCita();
+                    }
+                }
+            }
+
+            if (!historiasDisponibles.length) {
+                instancia.disable();
+                if (selectElement === historiaSelectCita) {
+                    historiaSeleccionadaParaCita = null;
+                    limpiarDatosHistoriaEnCita();
+                }
+            } else {
+                instancia.enable();
+            }
+
+            instancia.setTextboxValue('');
+            instancia.refreshOptions(false);
+        });
+    }
+
+    function poblarHistoriasParaCitas(lista = []) {
+        const listaNormalizada = Array.isArray(lista)
+            ? lista.filter(historia => historia && historia.id)
+            : [];
+
+        if (historiasBusquedaActual === '') {
+            historiasRepositorio.clear();
+        }
+
+        listaNormalizada.forEach(historia => {
+            const id = String(historia.id);
+            historiasRepositorio.set(id, historia);
+        });
+
+        historiasDisponibles = Array.from(historiasRepositorio.values());
+
+        if (!tomSelectHistorias.size && historiaSelectCita) {
+            const valorActual = historiaSelectCita.value;
+            historiaSelectCita.innerHTML = '<option value="">Selecciona una historia clínica</option>';
+
+            historiasDisponibles.forEach(historia => {
+                const opcion = document.createElement('option');
+                opcion.value = historia.id;
+                const formateada = formatearHistoriaParaOpcion(historia);
+                opcion.textContent = formateada?.text ?? '';
+                historiaSelectCita.appendChild(opcion);
+            });
+
+            const existeValorPrevio = historiasDisponibles.some(
                 historia => String(historia?.id ?? '') === String(valorActual)
             );
 
-            if (historiaActual) {
-                const opcion = formatearHistoriaParaOpcion(historiaActual);
-                if (opcion) {
-                    tomSelectHistoria.addOption(opcion);
-                    tomSelectHistoria.setValue(opcion.value, true);
-                }
+            if (existeValorPrevio) {
+                historiaSelectCita.value = valorActual;
             } else {
-                tomSelectHistoria.clear(true);
+                historiaSelectCita.value = '';
                 historiaSeleccionadaParaCita = null;
                 limpiarDatosHistoriaEnCita();
             }
         }
 
         if (!historiasDisponibles.length) {
-            tomSelectHistoria.clear(true);
-            tomSelectHistoria.disable();
             historiaSeleccionadaParaCita = null;
             limpiarDatosHistoriaEnCita();
-        } else {
-            tomSelectHistoria.enable();
         }
 
-        tomSelectHistoria.setTextboxValue('');
-        tomSelectHistoria.refreshOptions(false);
+        sincronizarTomSelectHistorias();
     }
 
-    function poblarHistoriasParaCitas(lista = []) {
-        if (!historiaSelectCita) {
+    function manejarBusquedaHistoria(selectElement, query) {
+        if (!selectElement) {
             return;
         }
 
-        historiasDisponibles = Array.isArray(lista)
-            ? lista.filter(historia => historia && historia.id)
-            : [];
-
-        if (tomSelectHistoria) {
-            sincronizarTomSelectHistorias();
+        const modo = (selectElement.dataset.searchMode || 'select').toLowerCase();
+        if (modo !== 'filter') {
             return;
         }
 
-        const valorActual = historiaSelectCita.value;
-        historiaSelectCita.innerHTML = '<option value="">Selecciona una historia clínica</option>';
+        const target = (selectElement.dataset.searchTarget || '').toLowerCase();
+        const termino = query.trim();
 
-        historiasDisponibles.forEach(historia => {
-            const opcion = document.createElement('option');
-            opcion.value = historia.id;
-            const formateada = formatearHistoriaParaOpcion(historia);
-            opcion.textContent = formateada?.text ?? '';
-            historiaSelectCita.appendChild(opcion);
-        });
+        if (target === 'citas') {
+            citasBusquedaActual = termino;
+            buscarCitasDebounce(citasBusquedaActual);
+        } else if (target === 'historias') {
+            historiasBusquedaActual = termino;
+            buscarHistoriasDebounce(historiasBusquedaActual);
+        }
+    }
 
-        const existeValorPrevio = historiasDisponibles.some(
-            historia => String(historia?.id ?? '') === String(valorActual)
+    function manejarSeleccionHistoria(selectElement, value) {
+        if (!selectElement) {
+            return;
+        }
+
+        const modo = (selectElement.dataset.searchMode || 'select').toLowerCase();
+        if (modo !== 'filter') {
+            return;
+        }
+
+        const target = (selectElement.dataset.searchTarget || '').toLowerCase();
+
+        if (!value) {
+            manejarBusquedaHistoria(selectElement, '');
+            return;
+        }
+
+        const instancia = tomSelectHistorias.get(selectElement);
+        const opcion = instancia?.options?.[value];
+        const historia = historiasDisponibles.find(
+            item => String(item?.id ?? '') === String(value)
         );
 
-        if (existeValorPrevio) {
-            historiaSelectCita.value = valorActual;
-        } else {
-            historiaSelectCita.value = '';
-            historiaSeleccionadaParaCita = null;
-            limpiarDatosHistoriaEnCita();
+        const termino = (opcion?.numero_historia
+            || historia?.numero_historia
+            || opcion?.mascota
+            || historia?.mascota
+            || opcion?.propietario
+            || historia?.propietario
+            || '').toString();
+
+        if (target === 'citas') {
+            citasBusquedaActual = termino;
+            buscarCitasDebounce(citasBusquedaActual);
+        } else if (target === 'historias') {
+            historiasBusquedaActual = termino;
+            buscarHistoriasDebounce(historiasBusquedaActual);
         }
     }
 
     window.inicializarBuscadorHistorias = function inicializarBuscadorHistorias() {
-        if (!historiaSelectCita || typeof TomSelect === 'undefined') {
+        if (!historiaSearchElements.length || typeof TomSelect === 'undefined') {
             return;
         }
 
-        if (tomSelectHistoria) {
-            tomSelectHistoria.destroy();
-            tomSelectHistoria = null;
-        }
+        historiaSearchElements.forEach(selectElement => {
+            if (!selectElement) {
+                return;
+            }
 
-        tomSelectHistoria = new TomSelect(historiaSelectCita, {
-            valueField: 'value',
-            labelField: 'text',
-            searchField: ['text', 'numero_historia', 'mascota', 'propietario', 'propietario_dni'],
-            allowEmptyOption: true,
-            placeholder: 'Escribe al menos 2 caracteres para buscar...',
-            loadThrottle: 250,
-            closeAfterSelect: true,
-            shouldLoad(query) {
-                return query.length >= 2;
-            },
-            load(query, callback) {
-                if (query.length < 2) {
-                    callback();
-                    return;
-                }
+            const instanciaExistente = tomSelectHistorias.get(selectElement);
+            if (instanciaExistente) {
+                instanciaExistente.destroy();
+                tomSelectHistorias.delete(selectElement);
+            } else if (selectElement.tomselect) {
+                selectElement.tomselect.destroy();
+            }
 
-                const termino = query.toLowerCase();
-                const coincidencias = historiasDisponibles
-                    .filter(historia => {
-                        const numero = (historia.numero_historia ?? '').toString().toLowerCase();
-                        const mascota = (historia.mascota ?? '').toString().toLowerCase();
-                        const propietario = (historia.propietario ?? '').toString().toLowerCase();
-                        const propietarioDni = (historia.propietario_dni ?? '').toString().toLowerCase();
+            const placeholder = selectElement.dataset.placeholder
+                || 'Escribe al menos 2 caracteres para buscar...';
+            const modo = (selectElement.dataset.searchMode || 'select').toLowerCase();
 
-                        return (
-                            numero.includes(termino) ||
-                            mascota.includes(termino) ||
-                            propietario.includes(termino) ||
-                            propietarioDni.includes(termino)
-                        );
-                    })
-                    .slice(0, 25)
-                    .map(formatearHistoriaParaOpcion)
-                    .filter(Boolean);
-
-                // Para integrar AJAX en el futuro, reemplazar el filtro anterior por una solicitud fetch().
-                callback(coincidencias);
-            },
-            render: {
-                option(item, escape) {
-                    const numero = escape(item.numero_historia ?? 'Sin código');
-                    const mascota = escape(item.mascota ?? 'Mascota sin nombre');
-                    const propietario = escape(item.propietario ?? 'Propietario sin registrar');
-                    const propietarioDni = escape(item.propietario_dni ?? '');
-                    const propietarioDetalle = propietarioDni
-                        ? `${propietario} · DNI ${propietarioDni}`
-                        : propietario;
-                    return `
-                        <div class="ts-option__content">
-                            <span class="ts-option__numero">${numero}</span>
-                            <span class="ts-option__mascota">${mascota}</span>
-                            <span class="ts-option__propietario">${propietarioDetalle}</span>
-                        </div>
-                    `;
+            const instancia = new TomSelect(selectElement, {
+                valueField: 'value',
+                labelField: 'text',
+                searchField: ['text', 'numero_historia', 'mascota', 'propietario', 'propietario_dni'],
+                allowEmptyOption: true,
+                placeholder,
+                loadThrottle: 250,
+                closeAfterSelect: modo !== 'filter',
+                shouldLoad(query) {
+                    return query.length >= 2;
                 },
-                item(item, escape) {
-                    const numero = escape(item.numero_historia ?? 'Sin código');
-                    const mascota = escape(item.mascota ?? 'Mascota sin nombre');
-                    const propietario = escape(item.propietario ?? 'Propietario sin registrar');
-                    return `
-                        <div class="ts-item__content">
-                            <span class="ts-item__numero">${numero}</span>
-                            <span class="ts-item__mascota">${mascota}</span>
-                            <span class="ts-item__propietario">${propietario}</span>
-                        </div>
-                    `;
-                },
-                no_results() {
-                    if (this.inputValue.length < 2) {
-                        return '<div class="ts-dropdown__message">Escribe al menos 2 caracteres para buscar.</div>';
+                load(query, callback) {
+                    if (query.length < 2) {
+                        callback();
+                        return;
                     }
 
-                    return '<div class="ts-dropdown__message">No se encontraron coincidencias.</div>';
+                    const termino = query.toLowerCase();
+                    const coincidencias = historiasDisponibles
+                        .filter(historia => {
+                            const numero = (historia.numero_historia ?? '').toString().toLowerCase();
+                            const mascota = (historia.mascota ?? '').toString().toLowerCase();
+                            const propietario = (historia.propietario ?? '').toString().toLowerCase();
+                            const propietarioDni = (historia.propietario_dni ?? '').toString().toLowerCase();
+
+                            return (
+                                numero.includes(termino)
+                                || mascota.includes(termino)
+                                || propietario.includes(termino)
+                                || propietarioDni.includes(termino)
+                            );
+                        })
+                        .slice(0, 25)
+                        .map(formatearHistoriaParaOpcion)
+                        .filter(Boolean);
+
+                    callback(coincidencias);
                 },
-            },
+                render: {
+                    option(item, escape) {
+                        const numero = escape(item.numero_historia ?? 'Sin código');
+                        const mascota = escape(item.mascota ?? 'Mascota sin nombre');
+                        const propietario = escape(item.propietario ?? 'Propietario sin registrar');
+                        const propietarioDni = escape(item.propietario_dni ?? '');
+                        const propietarioDetalle = propietarioDni
+                            ? `${propietario} · DNI ${propietarioDni}`
+                            : propietario;
+                        return `
+                            <div class="ts-option__content">
+                                <span class="ts-option__numero">${numero}</span>
+                                <span class="ts-option__mascota">${mascota}</span>
+                                <span class="ts-option__propietario">${propietarioDetalle}</span>
+                            </div>
+                        `;
+                    },
+                    item(item, escape) {
+                        const numero = escape(item.numero_historia ?? 'Sin código');
+                        const mascota = escape(item.mascota ?? 'Mascota sin nombre');
+                        const propietario = escape(item.propietario ?? 'Propietario sin registrar');
+                        return `
+                            <div class="ts-item__content">
+                                <span class="ts-item__numero">${numero}</span>
+                                <span class="ts-item__mascota">${mascota}</span>
+                                <span class="ts-item__propietario">${propietario}</span>
+                            </div>
+                        `;
+                    },
+                    no_results() {
+                        if (this.inputValue.length < 2) {
+                            return '<div class="ts-dropdown__message">Escribe al menos 2 caracteres para buscar.</div>';
+                        }
+
+                        return '<div class="ts-dropdown__message">No se encontraron coincidencias.</div>';
+                    },
+                },
+            });
+
+            instancia.on('type', query => {
+                manejarBusquedaHistoria(selectElement, query);
+            });
+
+            instancia.on('change', value => {
+                manejarSeleccionHistoria(selectElement, value);
+            });
+
+            instancia.on('clear', () => {
+                manejarSeleccionHistoria(selectElement, '');
+            });
+
+            tomSelectHistorias.set(selectElement, instancia);
         });
 
         sincronizarTomSelectHistorias();
@@ -2124,7 +2256,7 @@
                 <p>No hay historias clínicas registradas todavía.</p>
             `;
             tablaHistorias.appendChild(vacio);
-            actualizarProximoNumero([]);
+            actualizarProximoNumero(historiasDisponibles);
             return;
         }
 
@@ -2134,16 +2266,22 @@
         });
 
         tablaHistorias.appendChild(fragment);
-        actualizarProximoNumero(lista);
+        actualizarProximoNumero(historiasDisponibles);
     }
 
-    async function cargarHistorias() {
+    async function cargarHistorias(query = '') {
         if (!historiaListUrl) {
             return;
         }
 
         try {
-            const response = await fetch(historiaListUrl, {
+            const url = new URL(historiaListUrl, window.location.origin);
+
+            if (query) {
+                url.searchParams.set('q', query);
+            }
+
+            const response = await fetch(url.toString(), {
                 headers: { Accept: 'application/json' },
             });
 
@@ -2157,7 +2295,7 @@
             console.error(error);
             mostrarMensajeHistoria('No se pudieron cargar las historias clínicas.', 'error');
             mostrarMensajeCita('No se pudieron cargar las historias clínicas.', 'error');
-            renderHistorias();
+            renderHistorias(historiasDisponibles);
         }
     }
 
@@ -2198,12 +2336,9 @@
         cargarCitas(valor);
     }, 350);
 
-    if (buscarCitasInput) {
-        buscarCitasInput.addEventListener('input', event => {
-            citasBusquedaActual = event.target.value.trim();
-            buscarCitasDebounce(citasBusquedaActual);
-        });
-    }
+    const buscarHistoriasDebounce = debounce(valor => {
+        cargarHistorias(valor);
+    }, 350);
 
     if (tablaCitas) {
         tablaCitas.addEventListener('click', event => {
@@ -2431,7 +2566,8 @@
             }
 
             mostrarMensajeHistoria('Historia clínica eliminada correctamente.');
-            await cargarHistorias();
+            historiasRepositorio.delete(String(id));
+            await cargarHistorias(historiasBusquedaActual);
         } catch (error) {
             console.error(error);
             mostrarMensajeHistoria(error.message || 'No se pudo eliminar la historia clínica.', 'error');
@@ -2760,10 +2896,14 @@
                     ? 'Historia clínica actualizada correctamente.'
                     : 'Historia clínica guardada correctamente.';
 
+                if (responseData?.historia?.id) {
+                    historiasRepositorio.set(String(responseData.historia.id), responseData.historia);
+                }
+
                 mostrarMensajeHistoria(mensajeExito);
                 cerrarModal();
                 reiniciarFormulario();
-                await cargarHistorias();
+                await cargarHistorias(historiasBusquedaActual);
             } catch (error) {
                 console.error(error);
                 mostrarMensajeHistoria(error.message || 'No se pudo guardar la historia clínica.', 'error');

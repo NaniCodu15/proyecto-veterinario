@@ -1236,6 +1236,30 @@ img {
     margin-bottom: 20px;
 }
 
+.historia-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.historia-search i {
+    color: var(--text-muted);
+}
+
+.historia-search__select {
+    width: 100%;
+}
+
+.historia-search--toolbar,
+.historia-search--historias {
+    width: min(320px, 100%);
+}
+
+.historia-search--form {
+    width: 100%;
+}
+
 .citas-search {
     display: flex;
     align-items: center;
@@ -1255,13 +1279,42 @@ img {
     box-shadow: 0 0 0 4px rgba(95, 141, 229, 0.18);
 }
 
-.citas-search input {
+.citas-search .ts-wrapper {
+    flex: 1;
+}
+
+.citas-search .ts-wrapper.single .ts-control {
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+    min-height: auto;
+}
+
+.citas-search .ts-control input {
     border: none;
     background: transparent;
     outline: none;
     font-size: 0.95rem;
     color: var(--text-dark);
-    flex: 1;
+    width: 100%;
+}
+
+.citas-search .ts-wrapper.single .ts-control::after {
+    display: none;
+}
+
+.citas-search .ts-control .item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.historias-registradas__toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 20px;
 }
 
 .citas-alert {
