@@ -34,12 +34,30 @@
             </li>
         </ul>
 
-        <form action="{{ route('logout') }}" method="POST" class="logout-form">
-            @csrf
-            <button type="submit" class="btn-logout">
-                <i class="fas fa-sign-out-alt"></i> <span>Cerrar sesión</span>
-            </button>
-        </form>
+        @php
+            $user = auth()->user();
+            $userName = $user?->name ?? 'Usuario';
+            $userEmail = $user?->email ?? 'usuario@correo.com';
+            $avatarUrl = $user?->profile_photo_url ?? 'https://ui-avatars.com/api/?name=' . urlencode($userName) . '&background=7aa8ff&color=ffffff';
+        @endphp
+
+        <div class="user-card">
+            <div class="user-card__info">
+                <div class="user-card__avatar">
+                    <img src="{{ $avatarUrl }}" alt="Avatar de {{ $userName }}">
+                </div>
+                <div class="user-card__details">
+                    <span class="user-card__name">{{ $userName }}</span>
+                    <span class="user-card__email">{{ $userEmail }}</span>
+                </div>
+            </div>
+            <form action="{{ route('logout') }}" method="POST" class="user-card__logout">
+                @csrf
+                <button type="submit" aria-label="Cerrar sesión">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </form>
+        </div>
     </div>
 
     <!-- CONTENIDO PRINCIPAL (CAMBIA SEGÚN OPCIÓN) -->
