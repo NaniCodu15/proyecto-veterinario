@@ -307,6 +307,20 @@
 
                 <div class="alert historias-registradas__alert" role="status" aria-live="polite" data-historia-mensaje hidden></div>
 
+                <div class="historias-registradas__toolbar">
+                    <div class="historias-registradas__search">
+                        <i class="fas fa-search historias-registradas__search-icon" aria-hidden="true"></i>
+                        <input
+                            type="search"
+                            id="buscarHistorias"
+                            class="historias-registradas__search-input"
+                            placeholder="Buscar por número, propietario o mascota"
+                            aria-label="Buscar historias clínicas"
+                            autocomplete="off"
+                        >
+                    </div>
+                </div>
+
                 <div class="historias-registradas__grid" id="tablaHistorias">
                     <div class="historias-registradas__empty">
                         <i class="fas fa-folder-open"></i>
@@ -887,6 +901,7 @@
     const especieOtroInput    = document.getElementById('especieOtro');
     const tablaHistorias      = document.getElementById('tablaHistorias');
     const mensajesHistoria    = Array.from(document.querySelectorAll('[data-historia-mensaje]'));
+    const buscarHistoriasInput = document.getElementById('buscarHistorias');
     const btnGuardar          = form?.querySelector('.btn-guardar');
     const btnAccesoRapido     = document.getElementById('btnAccesoRapido');
     const btnIrHistorias      = document.querySelector('.btn-ir-historias');
@@ -1017,6 +1032,8 @@
     let historiaSeleccionadaParaCita = null;
     let tomSelectHistoria = null;
     let historiasDisponibles = [];
+    let historiasRegistradas = [];
+    let terminoBusquedaHistorias = '';
     let historiaDetalleActual = null;
     let consultasDetalleActual = [];
 
@@ -2107,34 +2124,57 @@
         }
     }
 
-    function renderHistorias(lista = []) {
-        poblarHistoriasParaCitas(Array.isArray(lista) ? lista : []);
+    function renderHistorias(lista = null) {
+        if (Array.isArray(lista)) {
+            historiasRegistradas = lista;
+            poblarHistoriasParaCitas(lista);
+        }
+
+        const historiasBase = Array.isArray(historiasRegistradas) ? historiasRegistradas : [];
+        actualizarProximoNumero(historiasBase);
 
         if (!tablaHistorias) {
             return;
         }
 
+        const termino = terminoBusquedaHistorias.trim().toLowerCase();
+        const listaFiltrada = termino
+            ? historiasBase.filter(historia => {
+                const numero = (historia.numero_historia ?? '').toString().toLowerCase();
+                const mascota = (historia.mascota ?? '').toString().toLowerCase();
+                const propietario = (historia.propietario ?? '').toString().toLowerCase();
+
+                return (
+                    numero.includes(termino) ||
+                    mascota.includes(termino) ||
+                    propietario.includes(termino)
+                );
+            })
+            : historiasBase;
+
         tablaHistorias.innerHTML = '';
 
-        if (!Array.isArray(lista) || lista.length === 0) {
+        if (!listaFiltrada.length) {
             const vacio = document.createElement('div');
             vacio.className = 'historias-registradas__empty';
+            const icono = termino ? 'fa-search' : 'fa-folder-open';
+            const mensaje = termino
+                ? 'No se encontraron historias clínicas para la búsqueda.'
+                : 'No hay historias clínicas registradas todavía.';
             vacio.innerHTML = `
-                <i class="fas fa-folder-open"></i>
-                <p>No hay historias clínicas registradas todavía.</p>
+                <i class="fas ${icono}"></i>
+                <p>${mensaje}</p>
             `;
             tablaHistorias.appendChild(vacio);
-            actualizarProximoNumero([]);
             return;
         }
 
         const fragment = document.createDocumentFragment();
-        lista.forEach(historia => {
+        listaFiltrada.forEach(historia => {
             fragment.appendChild(crearTarjetaHistoria(historia));
         });
 
         tablaHistorias.appendChild(fragment);
-        actualizarProximoNumero(lista);
     }
 
     async function cargarHistorias() {
@@ -2157,7 +2197,7 @@
             console.error(error);
             mostrarMensajeHistoria('No se pudieron cargar las historias clínicas.', 'error');
             mostrarMensajeCita('No se pudieron cargar las historias clínicas.', 'error');
-            renderHistorias();
+            renderHistorias([]);
         }
     }
 
@@ -2191,6 +2231,16 @@
             event.preventDefault();
 
             navegarAHistorias();
+        });
+    }
+
+    if (buscarHistoriasInput) {
+        buscarHistoriasInput.addEventListener('input', event => {
+            const valor = event.target && typeof event.target.value === 'string'
+                ? event.target.value
+                : '';
+            terminoBusquedaHistorias = valor;
+            renderHistorias();
         });
     }
 
@@ -2851,6 +2901,52 @@
             padding: 12px;
             font-size: 0.85rem;
             color: #6c7a91;
+        }
+
+        .historias-registradas__toolbar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin: 24px 0 20px;
+        }
+
+        .historias-registradas__search {
+            position: relative;
+            flex: 1 1 280px;
+            max-width: 360px;
+        }
+
+        .historias-registradas__search-input {
+            width: 100%;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(122, 168, 255, 0.3);
+            padding: 12px 16px 12px 44px;
+            font-size: 0.95rem;
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--text-dark);
+            box-shadow: inset 0 1px 2px rgba(122, 168, 255, 0.12);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .historias-registradas__search-input::placeholder {
+            color: rgba(63, 91, 150, 0.55);
+        }
+
+        .historias-registradas__search-input:focus {
+            outline: none;
+            border-color: var(--primary-dark);
+            box-shadow: 0 0 0 4px rgba(156, 194, 255, 0.22);
+        }
+
+        .historias-registradas__search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(63, 91, 150, 0.55);
+            font-size: 0.95rem;
         }
 
         .modal--historia .modal-content--historia {
