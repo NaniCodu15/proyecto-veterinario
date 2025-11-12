@@ -11,23 +11,23 @@
         <ul class="sidebar-menu">
             <li><a href="#" class="nav-link active" data-section="inicio"><i class="fas fa-home"></i><span>Inicio</span></a></li>
             <li class="sidebar-item sidebar-item--has-submenu">
-                <a href="#" class="nav-link" data-section="citas"><i class="fas fa-calendar-alt"></i><span>Citas</span></a>
-                <ul class="sidebar-submenu">
-                    <li>
-                        <a href="#" class="nav-link nav-link--sublayer" data-section="citas-agendadas" data-parent="citas">
-                            <i class="fas fa-calendar-check"></i>
-                            <span>Citas Agendadas</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li class="sidebar-item sidebar-item--has-submenu">
                 <a href="#" class="nav-link" data-section="historias"><i class="fas fa-notes-medical"></i><span>Historias Clínicas</span></a>
                 <ul class="sidebar-submenu">
                     <li>
                         <a href="#" class="nav-link nav-link--sublayer" data-section="historias-registradas" data-parent="historias">
                             <i class="fas fa-folder-open"></i>
                             <span>Historias Registradas</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="sidebar-item sidebar-item--has-submenu">
+                <a href="#" class="nav-link" data-section="citas"><i class="fas fa-calendar-alt"></i><span>Citas</span></a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a href="#" class="nav-link nav-link--sublayer" data-section="citas-agendadas" data-parent="citas">
+                            <i class="fas fa-calendar-check"></i>
+                            <span>Citas Agendadas</span>
                         </a>
                     </li>
                 </ul>
@@ -76,10 +76,6 @@
                             <i class="fas fa-clinic-medical"></i>
                             Abrir módulo clínico
                         </a>
-                        <button type="button" class="btn btn-ghost" id="btnAccesoRapido">
-                            <i class="fas fa-calendar-plus"></i>
-                            Ver agenda
-                        </button>
                     </div>
                 </div>
                 <div class="home-hero__visual">
@@ -206,57 +202,6 @@
                     </ul>
                 </section>
 
-                <section class="panel panel--insights">
-                    <div class="panel__header">
-                        <div>
-                            <h2 class="panel__title">Experiencia de bienestar</h2>
-                            <p class="panel__subtitle">Refuerza la comunicación y el seguimiento con cada familia.</p>
-                        </div>
-                    </div>
-                    <div class="insight-cards">
-                        <article class="insight-card">
-                            <span class="insight-card__icon"><i class="fas fa-heart"></i></span>
-                            <div>
-                                <h3>Planes preventivos activos</h3>
-                                <p>Programas personalizados que mantienen saludables a los pacientes más delicados.</p>
-                            </div>
-                        </article>
-                        <article class="insight-card">
-                            <span class="insight-card__icon"><i class="fas fa-comments"></i></span>
-                            <div>
-                                <h3>Seguimiento con familias</h3>
-                                <p>Recordatorios amables y reportes breves para construir confianza día a día.</p>
-                            </div>
-                        </article>
-                        <article class="insight-card">
-                            <span class="insight-card__icon"><i class="fas fa-sun"></i></span>
-                            <div>
-                                <h3>Agenda balanceada</h3>
-                                <p>Distribuye atenciones entre turnos para sostener un ritmo de trabajo saludable.</p>
-                            </div>
-                        </article>
-                    </div>
-                    <div class="care-progress">
-                        <div class="care-progress__item">
-                            <div class="care-progress__label">
-                                Adherencia a tratamientos
-                                <span>92%</span>
-                            </div>
-                            <div class="care-progress__track">
-                                <span class="care-progress__bar" style="width: 92%;"></span>
-                            </div>
-                        </div>
-                        <div class="care-progress__item">
-                            <div class="care-progress__label">
-                                Pacientes en seguimiento activo
-                                <span>18</span>
-                            </div>
-                            <div class="care-progress__track">
-                                <span class="care-progress__bar" style="width: 72%;"></span>
-                            </div>
-                        </div>
-                    </div>
-                </section>
             </div>
         </div>
 
@@ -899,7 +844,6 @@
     const mensajesHistoria    = Array.from(document.querySelectorAll('[data-historia-mensaje]'));
     const buscarHistoriasInput = document.getElementById('buscarHistorias');
     const btnGuardar          = form?.querySelector('.btn-guardar');
-    const btnAccesoRapido     = document.getElementById('btnAccesoRapido');
     const btnIrHistorias      = document.querySelector('.btn-ir-historias');
     const btnIrCrearHistoria  = document.getElementById('btnIrCrearHistoria');
     const confirmModal        = document.getElementById('confirmModal');
@@ -2204,12 +2148,6 @@
 
     if (btnNueva) {
         btnNueva.addEventListener('click', () => {
-            abrirModalParaCrear();
-        });
-    }
-
-    if (btnAccesoRapido) {
-        btnAccesoRapido.addEventListener('click', () => {
             abrirModalParaCrear();
         });
     }

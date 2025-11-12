@@ -30,6 +30,10 @@ class DashboardController extends Controller
         ])->paginate(10); // Paginación de 10 por página
 
         $upcomingAppointments = Cita::with(['historiaClinica.mascota.propietario'])
+            ->where(function ($query) {
+                $query->whereIn('estado', ['Pendiente', 'Reprogramada'])
+                    ->orWhereNull('estado');
+            })
             ->whereDate('fecha_cita', '>=', Carbon::today())
             ->orderBy('fecha_cita')
             ->orderBy('hora_cita')
