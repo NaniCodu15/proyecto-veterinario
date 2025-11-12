@@ -64,194 +64,177 @@
     <div id="main-content" class="content">
         <!-- SECCIÓN INICIO -->
         <div id="section-inicio" class="section active">
-            <div class="welcome-card">
-                <div class="welcome-card__body">
-                    <span class="welcome-card__badge">Hospital Veterinario</span>
-                    <h1 class="welcome-card__title">Un panel cálido para la gestión integral veterinaria</h1>
-                    <p class="welcome-card__subtitle">
-                        Organiza pacientes, citas y seguimientos en un entorno profesional, limpio y pensado para transmitir confianza al equipo y a las familias.
+            <div class="home-hero">
+                <div class="home-hero__content">
+                    <span class="home-hero__badge">CLÍNICA CENTRAL</span>
+                    <h1 class="home-hero__title">Seguimiento integral con una mirada moderna</h1>
+                    <p class="home-hero__subtitle">
+                        Centraliza la información clínica, anticipa citas críticas y brinda una experiencia confiable a cada familia.
                     </p>
-                    <div class="welcome-card__actions">
+                    <div class="home-hero__actions">
                         <a href="#" class="btn btn-primary btn-ir-historias" data-section="historias">
-                            <i class="fas fa-notes-medical"></i>
-                            Gestionar historias clínicas
+                            <i class="fas fa-clinic-medical"></i>
+                            Abrir módulo clínico
                         </a>
-                        <button type="button" class="btn btn-outline" id="btnAccesoRapido">
-                            <i class="fas fa-plus-circle"></i>
-                            Registrar nueva historia
+                        <button type="button" class="btn btn-ghost" id="btnAccesoRapido">
+                            <i class="fas fa-calendar-plus"></i>
+                            Ver agenda
                         </button>
                     </div>
-                    <div class="welcome-card__meta">
-                        <span><i class="fas fa-heartbeat"></i> Seguimiento preventivo y cálido</span>
-                        <span><i class="fas fa-headset"></i> Equipo coordinado y disponible</span>
-                    </div>
                 </div>
-                <div class="welcome-card__illustration">
-                    <div class="welcome-card__halo"></div>
-                    <img src="{{ asset('images/logoVet.png') }}" alt="Hospital veterinario" class="welcome-card__image">
+                <div class="home-hero__visual">
+                    <div class="home-hero__bubble home-hero__bubble--one"></div>
+                    <div class="home-hero__bubble home-hero__bubble--two"></div>
+                    <img src="{{ asset('images/logoVet.png') }}" alt="Dra. Alfaro" class="home-hero__image">
                 </div>
             </div>
 
-            <div class="search-bar">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Buscar en el panel...">
+            <div class="metrics-grid">
+                <article class="metric-card metric-card--patients">
+                    <header class="metric-card__header">
+                        <span class="metric-card__label">Pacientes activos</span>
+                        <span class="metric-card__icon"><i class="fas fa-paw"></i></span>
+                    </header>
+                    <div class="metric-card__body">
+                        <h2 class="metric-card__value">{{ $totalMascotas }}</h2>
+                        <p class="metric-card__description">Mascotas con seguimiento vigente</p>
+                    </div>
+                    <footer class="metric-card__footer">
+                        <span class="metric-card__dot"></span>
+                        <span class="metric-card__dot"></span>
+                        <span class="metric-card__dot"></span>
+                        <span class="metric-card__dot"></span>
+                        <span class="metric-card__dot"></span>
+                    </footer>
+                </article>
+
+                <article class="metric-card metric-card--owners">
+                    <header class="metric-card__header">
+                        <span class="metric-card__label">Propietarios fidelizados</span>
+                        <span class="metric-card__icon"><i class="fas fa-users"></i></span>
+                    </header>
+                    <div class="metric-card__body">
+                        <h2 class="metric-card__value">{{ $totalPropietarios }}</h2>
+                        <p class="metric-card__description">Familias activas en el último trimestre</p>
+                    </div>
+                    <footer class="metric-card__footer">
+                        <span class="metric-card__dot"></span>
+                        <span class="metric-card__dot"></span>
+                        <span class="metric-card__dot"></span>
+                        <span class="metric-card__dot"></span>
+                        <span class="metric-card__dot"></span>
+                    </footer>
+                </article>
+
+                <article class="metric-card metric-card--records">
+                    <header class="metric-card__header">
+                        <span class="metric-card__label">Historias clínicas</span>
+                        <span class="metric-card__icon"><i class="fas fa-file-medical"></i></span>
+                    </header>
+                    <div class="metric-card__body">
+                        <h2 class="metric-card__value">{{ $totalHistorias }}</h2>
+                        <p class="metric-card__description">Registros completos y auditados</p>
+                    </div>
+                    <footer class="metric-card__footer">
+                        <span class="metric-card__dot"></span>
+                        <span class="metric-card__dot"></span>
+                        <span class="metric-card__dot"></span>
+                        <span class="metric-card__dot"></span>
+                        <span class="metric-card__dot"></span>
+                    </footer>
+                </article>
+
+                <article class="metric-card metric-card--consults">
+                    <header class="metric-card__header">
+                        <span class="metric-card__label">Consultas resueltas</span>
+                        <span class="metric-card__icon"><i class="fas fa-stethoscope"></i></span>
+                    </header>
+                    <div class="metric-card__body">
+                        <h2 class="metric-card__value">{{ $totalConsultas ?? 0 }}</h2>
+                        <p class="metric-card__description">Atenciones finalizadas con seguimiento</p>
+                    </div>
+                    <footer class="metric-card__footer">
+                        <span class="metric-card__dot"></span>
+                        <span class="metric-card__dot"></span>
+                        <span class="metric-card__dot"></span>
+                        <span class="metric-card__dot"></span>
+                        <span class="metric-card__dot"></span>
+                    </footer>
+                </article>
             </div>
 
-            <div class="dashboard-cards">
-                <div class="stat-card stat-card--primary">
-                    <div class="stat-card__header">
-                        <span>Pacientes activos</span>
-                        <span class="stat-card__trend stat-card__trend--up"><i class="fas fa-arrow-up"></i> 8%</span>
-                    </div>
-                    <div class="stat-card__body">
-                        <div class="stat-card__icon"><i class="fas fa-paw"></i></div>
-                        <div class="stat-info">
-                            <h2>{{ $totalMascotas }}</h2>
-                            <p>Mascotas registradas</p>
-                        </div>
-                    </div>
-                    <div class="stat-card__footer">
-                        <div class="stat-card__sparkline"><span style="width: 72%;"></span></div>
-                        <span>Promedio mensual</span>
-                    </div>
-                </div>
-
-                <div class="stat-card stat-card--sky">
-                    <div class="stat-card__header">
-                        <span>Propietarios fidelizados</span>
-                        <span class="stat-card__trend stat-card__trend--calm"><i class="fas fa-user-check"></i> +5 nuevos</span>
-                    </div>
-                    <div class="stat-card__body">
-                        <div class="stat-card__icon"><i class="fas fa-users"></i></div>
-                        <div class="stat-info">
-                            <h2>{{ $totalPropietarios }}</h2>
-                            <p>Propietarios activos</p>
-                        </div>
-                    </div>
-                    <div class="stat-card__footer">
-                        <div class="stat-card__sparkline"><span style="width: 65%;"></span></div>
-                        <span>Seguimiento comunitario</span>
-                    </div>
-                </div>
-
-                <div class="stat-card stat-card--mint">
-                    <div class="stat-card__header">
-                        <span>Consultas resueltas</span>
-                        <span class="stat-card__trend stat-card__trend--up"><i class="fas fa-check-circle"></i> +3 hoy</span>
-                    </div>
-                    <div class="stat-card__body">
-                        <div class="stat-card__icon"><i class="fas fa-stethoscope"></i></div>
-                        <div class="stat-info">
-                            <h2>{{ $totalConsultas ?? 0 }}</h2>
-                            <p>Consultas históricas</p>
-                        </div>
-                    </div>
-                    <div class="stat-card__footer">
-                        <div class="stat-card__sparkline"><span style="width: 58%;"></span></div>
-                        <span>Casos exitosos</span>
-                    </div>
-                </div>
-
-                <div class="stat-card stat-card--accent">
-                    <div class="stat-card__header">
-                        <span>Citas del día</span>
-                        <span class="stat-card__trend stat-card__trend--alert"><i class="fas fa-bell"></i> 2 pendientes</span>
-                    </div>
-                    <div class="stat-card__body">
-                        <div class="stat-card__icon"><i class="fas fa-calendar-day"></i></div>
-                        <div class="stat-info">
-                            <h2>8</h2>
-                            <p>Reservas programadas</p>
-                        </div>
-                    </div>
-                    <div class="stat-card__footer">
-                        <div class="stat-card__sparkline"><span style="width: 48%;"></span></div>
-                        <span>Actualizado hace 2 h</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="insight-grid">
-                <section class="panel panel--schedule">
+            <div class="overview-grid">
+                <section class="panel panel--appointments">
                     <div class="panel__header">
                         <div>
-                            <h2 class="panel__title">Citas del día</h2>
+                            <h2 class="panel__title">Citas próximas</h2>
                             <p class="panel__subtitle">Coordina la agenda del equipo de atención primaria.</p>
                         </div>
-                        <span class="panel__tag"><i class="fas fa-clock"></i> Hoy</span>
+                        <span class="panel__chip"><i class="fas fa-clock"></i> Hoy</span>
                     </div>
-                    <ul class="schedule-list">
-                        <li>
-                            <div class="schedule-list__time">08:30</div>
-                            <div class="schedule-list__info">
-                                <p class="schedule-list__pet">Luna · Control preventivo</p>
-                                <span class="schedule-list__owner">Propietario: Ana Pérez</span>
-                            </div>
-                            <span class="schedule-list__status schedule-list__status--check"><i class="fas fa-check"></i>Atendida</span>
-                        </li>
-                        <li>
-                            <div class="schedule-list__time">10:15</div>
-                            <div class="schedule-list__info">
-                                <p class="schedule-list__pet">Max · Vacunación anual</p>
-                                <span class="schedule-list__owner">Propietario: Carlos Gómez</span>
-                            </div>
-                            <span class="schedule-list__status schedule-list__status--pending"><i class="fas fa-hourglass-half"></i>En sala</span>
-                        </li>
-                        <li>
-                            <div class="schedule-list__time">12:40</div>
-                            <div class="schedule-list__info">
-                                <p class="schedule-list__pet">Nala · Revisión postoperatoria</p>
-                                <span class="schedule-list__owner">Propietario: Laura Rivas</span>
-                            </div>
-                            <span class="schedule-list__status schedule-list__status--alert"><i class="fas fa-triangle-exclamation"></i>Prioritario</span>
-                        </li>
+                    <ul class="appointment-list">
+                        @forelse ($upcomingAppointments as $appointment)
+                            @php
+                                $status = $appointment['estado'] ?? 'Pendiente';
+                                $statusClasses = [
+                                    'Pendiente' => 'is-pending',
+                                    'Atendida' => 'is-done',
+                                    'Cancelada' => 'is-cancelled',
+                                    'Reprogramada' => 'is-rescheduled',
+                                ];
+                                $statusClass = $statusClasses[$status] ?? 'is-pending';
+                            @endphp
+                            <li class="appointment-list__item">
+                                <div class="appointment-list__time">
+                                    <span class="appointment-list__hour">{{ $appointment['hora'] ?? '--:--' }}</span>
+                                    <span class="appointment-list__date">{{ $appointment['fecha'] ?? '--/--' }}</span>
+                                </div>
+                                <div class="appointment-list__details">
+                                    <p class="appointment-list__pet">{{ $appointment['mascota'] }} <span>· {{ $appointment['motivo'] }}</span></p>
+                                    <span class="appointment-list__owner">Propietario: {{ $appointment['propietario'] }}</span>
+                                </div>
+                                <span class="appointment-list__status {{ $statusClass }}">{{ $status }}</span>
+                            </li>
+                        @empty
+                            <li class="appointment-list__item appointment-list__item--empty">
+                                <div>
+                                    <p>No hay citas próximas registradas.</p>
+                                    <span>Agenda una nueva cita para mantener una atención oportuna.</span>
+                                </div>
+                            </li>
+                        @endforelse
                     </ul>
                 </section>
 
-                <section class="panel panel--alerts">
+                <section class="panel panel--insights">
                     <div class="panel__header">
                         <div>
-                            <h2 class="panel__title">Alertas y seguimientos</h2>
-                            <p class="panel__subtitle">Mantén al equipo informado sobre pendientes críticos.</p>
+                            <h2 class="panel__title">Experiencia de bienestar</h2>
+                            <p class="panel__subtitle">Refuerza la comunicación y el seguimiento con cada familia.</p>
                         </div>
-                        <span class="panel__tag"><i class="fas fa-heart"></i> Cuidados</span>
                     </div>
-                    <div class="alert-summary">
-                        <i class="fas fa-heartbeat"></i>
-                        3 pacientes requieren monitoreo cercano
-                    </div>
-                    <ul class="alert-list">
-                        <li>
-                            <div class="alert-list__info">
-                                <p class="alert-list__title">Control post cirugía</p>
-                                <p class="alert-list__note">Kira · Revisar suturas y analgésicos</p>
+                    <div class="insight-cards">
+                        <article class="insight-card">
+                            <span class="insight-card__icon"><i class="fas fa-heart"></i></span>
+                            <div>
+                                <h3>Planes preventivos activos</h3>
+                                <p>Programas personalizados que mantienen saludables a los pacientes más delicados.</p>
                             </div>
-                            <span class="alert-list__pill">Antes de 14:00</span>
-                        </li>
-                        <li>
-                            <div class="alert-list__info">
-                                <p class="alert-list__title">Recordatorio de laboratorio</p>
-                                <p class="alert-list__note">Toby · Resultados hemograma</p>
+                        </article>
+                        <article class="insight-card">
+                            <span class="insight-card__icon"><i class="fas fa-comments"></i></span>
+                            <div>
+                                <h3>Seguimiento con familias</h3>
+                                <p>Recordatorios amables y reportes breves para construir confianza día a día.</p>
                             </div>
-                            <span class="alert-list__pill">Recibir hoy</span>
-                        </li>
-                        <li>
-                            <div class="alert-list__info">
-                                <p class="alert-list__title">Vacuna pendiente</p>
-                                <p class="alert-list__note">Luna · Refuerzo anual</p>
+                        </article>
+                        <article class="insight-card">
+                            <span class="insight-card__icon"><i class="fas fa-sun"></i></span>
+                            <div>
+                                <h3>Agenda balanceada</h3>
+                                <p>Distribuye atenciones entre turnos para sostener un ritmo de trabajo saludable.</p>
                             </div>
-                            <span class="alert-list__pill">Programar cita</span>
-                        </li>
-                    </ul>
-                </section>
-
-                <section class="panel panel--care panel--wide">
-                    <div class="panel__header">
-                        <div>
-                            <h2 class="panel__title">Indicadores de bienestar</h2>
-                            <p class="panel__subtitle">Comparte con tu equipo una visión clara del estado de cada paciente.</p>
-                        </div>
-                        <span class="panel__tag"><i class="fas fa-leaf"></i> Bienestar</span>
+                        </article>
                     </div>
                     <div class="care-progress">
                         <div class="care-progress__item">
@@ -269,14 +252,9 @@
                                 <span>18</span>
                             </div>
                             <div class="care-progress__track">
-                                <span class="care-progress__bar" style="width: 70%;"></span>
+                                <span class="care-progress__bar" style="width: 72%;"></span>
                             </div>
                         </div>
-                    </div>
-                    <div class="care-notes">
-                        <div class="care-note"><i class="fas fa-paw"></i> Nuevos planes preventivos listos</div>
-                        <div class="care-note"><i class="fas fa-sun"></i> Agenda balanceada mañana y tarde</div>
-                        <div class="care-note"><i class="fas fa-comment-dots"></i> Actualiza notas de bienestar semanal</div>
                     </div>
                 </section>
             </div>
