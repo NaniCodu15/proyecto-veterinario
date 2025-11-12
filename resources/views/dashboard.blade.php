@@ -5,40 +5,69 @@
     <!-- SIDEBAR FIJO -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <img src="{{ asset('images/logoVet.png') }}" alt="Logo" class="sidebar-logo">
+            <div class="sidebar-brand">
+                <span class="sidebar-brand__icon"><i class="fas fa-shield-heart"></i></span>
+                <div class="sidebar-brand__text">
+                    <p class="sidebar-brand__eyebrow">Hospital Veterinario</p>
+                    <h1 class="sidebar-brand__title">VetCare 360</h1>
+                </div>
+            </div>
+            <p class="sidebar-header__subtitle">Supervisa pacientes, citas y bienestar en una vista moderna.</p>
         </div>
 
-        <ul class="sidebar-menu">
-            <li><a href="#" class="nav-link active" data-section="inicio"><i class="fas fa-home"></i><span>Inicio</span></a></li>
-            <li class="sidebar-item sidebar-item--has-submenu">
-                <a href="#" class="nav-link" data-section="citas"><i class="fas fa-calendar-alt"></i><span>Citas</span></a>
-                <ul class="sidebar-submenu">
-                    <li>
-                        <a href="#" class="nav-link nav-link--sublayer" data-section="citas-agendadas" data-parent="citas">
-                            <i class="fas fa-calendar-check"></i>
-                            <span>Citas Agendadas</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li class="sidebar-item sidebar-item--has-submenu">
-                <a href="#" class="nav-link" data-section="historias"><i class="fas fa-notes-medical"></i><span>Historias Clínicas</span></a>
-                <ul class="sidebar-submenu">
-                    <li>
-                        <a href="#" class="nav-link nav-link--sublayer" data-section="historias-registradas" data-parent="historias">
-                            <i class="fas fa-folder-open"></i>
-                            <span>Historias Registradas</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-        </ul>
+        <div class="sidebar-highlight">
+            <div class="sidebar-highlight__item">
+                <span>Historias activas</span>
+                <strong>{{ $totalHistorias }}</strong>
+            </div>
+            <div class="sidebar-highlight__item">
+                <span>Mascotas al cuidado</span>
+                <strong>{{ $totalMascotas }}</strong>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Navegación principal">
+            <p class="sidebar-nav__label">Panel</p>
+            <ul class="sidebar-menu">
+                <li><a href="#" class="nav-link active" data-section="inicio"><i class="fas fa-grid-2"></i><span>Inicio</span></a></li>
+                <li class="sidebar-item sidebar-item--has-submenu">
+                    <a href="#" class="nav-link" data-section="citas"><i class="fas fa-calendar-alt"></i><span>Citas</span></a>
+                    <ul class="sidebar-submenu">
+                        <li>
+                            <a href="#" class="nav-link nav-link--sublayer" data-section="citas-agendadas" data-parent="citas">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>Citas Agendadas</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="sidebar-item sidebar-item--has-submenu">
+                    <a href="#" class="nav-link" data-section="historias"><i class="fas fa-notes-medical"></i><span>Historias Clínicas</span></a>
+                    <ul class="sidebar-submenu">
+                        <li>
+                            <a href="#" class="nav-link nav-link--sublayer" data-section="historias-registradas" data-parent="historias">
+                                <i class="fas fa-folder-open"></i>
+                                <span>Historias Registradas</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="sidebar-reminder">
+            <span class="sidebar-reminder__icon"><i class="fas fa-wand-magic-sparkles"></i></span>
+            <div class="sidebar-reminder__info">
+                <p>Programa los refuerzos de vacunas</p>
+                <small>{{ $totalVacunas }} dosis registradas</small>
+            </div>
+        </div>
 
         @php
             $user = auth()->user();
             $userName = $user?->name ?? 'Usuario';
             $userEmail = $user?->email ?? 'usuario@correo.com';
-            $avatarUrl = $user?->profile_photo_url ?? 'https://ui-avatars.com/api/?name=' . urlencode($userName) . '&background=7aa8ff&color=ffffff';
+            $avatarUrl = $user?->profile_photo_url ?? 'https://ui-avatars.com/api/?name=' . urlencode($userName) . '&background=3543a6&color=ffffff';
         @endphp
 
         <div class="user-card">
@@ -47,6 +76,7 @@
                     <img src="{{ $avatarUrl }}" alt="Avatar de {{ $userName }}">
                 </div>
                 <div class="user-card__details">
+                    <span class="user-card__greeting">Hola,</span>
                     <span class="user-card__name">{{ $userName }}</span>
                     <span class="user-card__email">{{ $userEmail }}</span>
                 </div>
@@ -63,112 +93,181 @@
     <!-- CONTENIDO PRINCIPAL (CAMBIA SEGÚN OPCIÓN) -->
     <div id="main-content" class="content">
         <!-- SECCIÓN INICIO -->
-        <div id="section-inicio" class="section active">
+        <section id="section-inicio" class="section active" aria-labelledby="inicioHeading">
+            <header class="section-header">
+                <div class="section-header__titles">
+                    <span class="section-header__eyebrow">Resumen general</span>
+                    <h2 id="inicioHeading">Panel de control</h2>
+                    <p>Consulta la actividad diaria y toma decisiones informadas con datos actualizados.</p>
+                </div>
+                <div class="section-header__meta">
+                    <div class="section-header__date">
+                        <i class="fas fa-calendar-week"></i>
+                        <span>{{ now()->format('d/m/Y') }}</span>
+                    </div>
+                    <button type="button" class="btn btn-outline--ghost" id="btnAccesoRapido">
+                        <i class="fas fa-plus-circle"></i>
+                        Nueva historia
+                    </button>
+                </div>
+            </header>
+
             <div class="welcome-card">
                 <div class="welcome-card__body">
-                    <span class="welcome-card__badge">Hospital Veterinario</span>
-                    <h1 class="welcome-card__title">Un panel cálido para la gestión integral veterinaria</h1>
-                    <p class="welcome-card__subtitle">
-                        Organiza pacientes, citas y seguimientos en un entorno profesional, limpio y pensado para transmitir confianza al equipo y a las familias.
-                    </p>
+                    <span class="welcome-card__badge">Clínica central</span>
+                    <h1 class="welcome-card__title">Seguimiento integral con una mirada moderna</h1>
+                    <p class="welcome-card__subtitle">Centraliza la información clínica, anticipa citas críticas y brinda una experiencia confiable a cada familia.</p>
                     <div class="welcome-card__actions">
                         <a href="#" class="btn btn-primary btn-ir-historias" data-section="historias">
                             <i class="fas fa-notes-medical"></i>
-                            Gestionar historias clínicas
+                            Abrir módulo clínico
                         </a>
-                        <button type="button" class="btn btn-outline" id="btnAccesoRapido">
-                            <i class="fas fa-plus-circle"></i>
-                            Registrar nueva historia
-                        </button>
+                        <a href="#" class="btn btn-soft" data-section="citas-agendadas">
+                            <i class="fas fa-calendar-check"></i>
+                            Ver agenda
+                        </a>
                     </div>
-                    <div class="welcome-card__meta">
-                        <span><i class="fas fa-heartbeat"></i> Seguimiento preventivo y cálido</span>
-                        <span><i class="fas fa-headset"></i> Equipo coordinado y disponible</span>
+                    <div class="welcome-card__stats">
+                        <div>
+                            <span>Consultas históricas</span>
+                            <strong>{{ $totalConsultas ?? 0 }}</strong>
+                        </div>
+                        <div>
+                            <span>Vacunas administradas</span>
+                            <strong>{{ $totalVacunas }}</strong>
+                        </div>
+                        <div>
+                            <span>Historias creadas este mes</span>
+                            <strong>{{ $totalHistorias }}</strong>
+                        </div>
                     </div>
                 </div>
                 <div class="welcome-card__illustration">
-                    <div class="welcome-card__halo"></div>
+                    <div class="welcome-card__glow"></div>
                     <img src="{{ asset('images/logoVet.png') }}" alt="Hospital veterinario" class="welcome-card__image">
+                    <div class="welcome-card__pulse"></div>
                 </div>
             </div>
 
-            <div class="search-bar">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Buscar en el panel...">
+            <div class="content-toolbar">
+                <div class="content-toolbar__search">
+                    <i class="fas fa-search"></i>
+                    <input type="search" placeholder="Buscar historias, propietarios o citas" aria-label="Buscar en el panel">
+                </div>
+                <div class="content-toolbar__filters">
+                    <button type="button" class="chip chip--active"><i class="fas fa-sun"></i> Hoy</button>
+                    <button type="button" class="chip"><i class="fas fa-calendar-day"></i> Semana</button>
+                    <button type="button" class="chip"><i class="fas fa-chart-line"></i> Tendencias</button>
+                </div>
             </div>
 
             <div class="dashboard-cards">
-                <div class="stat-card stat-card--primary">
-                    <div class="stat-card__header">
-                        <span>Pacientes activos</span>
-                        <span class="stat-card__trend stat-card__trend--up"><i class="fas fa-arrow-up"></i> 8%</span>
+                <article class="stat-card stat-card--primary">
+                    <div class="stat-card__icon" aria-hidden="true"><i class="fas fa-paw"></i></div>
+                    <div class="stat-card__content">
+                        <span class="stat-card__label">Pacientes activos</span>
+                        <h3 class="stat-card__value">{{ $totalMascotas }}</h3>
+                        <p class="stat-card__description">Mascotas con seguimiento vigente</p>
                     </div>
-                    <div class="stat-card__body">
-                        <div class="stat-card__icon"><i class="fas fa-paw"></i></div>
-                        <div class="stat-info">
-                            <h2>{{ $totalMascotas }}</h2>
-                            <p>Mascotas registradas</p>
-                        </div>
+                    <div class="stat-card__chart" role="img" aria-label="Progreso semanal de pacientes">
+                        <span style="height: 68%;"></span>
+                        <span style="height: 82%;"></span>
+                        <span style="height: 74%;"></span>
+                        <span style="height: 90%;"></span>
+                        <span style="height: 78%;"></span>
                     </div>
-                    <div class="stat-card__footer">
-                        <div class="stat-card__sparkline"><span style="width: 72%;"></span></div>
-                        <span>Promedio mensual</span>
-                    </div>
-                </div>
+                </article>
 
-                <div class="stat-card stat-card--sky">
-                    <div class="stat-card__header">
-                        <span>Propietarios fidelizados</span>
-                        <span class="stat-card__trend stat-card__trend--calm"><i class="fas fa-user-check"></i> +5 nuevos</span>
+                <article class="stat-card stat-card--teal">
+                    <div class="stat-card__icon" aria-hidden="true"><i class="fas fa-people-group"></i></div>
+                    <div class="stat-card__content">
+                        <span class="stat-card__label">Propietarios fidelizados</span>
+                        <h3 class="stat-card__value">{{ $totalPropietarios }}</h3>
+                        <p class="stat-card__description">Familias activas en el último trimestre</p>
                     </div>
-                    <div class="stat-card__body">
-                        <div class="stat-card__icon"><i class="fas fa-users"></i></div>
-                        <div class="stat-info">
-                            <h2>{{ $totalPropietarios }}</h2>
-                            <p>Propietarios activos</p>
-                        </div>
+                    <div class="stat-card__chart" role="img" aria-label="Tendencia de propietarios">
+                        <span style="height: 60%;"></span>
+                        <span style="height: 66%;"></span>
+                        <span style="height: 74%;"></span>
+                        <span style="height: 88%;"></span>
+                        <span style="height: 92%;"></span>
                     </div>
-                    <div class="stat-card__footer">
-                        <div class="stat-card__sparkline"><span style="width: 65%;"></span></div>
-                        <span>Seguimiento comunitario</span>
-                    </div>
-                </div>
+                </article>
 
-                <div class="stat-card stat-card--mint">
-                    <div class="stat-card__header">
-                        <span>Consultas resueltas</span>
-                        <span class="stat-card__trend stat-card__trend--up"><i class="fas fa-check-circle"></i> +3 hoy</span>
+                <article class="stat-card stat-card--violet">
+                    <div class="stat-card__icon" aria-hidden="true"><i class="fas fa-clipboard-list"></i></div>
+                    <div class="stat-card__content">
+                        <span class="stat-card__label">Historias clínicas</span>
+                        <h3 class="stat-card__value">{{ $totalHistorias }}</h3>
+                        <p class="stat-card__description">Registros completos y auditados</p>
                     </div>
-                    <div class="stat-card__body">
-                        <div class="stat-card__icon"><i class="fas fa-stethoscope"></i></div>
-                        <div class="stat-info">
-                            <h2>{{ $totalConsultas ?? 0 }}</h2>
-                            <p>Consultas históricas</p>
-                        </div>
+                    <div class="stat-card__chart" role="img" aria-label="Historias creadas recientemente">
+                        <span style="height: 48%;"></span>
+                        <span style="height: 56%;"></span>
+                        <span style="height: 64%;"></span>
+                        <span style="height: 82%;"></span>
+                        <span style="height: 95%;"></span>
                     </div>
-                    <div class="stat-card__footer">
-                        <div class="stat-card__sparkline"><span style="width: 58%;"></span></div>
-                        <span>Casos exitosos</span>
-                    </div>
-                </div>
+                </article>
 
-                <div class="stat-card stat-card--accent">
-                    <div class="stat-card__header">
-                        <span>Citas del día</span>
-                        <span class="stat-card__trend stat-card__trend--alert"><i class="fas fa-bell"></i> 2 pendientes</span>
+                <article class="stat-card stat-card--amber">
+                    <div class="stat-card__icon" aria-hidden="true"><i class="fas fa-stethoscope"></i></div>
+                    <div class="stat-card__content">
+                        <span class="stat-card__label">Consultas resueltas</span>
+                        <h3 class="stat-card__value">{{ $totalConsultas ?? 0 }}</h3>
+                        <p class="stat-card__description">Atenciones finalizadas con seguimiento</p>
                     </div>
-                    <div class="stat-card__body">
-                        <div class="stat-card__icon"><i class="fas fa-calendar-day"></i></div>
-                        <div class="stat-info">
-                            <h2>8</h2>
-                            <p>Reservas programadas</p>
-                        </div>
+                    <div class="stat-card__chart" role="img" aria-label="Progreso de consultas">
+                        <span style="height: 58%;"></span>
+                        <span style="height: 70%;"></span>
+                        <span style="height: 76%;"></span>
+                        <span style="height: 84%;"></span>
+                        <span style="height: 90%;"></span>
                     </div>
-                    <div class="stat-card__footer">
-                        <div class="stat-card__sparkline"><span style="width: 48%;"></span></div>
-                        <span>Actualizado hace 2 h</span>
+                </article>
+
+                <article class="stat-card stat-card--rose">
+                    <div class="stat-card__icon" aria-hidden="true"><i class="fas fa-syringe"></i></div>
+                    <div class="stat-card__content">
+                        <span class="stat-card__label">Vacunas aplicadas</span>
+                        <h3 class="stat-card__value">{{ $totalVacunas }}</h3>
+                        <p class="stat-card__description">Cobertura inmunológica registrada</p>
                     </div>
-                </div>
+                    <div class="stat-card__chart" role="img" aria-label="Cobertura de vacunas">
+                        <span style="height: 40%;"></span>
+                        <span style="height: 52%;"></span>
+                        <span style="height: 68%;"></span>
+                        <span style="height: 80%;"></span>
+                        <span style="height: 88%;"></span>
+                    </div>
+                </article>
+            </div>
+
+            <div class="quick-highlights">
+                <article class="highlight-card">
+                    <div class="highlight-card__icon"><i class="fas fa-clock"></i></div>
+                    <div class="highlight-card__info">
+                        <h3>Próxima cita</h3>
+                        <p>15:30 · Bruno / Control dental</p>
+                    </div>
+                    <span class="highlight-card__tag highlight-card__tag--urgent">Prioritario</span>
+                </article>
+                <article class="highlight-card">
+                    <div class="highlight-card__icon"><i class="fas fa-user-nurse"></i></div>
+                    <div class="highlight-card__info">
+                        <h3>Equipo en turno</h3>
+                        <p>4 especialistas y 2 asistentes</p>
+                    </div>
+                    <span class="highlight-card__tag highlight-card__tag--calm">Cobertura completa</span>
+                </article>
+                <article class="highlight-card">
+                    <div class="highlight-card__icon"><i class="fas fa-heartbeat"></i></div>
+                    <div class="highlight-card__info">
+                        <h3>Seguimientos activos</h3>
+                        <p>18 pacientes con monitorización semanal</p>
+                    </div>
+                    <span class="highlight-card__tag highlight-card__tag--focus">Actualizar hoy</span>
+                </article>
             </div>
 
             <div class="insight-grid">
@@ -280,8 +379,7 @@
                     </div>
                 </section>
             </div>
-        </div>
-
+        </section>
         <!-- SECCIÓN HISTORIAS CLÍNICAS -->
         <div id="section-historias" class="section">
             <div class="historias-create">
