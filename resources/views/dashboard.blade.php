@@ -85,6 +85,17 @@
                 </div>
             </div>
 
+            @if (session('backup_message'))
+                @php
+                    $backupStatus = session('backup_status');
+                    $isSuccessful = $backupStatus === 'Correcto';
+                @endphp
+                <div class="system-alert {{ $isSuccessful ? 'system-alert--success' : 'system-alert--error' }}" role="status" aria-live="polite">
+                    <i class="fas {{ $isSuccessful ? 'fa-check-circle' : 'fa-exclamation-triangle' }}" aria-hidden="true"></i>
+                    <span>{{ session('backup_message') }}</span>
+                </div>
+            @endif
+
             <div class="metrics-grid">
                 <article class="metric-card metric-card--patients">
                     <header class="metric-card__header">
@@ -158,6 +169,26 @@
                     </footer>
                 </article>
             </div>
+
+            <section class="backup-card" aria-labelledby="backupCardTitle">
+                <div class="backup-card__content">
+                    <span class="backup-card__badge"><i class="fas fa-shield-alt" aria-hidden="true"></i> Respaldo de datos</span>
+                    <h2 id="backupCardTitle" class="backup-card__title">Protege la información de tu clínica</h2>
+                    <p class="backup-card__text">
+                        Genera un respaldo completo de la base de datos <strong>hospital_veterinario</strong> y mantén la tranquilidad de que toda la información está segura.
+                    </p>
+                </div>
+                <div class="backup-card__actions">
+                    <form method="POST" action="{{ route('backups.store') }}" class="backup-card__form">
+                        @csrf
+                        <button type="submit" class="btn btn-outline btn-backup">
+                            <i class="fas fa-database" aria-hidden="true"></i>
+                            Generar copia de seguridad
+                        </button>
+                    </form>
+                    <small class="backup-card__hint">El archivo se almacenará automáticamente en <code>storage/backups/</code>.</small>
+                </div>
+            </section>
 
             <div class="overview-grid">
                 <section class="panel panel--appointments">
@@ -2763,6 +2794,148 @@
 @push('styles')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.4.0/dist/css/tom-select.default.min.css">
     <style>
+        .system-alert {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            border-radius: 18px;
+            font-weight: 600;
+            box-shadow: 0 16px 30px rgba(79, 114, 205, 0.12);
+            margin: 32px 0;
+        }
+
+        .system-alert i {
+            font-size: 1.25rem;
+        }
+
+        .system-alert--success {
+            background: linear-gradient(135deg, rgba(209, 245, 228, 0.95), rgba(230, 250, 239, 0.95));
+            color: #1a7f4b;
+            border: 1px solid rgba(43, 174, 102, 0.35);
+        }
+
+        .system-alert--error {
+            background: linear-gradient(135deg, rgba(255, 231, 231, 0.95), rgba(255, 242, 242, 0.95));
+            color: #b14444;
+            border: 1px solid rgba(222, 120, 120, 0.35);
+        }
+
+        .backup-card {
+            margin-top: 36px;
+            margin-bottom: 40px;
+            padding: 32px 36px;
+            background: linear-gradient(135deg, rgba(243, 248, 255, 0.95), rgba(255, 255, 255, 0.95));
+            border-radius: 28px;
+            border: 1px solid rgba(126, 166, 255, 0.28);
+            box-shadow: 0 30px 60px rgba(126, 142, 177, 0.18);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 28px;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .backup-card__content {
+            flex: 1 1 360px;
+            min-width: 280px;
+            display: grid;
+            gap: 12px;
+        }
+
+        .backup-card__badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 999px;
+            background: rgba(122, 168, 255, 0.16);
+            color: var(--primary-dark);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 0.8rem;
+        }
+
+        .backup-card__title {
+            font-size: clamp(1.4rem, 1.2rem + 0.6vw, 1.8rem);
+            margin: 0;
+            color: var(--text-dark);
+        }
+
+        .backup-card__text {
+            margin: 0;
+            color: rgba(43, 57, 144, 0.75);
+            line-height: 1.6;
+        }
+
+        .backup-card__actions {
+            flex: 0 1 260px;
+            min-width: 220px;
+            display: grid;
+            gap: 12px;
+            justify-items: flex-start;
+        }
+
+        .btn-backup {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            padding: 14px 20px;
+            border-radius: 16px;
+            border-width: 2px;
+            border-color: rgba(122, 168, 255, 0.45);
+            color: var(--primary-dark);
+            background: rgba(255, 255, 255, 0.95);
+            transition: all 0.2s ease;
+        }
+
+        .btn-backup:hover,
+        .btn-backup:focus {
+            border-color: var(--primary-dark);
+            color: #fff;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            box-shadow: 0 14px 26px rgba(83, 121, 199, 0.25);
+        }
+
+        .backup-card__hint {
+            color: rgba(43, 57, 144, 0.6);
+        }
+
+        .backup-card__hint code {
+            background: rgba(122, 168, 255, 0.15);
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .system-alert {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .backup-card {
+                padding: 28px 24px;
+                gap: 22px;
+            }
+
+            .backup-card__actions {
+                width: 100%;
+            }
+
+            .backup-card__actions form {
+                width: 100%;
+            }
+
+            .btn-backup {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
         .cita-form__group .ts-wrapper {
             width: 100%;
         }
