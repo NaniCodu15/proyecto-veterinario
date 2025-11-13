@@ -41,14 +41,18 @@
             $avatarUrl = $user?->profile_photo_url ?? 'https://ui-avatars.com/api/?name=' . urlencode($userName) . '&background=7aa8ff&color=ffffff';
         @endphp
 
-        <div class="user-card">
+        <div class="user-card" role="group" aria-label="Sesión activa">
             <div class="user-card__info">
-                <div class="user-card__avatar">
-                    <img src="{{ $avatarUrl }}" alt="Avatar de {{ $userName }}">
+                <div class="user-card__avatar" aria-hidden="true">
+                    <i class="fas fa-user user-card__avatar-icon"></i>
                 </div>
                 <div class="user-card__details">
-                    <span class="user-card__name">{{ $userName }}</span>
-                    <span class="user-card__email">{{ $userEmail }}</span>
+                    <span class="user-card__label">Sesión activa</span>
+                    <span class="user-card__name" title="{{ $userName }}">{{ $userName }}</span>
+                    <span class="user-card__email" title="{{ $userEmail }}">
+                        <i class="fas fa-envelope" aria-hidden="true"></i>
+                        <span class="user-card__email-text">{{ $userEmail }}</span>
+                    </span>
                 </div>
             </div>
             <form action="{{ route('logout') }}" method="POST" class="user-card__logout">
@@ -248,24 +252,34 @@
 
                 <div class="alert historias-registradas__alert" role="status" aria-live="polite" data-historia-mensaje hidden></div>
 
-                <div class="historias-registradas__toolbar">
-                    <div class="historias-registradas__search">
-                        <i class="fas fa-search historias-registradas__search-icon" aria-hidden="true"></i>
-                        <input
-                            type="search"
-                            id="buscarHistorias"
-                            class="historias-registradas__search-input"
-                            placeholder="Buscar por número, propietario o mascota"
-                            aria-label="Buscar historias clínicas"
-                            autocomplete="off"
-                        >
-                    </div>
-                </div>
+                <div class="historias-registradas__layout">
+                    <aside class="historias-registradas__filters" aria-label="Herramientas de historias clínicas">
+                        <div class="historias-registradas__search-card">
+                            <h2>Buscar historias</h2>
+                            <p>Filtra por número de historia, mascota o propietario para ubicar la ficha correcta.</p>
+                            <label class="historias-registradas__search" for="buscarHistorias">
+                                <i class="fas fa-search historias-registradas__search-icon" aria-hidden="true"></i>
+                                <input
+                                    type="search"
+                                    id="buscarHistorias"
+                                    class="historias-registradas__search-input"
+                                    placeholder="Buscar por número, propietario o mascota"
+                                    aria-label="Buscar historias clínicas"
+                                    autocomplete="off"
+                                >
+                            </label>
+                        </div>
+                        <div class="historias-registradas__insights">
+                            <span class="historias-registradas__chip" data-historias-total>0 historias registradas</span>
+                            <span class="historias-registradas__chip historias-registradas__chip--muted" data-historias-filtradas>0 coincidencias</span>
+                        </div>
+                    </aside>
 
-                <div class="historias-registradas__grid" id="tablaHistorias">
-                    <div class="historias-registradas__empty">
-                        <i class="fas fa-folder-open"></i>
-                        <p>No hay historias clínicas registradas todavía.</p>
+                    <div class="historias-registradas__list" id="tablaHistorias">
+                        <div class="historias-registradas__empty">
+                            <i class="fas fa-folder-open"></i>
+                            <p>No hay historias clínicas registradas todavía.</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -565,34 +579,23 @@
                 </div>
 
                 <div id="citasListadoMensaje" class="citas-alert" role="status" aria-live="polite" hidden></div>
+                <div class="citas-board">
+                    <div class="citas-board__toolbar">
+                        <label for="buscarCitas" class="citas-search">
+                            <i class="fas fa-search"></i>
+                            <input type="search" id="buscarCitas" placeholder="Buscar por mascota o propietario">
+                        </label>
+                        <div class="citas-board__metrics">
+                            <span class="citas-board__chip" data-citas-total>0 citas en agenda</span>
+                        </div>
+                    </div>
 
-                <div class="citas-toolbar">
-                    <label for="buscarCitas" class="citas-search">
-                        <i class="fas fa-search"></i>
-                        <input type="search" id="buscarCitas" placeholder="Buscar por mascota o propietario">
-                    </label>
-                </div>
-
-                <div class="citas-table-wrapper">
-                    <table class="citas-table">
-                        <thead>
-                            <tr>
-                                <th>🆔 ID de la cita</th>
-                                <th>🐾 Nombre de la mascota</th>
-                                <th>🧍‍♀️ Nombre del propietario</th>
-                                <th>📅 Fecha de la cita</th>
-                                <th>⏰ Hora de la cita</th>
-                                <th>💬 Motivo</th>
-                                <th>🔖 Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tablaCitas">
-                            <tr class="citas-table__empty">
-                                <td colspan="8">No hay citas registradas todavía.</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="citas-board__list" id="tablaCitas">
+                        <div class="citas-board__empty">
+                            <i class="fas fa-calendar-times"></i>
+                            <p>No hay citas registradas todavía.</p>
+                        </div>
+                    </div>
                 </div>
             </section>
         </div>
@@ -607,6 +610,50 @@
             <button type="button" class="btn btn-confirm-cancel" data-confirm="cancel">Cancelar</button>
             <button type="button" class="btn btn-confirm-accept" data-confirm="accept">Aceptar</button>
         </div>
+    </div>
+</div>
+
+<div id="confirmCitaModal" class="confirm-modal" role="alertdialog" aria-modal="true" aria-labelledby="confirmCitaMessage" hidden>
+    <div class="confirm-modal__dialog">
+        <p id="confirmCitaMessage" class="confirm-modal__message">¿Desea eliminar esta cita?</p>
+        <div class="confirm-modal__actions">
+            <button type="button" class="btn btn-confirm-cancel" data-confirm-cita="cancel">Cancelar</button>
+            <button type="button" class="btn btn-confirm-accept" data-confirm-cita="accept">Eliminar</button>
+        </div>
+    </div>
+</div>
+
+<div id="modalEditarCita" class="modal modal--cita" aria-hidden="true">
+    <div class="modal-content modal-content--cita">
+        <span class="close" data-close="editarCita">&times;</span>
+        <h2>Editar cita</h2>
+        <p class="cita-edit__subtitle">Ajusta la fecha, la hora o el motivo sin salir del panel principal.</p>
+        <div class="cita-edit__meta">
+            <span class="cita-edit__tag" data-editar-cita="numero_historia">HC-00000</span>
+            <span class="cita-edit__tag" data-editar-cita="mascota">Mascota</span>
+            <span class="cita-edit__tag cita-edit__tag--owner" data-editar-cita="propietario">Propietario</span>
+        </div>
+        <div id="editarCitaMensaje" class="cita-alert" role="status" hidden></div>
+        <form id="formEditarCita" class="cita-edit-form" novalidate>
+            <div class="form-group">
+                <label for="editarCitaMotivo">Motivo de la cita</label>
+                <textarea id="editarCitaMotivo" name="motivo" rows="3" required placeholder="Describe brevemente el motivo de la visita"></textarea>
+            </div>
+            <div class="cita-edit-form__grid">
+                <div class="form-group">
+                    <label for="editarCitaFecha">Fecha programada</label>
+                    <input type="date" id="editarCitaFecha" name="fecha_cita" required>
+                </div>
+                <div class="form-group">
+                    <label for="editarCitaHora">Hora programada</label>
+                    <input type="time" id="editarCitaHora" name="hora_cita" required>
+                </div>
+            </div>
+            <div class="cita-estado-actions">
+                <button type="button" class="btn btn-outline" data-close="editarCita">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Guardar cambios</button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -683,6 +730,8 @@
     let citasCache = [];
     let citaDetalleSeleccionada = null;
     let citaSeleccionadaParaEstado = null;
+    let citaSeleccionadaParaEdicion = null;
+    let citaSeleccionadaParaEliminar = null;
 
     function hayModalVisible() {
         return Array.from(document.querySelectorAll('.modal')).some(modalEl => modalEl.style.display === 'block');
@@ -725,6 +774,11 @@
                 fn.apply(null, args);
             }, delay);
         };
+    }
+
+    function formatearConteo(cantidad, singular, plural) {
+        const numero = Number(cantidad) || 0;
+        return `${numero} ${numero === 1 ? singular : plural}`;
     }
 
     function resetCamposReprogramar() {
@@ -849,16 +903,35 @@
     const confirmModal        = document.getElementById('confirmModal');
     const confirmAcceptButton = confirmModal?.querySelector('[data-confirm="accept"]');
     const confirmCancelButton = confirmModal?.querySelector('[data-confirm="cancel"]');
+    const confirmCitaModal    = document.getElementById('confirmCitaModal');
+    const confirmCitaAcceptButton = confirmCitaModal?.querySelector('[data-confirm-cita="accept"]');
+    const confirmCitaCancelButton = confirmCitaModal?.querySelector('[data-confirm-cita="cancel"]');
     const tablaCitas          = document.getElementById('tablaCitas');
     const buscarCitasInput    = document.getElementById('buscarCitas');
     const citasListadoMensaje = document.getElementById('citasListadoMensaje');
     const modalDetalleCita    = document.getElementById('modalDetalleCita');
     const modalEstadoCita     = document.getElementById('modalEstadoCita');
+    const modalEditarCita     = document.getElementById('modalEditarCita');
     const formEstadoCita      = document.getElementById('formEstadoCita');
+    const formEditarCita      = document.getElementById('formEditarCita');
     const selectEstadoCita    = document.getElementById('selectEstadoCita');
     const reprogramarCampos   = document.getElementById('reprogramarCampos');
     const reprogramarFechaInput = document.getElementById('citaReprogramadaFecha');
     const reprogramarHoraInput  = document.getElementById('citaReprogramadaHora');
+    const editarCitaMensaje   = document.getElementById('editarCitaMensaje');
+    const editarCampos        = {
+        motivo: document.getElementById('editarCitaMotivo'),
+        fecha: document.getElementById('editarCitaFecha'),
+        hora: document.getElementById('editarCitaHora'),
+    };
+    const editarMeta          = modalEditarCita ? {
+        numero_historia: modalEditarCita.querySelector('[data-editar-cita="numero_historia"]'),
+        mascota: modalEditarCita.querySelector('[data-editar-cita="mascota"]'),
+        propietario: modalEditarCita.querySelector('[data-editar-cita="propietario"]'),
+    } : {};
+    const badgeHistoriasTotal = document.querySelector('[data-historias-total]');
+    const badgeHistoriasFiltradas = document.querySelector('[data-historias-filtradas]');
+    const badgeCitasTotal     = document.querySelector('[data-citas-total]');
     const detalleCamposCita   = modalDetalleCita ? {
         id: modalDetalleCita.querySelector('[data-detalle="id"]'),
         numero_historia: modalDetalleCita.querySelector('[data-detalle="numero_historia"]'),
@@ -1462,43 +1535,110 @@
         }
     }
 
-    function crearFilaCita(cita = {}) {
-        const fila = document.createElement('tr');
-        fila.dataset.citaId = cita.id ?? '';
+    function crearTarjetaCita(cita = {}) {
+        const card = document.createElement('article');
+        card.className = 'cita-item';
+        card.dataset.citaId = cita.id ?? '';
 
-        const crearCeldaTexto = (valor, clase = '') => {
-            const celda = document.createElement('td');
-            if (clase) {
-                celda.classList.add(clase);
-            }
-            celda.textContent = valor ?? '—';
-            return celda;
-        };
+        const header = document.createElement('header');
+        header.className = 'cita-item__header';
 
-        fila.appendChild(crearCeldaTexto(cita.id ?? '—'));
-        fila.appendChild(crearCeldaTexto(cita.mascota ?? '—'));
-        fila.appendChild(crearCeldaTexto(cita.propietario ?? '—'));
-        fila.appendChild(crearCeldaTexto(cita.fecha_legible ?? cita.fecha ?? '—'));
-        fila.appendChild(crearCeldaTexto(cita.hora ?? '—'));
+        const identificador = document.createElement('div');
+        identificador.className = 'cita-item__identifier';
 
-        const motivoCell = crearCeldaTexto(cita.motivo ?? '—', 'citas-table__motivo');
-        if (cita.motivo) {
-            motivoCell.title = cita.motivo;
-        }
-        fila.appendChild(motivoCell);
+        const codigo = document.createElement('span');
+        codigo.className = 'cita-item__code';
+        codigo.textContent = `#${cita.id ?? '—'}`;
 
-        const estadoCell = document.createElement('td');
+        const historia = document.createElement('span');
+        historia.className = 'cita-item__history';
+        historia.textContent = cita.numero_historia || 'Sin historia';
+
+        identificador.append(codigo, historia);
+
+        const estadoWrapper = document.createElement('div');
+        estadoWrapper.className = 'cita-item__status';
         const estadoPill = document.createElement('span');
         estadoPill.className = `cita-status ${obtenerClaseEstadoCita(cita.estado)}`;
         estadoPill.textContent = cita.estado ?? 'Pendiente';
-        estadoCell.appendChild(estadoPill);
-        fila.appendChild(estadoCell);
+        estadoWrapper.appendChild(estadoPill);
 
-        const accionesCell = document.createElement('td');
-        accionesCell.classList.add('citas-table__acciones');
+        const quickActions = document.createElement('div');
+        quickActions.className = 'cita-item__quick-actions';
+
+        const btnEditarIcon = document.createElement('button');
+        btnEditarIcon.type = 'button';
+        btnEditarIcon.className = 'cita-item__icon-btn btnEditarCita';
+        btnEditarIcon.title = 'Editar cita';
+        btnEditarIcon.innerHTML = '<i class="fas fa-pen"></i>';
+
+        const btnEliminarIcon = document.createElement('button');
+        btnEliminarIcon.type = 'button';
+        btnEliminarIcon.className = 'cita-item__icon-btn cita-item__icon-btn--danger btnEliminarCita';
+        btnEliminarIcon.title = 'Eliminar cita';
+        btnEliminarIcon.innerHTML = '<i class="fas fa-trash"></i>';
+
+        quickActions.append(btnEditarIcon, btnEliminarIcon);
+        header.append(identificador, estadoWrapper, quickActions);
+
+        const body = document.createElement('div');
+        body.className = 'cita-item__body';
+
+        const grid = document.createElement('div');
+        grid.className = 'cita-item__grid';
+
+        const campos = [
+            { etiqueta: 'Mascota', valor: cita.mascota || '—', icono: 'fa-paw' },
+            { etiqueta: 'Propietario', valor: cita.propietario || '—', icono: 'fa-user' },
+            { etiqueta: 'Fecha', valor: cita.fecha_legible ?? cita.fecha ?? '—', icono: 'fa-calendar' },
+            { etiqueta: 'Hora', valor: cita.hora ?? '—', icono: 'fa-clock' },
+        ];
+
+        if (cita.propietario_dni) {
+            campos.push({ etiqueta: 'DNI', valor: cita.propietario_dni, icono: 'fa-id-card' });
+        }
+
+        if (cita.propietario_telefono) {
+            campos.push({ etiqueta: 'Teléfono', valor: cita.propietario_telefono, icono: 'fa-phone' });
+        }
+
+        campos.forEach(({ etiqueta, valor, icono }) => {
+            const field = document.createElement('div');
+            field.className = 'cita-item__field';
+
+            const label = document.createElement('span');
+            label.className = 'cita-item__label';
+            label.innerHTML = `<i class="fas ${icono}" aria-hidden="true"></i>${etiqueta}`;
+
+            const value = document.createElement('span');
+            value.className = 'cita-item__value';
+            value.textContent = valor ?? '—';
+
+            field.append(label, value);
+            grid.appendChild(field);
+        });
+
+        body.appendChild(grid);
+
+        const motivo = document.createElement('div');
+        motivo.className = 'cita-item__motivo';
+        const motivoLabel = document.createElement('span');
+        motivoLabel.className = 'cita-item__label';
+        motivoLabel.textContent = 'Motivo';
+        const motivoTexto = document.createElement('p');
+        const textoMotivo = cita.motivo && cita.motivo.trim() !== ''
+            ? cita.motivo
+            : 'Sin motivo registrado.';
+        motivoTexto.textContent = textoMotivo;
+        motivoTexto.title = textoMotivo;
+        motivo.append(motivoLabel, motivoTexto);
+        body.appendChild(motivo);
+
+        const footer = document.createElement('footer');
+        footer.className = 'cita-item__footer';
 
         const accionesWrapper = document.createElement('div');
-        accionesWrapper.className = 'citas-actions';
+        accionesWrapper.className = 'citas-actions cita-item__actions';
 
         const whatsappLink = document.createElement('a');
         whatsappLink.className = 'citas-accion__whatsapp';
@@ -1535,13 +1675,12 @@
             btnEstado.title = 'Las citas atendidas no pueden modificarse.';
         }
 
-        accionesWrapper.appendChild(whatsappLink);
-        accionesWrapper.appendChild(btnDetalles);
-        accionesWrapper.appendChild(btnEstado);
-        accionesCell.appendChild(accionesWrapper);
-        fila.appendChild(accionesCell);
+        accionesWrapper.append(whatsappLink, btnDetalles, btnEstado);
+        footer.appendChild(accionesWrapper);
 
-        return fila;
+        card.append(header, body, footer);
+
+        return card;
     }
 
     function renderCitas(lista = []) {
@@ -1551,26 +1690,33 @@
 
         citasCache = Array.isArray(lista) ? lista : [];
 
+        if (badgeCitasTotal) {
+            badgeCitasTotal.textContent = formatearConteo(
+                citasCache.length,
+                'cita en agenda',
+                'citas en agenda'
+            );
+        }
+
         tablaCitas.innerHTML = '';
 
         if (!Array.isArray(citasCache) || citasCache.length === 0) {
-            const filaVacia = document.createElement('tr');
-            filaVacia.classList.add('citas-table__empty');
-
-            const celda = document.createElement('td');
-            celda.colSpan = 8;
-            celda.textContent = citasBusquedaActual
+            const vacio = document.createElement('div');
+            vacio.className = 'citas-board__empty';
+            const icono = document.createElement('i');
+            icono.className = `fas ${citasBusquedaActual ? 'fa-search' : 'fa-calendar-times'}`;
+            const mensaje = document.createElement('p');
+            mensaje.textContent = citasBusquedaActual
                 ? 'No se encontraron citas para la búsqueda ingresada.'
                 : 'No hay citas registradas todavía.';
-
-            filaVacia.appendChild(celda);
-            tablaCitas.appendChild(filaVacia);
+            vacio.append(icono, mensaje);
+            tablaCitas.appendChild(vacio);
             return;
         }
 
         const fragment = document.createDocumentFragment();
         citasCache.forEach(cita => {
-            fragment.appendChild(crearFilaCita(cita));
+            fragment.appendChild(crearTarjetaCita(cita));
         });
 
         tablaCitas.appendChild(fragment);
@@ -1673,6 +1819,126 @@
         abrirModalGenerico(modalEstadoCita);
     }
 
+    function limpiarMensajeEdicionCita() {
+        if (!editarCitaMensaje) {
+            return;
+        }
+
+        window.clearTimeout(mostrarMensajeEdicionCita.timeoutId);
+        editarCitaMensaje.hidden = true;
+        editarCitaMensaje.classList.remove('is-visible', 'cita-alert--success', 'cita-alert--error', 'cita-alert--info');
+        editarCitaMensaje.textContent = '';
+    }
+
+    function mostrarMensajeEdicionCita(texto, tipo = 'success') {
+        if (!editarCitaMensaje) {
+            return;
+        }
+
+        editarCitaMensaje.textContent = texto;
+        editarCitaMensaje.classList.remove('cita-alert--success', 'cita-alert--error', 'cita-alert--info', 'is-visible');
+
+        const clase = tipo === 'error'
+            ? 'cita-alert--error'
+            : tipo === 'info'
+                ? 'cita-alert--info'
+                : 'cita-alert--success';
+
+        editarCitaMensaje.classList.add(clase, 'is-visible');
+        editarCitaMensaje.hidden = false;
+
+        window.clearTimeout(mostrarMensajeEdicionCita.timeoutId);
+        mostrarMensajeEdicionCita.timeoutId = window.setTimeout(() => {
+            limpiarMensajeEdicionCita();
+        }, 4000);
+    }
+
+    function prepararModalEdicionCita(cita) {
+        if (!cita || !modalEditarCita) {
+            return;
+        }
+
+        citaSeleccionadaParaEdicion = cita;
+
+        if (editarCampos.motivo) {
+            editarCampos.motivo.value = cita.motivo ?? '';
+        }
+        if (editarCampos.fecha) {
+            editarCampos.fecha.value = cita.fecha ?? '';
+        }
+        if (editarCampos.hora) {
+            editarCampos.hora.value = cita.hora ?? '';
+        }
+
+        if (editarMeta.numero_historia) {
+            editarMeta.numero_historia.textContent = cita.numero_historia || 'Sin historia';
+        }
+        if (editarMeta.mascota) {
+            editarMeta.mascota.textContent = cita.mascota || 'Mascota sin nombre';
+        }
+        if (editarMeta.propietario) {
+            editarMeta.propietario.textContent = cita.propietario || 'Propietario sin registrar';
+        }
+
+        limpiarMensajeEdicionCita();
+        abrirModalGenerico(modalEditarCita);
+    }
+
+    function abrirConfirmacionCita(cita) {
+        if (!cita) {
+            return;
+        }
+
+        if (!confirmCitaModal) {
+            if (window.confirm('¿Desea eliminar esta cita?')) {
+                eliminarCitaPorId(cita.id)
+                    .then(() => {
+                        if (citaDetalleSeleccionada && String(citaDetalleSeleccionada.id ?? '') === String(cita.id ?? '')) {
+                            cerrarModalGenerico(modalDetalleCita);
+                            citaDetalleSeleccionada = null;
+                        }
+
+                        Promise.resolve(cargarCitas(citasBusquedaActual)).catch(error => {
+                            console.error(error);
+                        });
+                        mostrarMensajeListadoCitas('Cita eliminada correctamente.', 'success');
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        mostrarMensajeListadoCitas(error.message || 'No se pudo eliminar la cita.', 'error');
+                    });
+            }
+            return;
+        }
+
+        citaSeleccionadaParaEliminar = cita;
+
+        const mensaje = confirmCitaModal.querySelector('#confirmCitaMessage');
+        if (mensaje) {
+            const nombreMascota = cita.mascota || 'la mascota';
+            const fecha = cita.fecha_legible || cita.fecha || '';
+            const descripcion = fecha ? `${nombreMascota} del ${fecha}` : nombreMascota;
+            mensaje.textContent = `¿Desea eliminar la cita de ${descripcion}?`;
+        }
+
+        confirmCitaModal.hidden = false;
+        confirmCitaModal.classList.add('is-visible');
+        window.setTimeout(() => {
+            confirmCitaAcceptButton?.focus();
+        }, 10);
+    }
+
+    function cerrarConfirmacionCita() {
+        if (!confirmCitaModal) {
+            citaSeleccionadaParaEliminar = null;
+            return;
+        }
+
+        confirmCitaModal.classList.remove('is-visible');
+        confirmCitaModal.hidden = true;
+        citaSeleccionadaParaEliminar = null;
+    }
+
     async function cargarCitas(query = '') {
         if (!citasListUrl) {
             return;
@@ -1740,6 +2006,58 @@
         }
 
         return data?.cita ?? null;
+    }
+
+    async function actualizarCita(id, cambios = {}) {
+        if (!id || !citasEstadoBaseUrl) {
+            throw new Error('No se pudo identificar la cita seleccionada.');
+        }
+
+        const response = await fetch(`${citasEstadoBaseUrl}/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+            },
+            body: JSON.stringify({ ...cambios }),
+        });
+
+        const data = await response.json().catch(() => null);
+
+        if (response.status === 422) {
+            const errores = Object.values(data?.errors ?? {}).flat();
+            const mensaje = errores.join(' ') || 'Verifica la información ingresada.';
+            throw new Error(mensaje);
+        }
+
+        if (!response.ok) {
+            throw new Error(data?.message || 'No se pudo actualizar la cita.');
+        }
+
+        return data?.cita ?? data;
+    }
+
+    async function eliminarCitaPorId(id) {
+        if (!id || !citasEstadoBaseUrl) {
+            throw new Error('No se pudo identificar la cita seleccionada.');
+        }
+
+        const response = await fetch(`${citasEstadoBaseUrl}/${id}`, {
+            method: 'DELETE',
+            headers: {
+                Accept: 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+            },
+        });
+
+        const data = await response.json().catch(() => null);
+
+        if (!response.ok) {
+            throw new Error(data?.message || 'No se pudo eliminar la cita.');
+        }
+
+        return data;
     }
 
     function formatearHistoriaParaOpcion(historia) {
@@ -1979,45 +2297,59 @@
         card.className = 'historia-card';
         card.dataset.historiaId = historia.id ?? '';
 
-        const header = document.createElement('div');
+        const header = document.createElement('header');
         header.className = 'historia-card__header';
+
+        const identificador = document.createElement('div');
+        identificador.className = 'historia-card__identifier';
 
         const badge = document.createElement('span');
         badge.className = 'historia-card__badge';
         badge.textContent = historia.numero_historia || 'Sin código';
 
         const fecha = document.createElement('span');
-        fecha.className = 'historia-card__date';
-        fecha.innerHTML = `<i class="fas fa-calendar-day"></i> ${historia.fecha_apertura || 'Sin fecha'}`;
+        fecha.className = 'historia-card__date-chip';
+        const fechaTexto = historia.fecha_apertura ? `Apertura ${historia.fecha_apertura}` : 'Apertura —';
+        fecha.innerHTML = `<i class="fas fa-calendar-day" aria-hidden="true"></i>${fechaTexto}`;
 
-        header.append(badge, fecha);
+        identificador.append(badge, fecha);
+
+        const resumen = document.createElement('div');
+        resumen.className = 'historia-card__highlight';
+        resumen.innerHTML = `<i class="fas fa-paw" aria-hidden="true"></i><span>${historia.mascota || 'Sin nombre'}</span>`;
+
+        header.append(identificador, resumen);
 
         const body = document.createElement('div');
         body.className = 'historia-card__body';
 
+        const info = document.createElement('div');
+        info.className = 'historia-card__info';
+
         const detalles = [
-            { icono: 'fa-paw', etiqueta: 'Mascota', valor: historia.mascota || 'Sin nombre' },
             { icono: 'fa-user', etiqueta: 'Propietario', valor: historia.propietario || 'Sin registrar' },
             { icono: 'fa-id-card', etiqueta: 'DNI', valor: historia.propietario_dni || '—' },
         ];
 
         detalles.forEach(({ icono, etiqueta, valor }) => {
-            const filaDetalle = document.createElement('div');
-            filaDetalle.className = 'historia-card__row';
+            const item = document.createElement('div');
+            item.className = 'historia-card__info-item';
 
             const label = document.createElement('span');
             label.className = 'historia-card__label';
-            label.innerHTML = `<i class="fas ${icono}"></i> ${etiqueta}`;
+            label.innerHTML = `<i class="fas ${icono}" aria-hidden="true"></i>${etiqueta}`;
 
             const value = document.createElement('span');
             value.className = 'historia-card__value';
             value.textContent = valor;
 
-            filaDetalle.append(label, value);
-            body.appendChild(filaDetalle);
+            item.append(label, value);
+            info.appendChild(item);
         });
 
-        const acciones = document.createElement('div');
+        body.appendChild(info);
+
+        const acciones = document.createElement('footer');
         acciones.className = 'historia-card__actions';
 
         const btnVerConsultas = document.createElement('button');
@@ -2073,6 +2405,14 @@
         const historiasBase = Array.isArray(historiasRegistradas) ? historiasRegistradas : [];
         actualizarProximoNumero(historiasBase);
 
+        if (badgeHistoriasTotal) {
+            badgeHistoriasTotal.textContent = formatearConteo(
+                historiasBase.length,
+                'historia registrada',
+                'historias registradas'
+            );
+        }
+
         if (!tablaHistorias) {
             return;
         }
@@ -2091,6 +2431,13 @@
                 );
             })
             : historiasBase;
+
+        if (badgeHistoriasFiltradas) {
+            const texto = termino
+                ? formatearConteo(listaFiltrada.length, 'coincidencia', 'coincidencias')
+                : `Mostrando ${formatearConteo(listaFiltrada.length, 'historia', 'historias')}`;
+            badgeHistoriasFiltradas.textContent = texto;
+        }
 
         tablaHistorias.innerHTML = '';
 
@@ -2200,13 +2547,15 @@
 
             const botonDetalles = event.target.closest('.btnVerCita');
             const botonEstado = event.target.closest('.btnEstadoCita');
+            const botonEditar = event.target.closest('.btnEditarCita');
+            const botonEliminar = event.target.closest('.btnEliminarCita');
 
-            if (!botonDetalles && !botonEstado) {
+            if (!botonDetalles && !botonEstado && !botonEditar && !botonEliminar) {
                 return;
             }
 
-            const fila = event.target.closest('tr');
-            const id = fila?.dataset.citaId;
+            const tarjeta = event.target.closest('[data-cita-id]');
+            const id = tarjeta?.dataset.citaId;
             if (!id) {
                 return;
             }
@@ -2215,6 +2564,16 @@
 
             if (botonDetalles && cita) {
                 mostrarDetalleCita(cita);
+                return;
+            }
+
+            if (botonEditar && cita) {
+                prepararModalEdicionCita(cita);
+                return;
+            }
+
+            if (botonEliminar && cita) {
+                abrirConfirmacionCita(cita);
                 return;
             }
 
@@ -2243,6 +2602,14 @@
         });
     });
 
+    document.querySelectorAll('[data-close="editarCita"]').forEach(elemento => {
+        elemento.addEventListener('click', () => {
+            cerrarModalGenerico(modalEditarCita);
+            limpiarMensajeEdicionCita();
+            citaSeleccionadaParaEdicion = null;
+        });
+    });
+
     if (modalDetalleCita) {
         modalDetalleCita.addEventListener('click', event => {
             if (event.target === modalDetalleCita) {
@@ -2258,6 +2625,16 @@
                 cerrarModalGenerico(modalEstadoCita);
                 resetCamposReprogramar();
                 citaSeleccionadaParaEstado = null;
+            }
+        });
+    }
+
+    if (modalEditarCita) {
+        modalEditarCita.addEventListener('click', event => {
+            if (event.target === modalEditarCita) {
+                cerrarModalGenerico(modalEditarCita);
+                limpiarMensajeEdicionCita();
+                citaSeleccionadaParaEdicion = null;
             }
         });
     }
@@ -2318,6 +2695,66 @@
             } catch (error) {
                 console.error(error);
                 mostrarMensajeListadoCitas(error.message || 'No se pudo actualizar el estado de la cita.', 'error');
+            }
+        });
+    }
+
+    if (formEditarCita) {
+        formEditarCita.addEventListener('submit', async event => {
+            event.preventDefault();
+
+            if (!citaSeleccionadaParaEdicion) {
+                mostrarMensajeEdicionCita('Selecciona una cita para editarla.', 'error');
+                return;
+            }
+
+            const motivo = editarCampos.motivo?.value.trim() ?? '';
+            const fecha = editarCampos.fecha?.value || '';
+            const hora = editarCampos.hora?.value || '';
+
+            if (!motivo) {
+                mostrarMensajeEdicionCita('El motivo de la cita es obligatorio.', 'error');
+                editarCampos.motivo?.focus();
+                return;
+            }
+
+            if (!fecha) {
+                mostrarMensajeEdicionCita('Selecciona la fecha de la cita.', 'error');
+                editarCampos.fecha?.focus();
+                return;
+            }
+
+            if (!hora) {
+                mostrarMensajeEdicionCita('Selecciona la hora de la cita.', 'error');
+                editarCampos.hora?.focus();
+                return;
+            }
+
+            const payload = {
+                motivo,
+                fecha_cita: fecha,
+                hora_cita: hora,
+                id_historia: citaSeleccionadaParaEdicion.historia_id,
+            };
+
+            try {
+                const citaId = citaSeleccionadaParaEdicion.id;
+                const citaActualizada = await actualizarCita(citaId, payload);
+                cerrarModalGenerico(modalEditarCita);
+                citaSeleccionadaParaEdicion = null;
+                limpiarMensajeEdicionCita();
+
+                await cargarCitas(citasBusquedaActual);
+
+                const citaDesdeLista = obtenerCitaPorId(citaActualizada?.id ?? citaId);
+                if (citaDesdeLista) {
+                    actualizarDetalleCitaSiCorresponde(citaDesdeLista);
+                }
+
+                mostrarMensajeListadoCitas('Cita actualizada correctamente.', 'success');
+            } catch (error) {
+                console.error(error);
+                mostrarMensajeEdicionCita(error.message || 'No se pudo actualizar la cita.', 'error');
             }
         });
     }
@@ -2441,10 +2878,51 @@
         });
     }
 
+    if (confirmCitaCancelButton) {
+        confirmCitaCancelButton.addEventListener('click', () => {
+            cerrarConfirmacionCita();
+        });
+    }
+
+    if (confirmCitaAcceptButton) {
+        confirmCitaAcceptButton.addEventListener('click', async () => {
+            if (!citaSeleccionadaParaEliminar) {
+                cerrarConfirmacionCita();
+                return;
+            }
+
+            const id = citaSeleccionadaParaEliminar.id;
+            cerrarConfirmacionCita();
+
+            try {
+                await eliminarCitaPorId(id);
+
+                if (citaDetalleSeleccionada && String(citaDetalleSeleccionada.id ?? '') === String(id)) {
+                    cerrarModalGenerico(modalDetalleCita);
+                    citaDetalleSeleccionada = null;
+                }
+
+                await cargarCitas(citasBusquedaActual);
+                mostrarMensajeListadoCitas('Cita eliminada correctamente.', 'success');
+            } catch (error) {
+                console.error(error);
+                mostrarMensajeListadoCitas(error.message || 'No se pudo eliminar la cita.', 'error');
+            }
+        });
+    }
+
     if (confirmModal) {
         confirmModal.addEventListener('click', event => {
             if (event.target === confirmModal) {
                 cerrarConfirmacion();
+            }
+        });
+    }
+
+    if (confirmCitaModal) {
+        confirmCitaModal.addEventListener('click', event => {
+            if (event.target === confirmCitaModal) {
+                cerrarConfirmacionCita();
             }
         });
     }
@@ -2458,6 +2936,10 @@
             cerrarConfirmacion();
         }
 
+        if (confirmCitaModal?.classList.contains('is-visible')) {
+            cerrarConfirmacionCita();
+        }
+
         if (modalEstadoCita && modalEstadoCita.style.display === 'block') {
             cerrarModalGenerico(modalEstadoCita);
             resetCamposReprogramar();
@@ -2467,6 +2949,12 @@
         if (modalDetalleCita && modalDetalleCita.style.display === 'block') {
             cerrarModalGenerico(modalDetalleCita);
             citaDetalleSeleccionada = null;
+        }
+
+        if (modalEditarCita && modalEditarCita.style.display === 'block') {
+            cerrarModalGenerico(modalEditarCita);
+            limpiarMensajeEdicionCita();
+            citaSeleccionadaParaEdicion = null;
         }
 
         if (modalConsultas && modalConsultas.style.display === 'block') {

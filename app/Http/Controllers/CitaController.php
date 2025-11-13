@@ -80,11 +80,14 @@ class CitaController extends Controller
             'estado' => 'Pendiente',
         ]);
 
+        $citaRefrescada = $cita->fresh(['historiaClinica.mascota.propietario']);
+        $citaTransformada = $this->transformCita($citaRefrescada);
+
         if ($request->expectsJson()) {
             return response()->json([
                 'success' => true,
                 'message' => 'Cita creada correctamente.',
-                'cita' => $cita,
+                'cita' => $citaTransformada,
             ], 201);
         }
 
@@ -106,25 +109,43 @@ class CitaController extends Controller
     // Actualizar cita
     public function update(Request $request, Cita $cita)
     {
-        $request->validate([
-            'fecha_cita' => 'required|date',
-            'hora_cita' => 'required',
+        $validated = $request->validate([
+            'fecha_cita' => ['required', 'date'],
+            'hora_cita' => ['required', 'date_format:H:i'],
+            'motivo' => ['required', 'string', 'max:255'],
             'id_historia' => ['required', 'exists:historia_clinicas,id_historia'],
         ]);
 
         $cita->update([
-            'fecha_cita' => $request->fecha_cita,
-            'hora_cita' => $request->hora_cita,
-            'id_historia' => $request->id_historia,
+            'fecha_cita' => $validated['fecha_cita'],
+            'hora_cita' => $this->normalizarHora($validated['hora_cita']) ?? $cita->hora_cita,
+            'motivo' => $validated['motivo'],
+            'id_historia' => $validated['id_historia'],
         ]);
+
+        $citaRefrescada = $cita->fresh(['historiaClinica.mascota.propietario']);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Cita actualizada correctamente.',
+                'cita' => $this->transformCita($citaRefrescada),
+            ]);
+        }
 
         return redirect()->route('citas.index')->with('success', 'Cita actualizada correctamente.');
     }
 
     // Eliminar cita
-    public function destroy(Cita $cita)
+    public function destroy(Request $request, Cita $cita)
     {
         $cita->delete();
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Cita eliminada correctamente.',
+            ]);
+        }
+
         return redirect()->route('citas.index')->with('success', 'Cita eliminada correctamente.');
     }
 
