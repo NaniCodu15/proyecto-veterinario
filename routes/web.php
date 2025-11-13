@@ -10,6 +10,7 @@ use App\Http\Controllers\PropietarioController;
 use App\Http\Controllers\TratamientoController;
 use App\Http\Controllers\VacunaController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\BackupController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -34,6 +35,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('propietarios', PropietarioController::class);
     Route::resource('tratamientos', TratamientoController::class);
     Route::resource('vacunas', VacunaController::class);
+
+    Route::post('backups/generate', [BackupController::class, 'generate'])->name('backups.generate');
+    Route::get('backups', [BackupController::class, 'index'])->name('backups.index');
 
     // ✅ Rutas Historia Clínica con AJAX
     Route::get('historia_clinicas/list', [HistoriaClinicaController::class,'list'])->name('historia_clinicas.list');
