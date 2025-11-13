@@ -231,6 +231,57 @@
                     </ul>
                 </div>
             </div>
+
+            <div class="backup-panel" id="panelBackups">
+                <div class="backup-panel__content">
+                    <span class="backup-panel__badge"><i class="fas fa-shield-heart"></i> Seguridad de datos</span>
+                    <h2 class="backup-panel__title">Copia de seguridad del sistema</h2>
+                    <p class="backup-panel__text">
+                        Genera un respaldo completo de la información clínica y consulta el historial de copias de seguridad
+                        realizadas.
+                    </p>
+                </div>
+
+                <div class="backup-panel__actions">
+                    <button type="button" class="btn btn-primary backup-panel__button" id="btnGenerarBackup">
+                        <i class="fas fa-database"></i>
+                        Generar copia de seguridad
+                    </button>
+                    <button type="button" class="btn btn-outline backup-panel__button" id="btnVerBackups">
+                        <i class="fas fa-list"></i>
+                        Ver registros de copias de seguridad
+                    </button>
+                </div>
+
+                <div class="alert backup-panel__alert" role="status" data-backup-mensaje hidden></div>
+
+                <div id="backupRegistros" class="backup-log" hidden>
+                    <div class="backup-log__loader" data-backup-loader hidden>
+                        <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        <span>Cargando registros de copias de seguridad...</span>
+                    </div>
+
+                    <div class="backup-log__empty" data-backup-empty hidden>
+                        <i class="fas fa-box-open" aria-hidden="true"></i>
+                        <p>No hay copias de seguridad registradas.</p>
+                    </div>
+
+                    <div class="tabla-wrapper backup-log__wrapper" data-backup-wrapper hidden>
+                        <table class="backup-log__table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Fecha de respaldo</th>
+                                    <th scope="col">Nombre del archivo</th>
+                                    <th scope="col">Ruta del archivo</th>
+                                    <th scope="col">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody data-backup-body></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="section-historias-registradas" class="section">
@@ -673,6 +724,8 @@
     const citasStoreUrl     = "{{ route('citas.store') }}";
     const citasListUrl      = "{{ route('citas.list') }}";
     const citasEstadoBaseUrl = "{{ url('citas') }}";
+    const backupGenerateUrl = "{{ route('backups.generate') }}";
+    const backupListUrl     = "{{ route('backups.index') }}";
     const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
     const csrfToken        = csrfTokenElement ? csrfTokenElement.getAttribute('content') : '';
 
@@ -859,6 +912,14 @@
     const reprogramarCampos   = document.getElementById('reprogramarCampos');
     const reprogramarFechaInput = document.getElementById('citaReprogramadaFecha');
     const reprogramarHoraInput  = document.getElementById('citaReprogramadaHora');
+    const btnGenerarBackup    = document.getElementById('btnGenerarBackup');
+    const btnVerBackups       = document.getElementById('btnVerBackups');
+    const backupMensaje       = document.querySelector('[data-backup-mensaje]');
+    const backupContenedor    = document.getElementById('backupRegistros');
+    const backupLoader        = backupContenedor?.querySelector('[data-backup-loader]') ?? null;
+    const backupEmpty         = backupContenedor?.querySelector('[data-backup-empty]') ?? null;
+    const backupWrapper       = backupContenedor?.querySelector('[data-backup-wrapper]') ?? null;
+    const backupTableBody     = backupContenedor?.querySelector('[data-backup-body]') ?? null;
     const detalleCamposCita   = modalDetalleCita ? {
         id: modalDetalleCita.querySelector('[data-detalle="id"]'),
         numero_historia: modalDetalleCita.querySelector('[data-detalle="numero_historia"]'),
@@ -976,6 +1037,7 @@
     let terminoBusquedaHistorias = '';
     let historiaDetalleActual = null;
     let consultasDetalleActual = [];
+    let respaldosCargados = false;
 
     function ocultarEspecieOtro() {
         if (!especieOtroGroup || !especieOtroInput) {
@@ -1185,6 +1247,241 @@
             consultaMensaje.classList.remove('is-visible', 'consulta-alert--success', 'consulta-alert--error');
             consultaMensaje.hidden = true;
         }, 4000);
+    }
+
+    function mostrarMensajeBackup(texto, tipo = 'success') {
+        if (!backupMensaje) {
+            return;
+        }
+
+        if (!texto) {
+            backupMensaje.hidden = true;
+            return;
+        }
+
+        backupMensaje.textContent = texto;
+        backupMensaje.classList.remove('alert--success', 'alert--error');
+        const clase = tipo === 'success' ? 'alert--success' : 'alert--error';
+        backupMensaje.classList.add(clase);
+        backupMensaje.hidden = false;
+
+        window.clearTimeout(mostrarMensajeBackup.timeoutId);
+        mostrarMensajeBackup.timeoutId = window.setTimeout(() => {
+            if (!backupMensaje) {
+                return;
+            }
+
+            backupMensaje.hidden = true;
+        }, 4000);
+    }
+
+    function setButtonLoading(button, isLoading, loadingText = 'Procesando...') {
+        if (!button) {
+            return;
+        }
+
+        if (isLoading) {
+            if (!button.dataset.originalHtml) {
+                button.dataset.originalHtml = button.innerHTML;
+            }
+
+            button.innerHTML = `<i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i> ${loadingText}`;
+            button.disabled = true;
+            button.setAttribute('aria-busy', 'true');
+            button.classList.add('is-loading');
+        } else {
+            const original = button.dataset.originalHtml;
+
+            if (original) {
+                button.innerHTML = original;
+                delete button.dataset.originalHtml;
+            }
+
+            button.disabled = false;
+            button.removeAttribute('aria-busy');
+            button.classList.remove('is-loading');
+        }
+    }
+
+    function formatearFechaRespaldo(valor) {
+        if (!valor) {
+            return '--';
+        }
+
+        const fecha = new Date(valor);
+
+        if (Number.isNaN(fecha.getTime())) {
+            return valor;
+        }
+
+        return fecha.toLocaleString('es-PE', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+        });
+    }
+
+    function obtenerClaseEstadoRespaldo(estado) {
+        const valor = String(estado ?? '').toLowerCase();
+
+        if (valor === 'correcto') {
+            return 'backup-log__status backup-log__status--success';
+        }
+
+        if (valor === 'fallido') {
+            return 'backup-log__status backup-log__status--error';
+        }
+
+        return 'backup-log__status';
+    }
+
+    function renderBackups(registros = []) {
+        if (!backupWrapper || !backupTableBody || !backupEmpty) {
+            return;
+        }
+
+        backupTableBody.innerHTML = '';
+
+        if (!Array.isArray(registros) || registros.length === 0) {
+            backupWrapper.hidden = true;
+            backupEmpty.hidden = false;
+            return;
+        }
+
+        const fragment = document.createDocumentFragment();
+
+        registros.forEach(registro => {
+            const fila = document.createElement('tr');
+
+            const columnas = [
+                registro?.id ?? '--',
+                formatearFechaRespaldo(registro?.fecha_respaldo),
+                registro?.nombre_archivo ?? '--',
+                registro?.ruta_archivo ?? '--',
+            ];
+
+            columnas.forEach((valor, indice) => {
+                const celda = document.createElement('td');
+                celda.textContent = valor;
+
+                if (indice === 3) {
+                    celda.classList.add('backup-log__path');
+                }
+
+                fila.appendChild(celda);
+            });
+
+            const estadoCelda = document.createElement('td');
+            estadoCelda.textContent = registro?.estado ?? '--';
+            estadoCelda.className = obtenerClaseEstadoRespaldo(registro?.estado);
+            fila.appendChild(estadoCelda);
+
+            fragment.appendChild(fila);
+        });
+
+        backupTableBody.appendChild(fragment);
+        backupEmpty.hidden = true;
+        backupWrapper.hidden = false;
+    }
+
+    async function cargarBackups(force = false) {
+        if (!backupListUrl || !backupContenedor) {
+            return;
+        }
+
+        if (respaldosCargados && !force) {
+            backupContenedor.hidden = false;
+            return;
+        }
+
+        backupContenedor.hidden = false;
+
+        if (backupWrapper) {
+            backupWrapper.hidden = true;
+        }
+
+        if (backupEmpty) {
+            backupEmpty.hidden = true;
+        }
+
+        if (backupLoader) {
+            backupLoader.hidden = false;
+        }
+
+        try {
+            const response = await fetch(backupListUrl, {
+                headers: { Accept: 'application/json' },
+            });
+
+            if (!response.ok) {
+                throw new Error('No se pudieron obtener los registros de respaldo.');
+            }
+
+            const data = await response.json();
+            const registros = Array.isArray(data?.data) ? data.data : [];
+
+            renderBackups(registros);
+            respaldosCargados = true;
+        } catch (error) {
+            console.error(error);
+            respaldosCargados = false;
+            mostrarMensajeBackup(error.message || 'No se pudieron cargar los registros de respaldo.', 'error');
+
+            if (backupWrapper) {
+                backupWrapper.hidden = true;
+            }
+
+            if (backupEmpty) {
+                backupEmpty.hidden = true;
+            }
+        } finally {
+            if (backupLoader) {
+                backupLoader.hidden = true;
+            }
+        }
+    }
+
+    async function generarBackup() {
+        if (!backupGenerateUrl) {
+            return;
+        }
+
+        mostrarMensajeBackup('');
+        setButtonLoading(btnGenerarBackup, true, 'Generando...');
+
+        try {
+            const response = await fetch(backupGenerateUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                },
+                body: JSON.stringify({}),
+            });
+
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(data?.message || 'No se pudo generar la copia de seguridad.');
+            }
+
+            mostrarMensajeBackup(data?.message || 'Copia de seguridad generada correctamente.', 'success');
+            respaldosCargados = false;
+
+            if (backupContenedor) {
+                backupContenedor.hidden = false;
+                await cargarBackups(true);
+            }
+        } catch (error) {
+            console.error(error);
+            mostrarMensajeBackup(error.message || 'No se pudo generar la copia de seguridad.', 'error');
+            respaldosCargados = false;
+        } finally {
+            setButtonLoading(btnGenerarBackup, false);
+        }
     }
 
     function limpiarFormularioConsulta() {
@@ -2149,6 +2446,25 @@
     if (btnNueva) {
         btnNueva.addEventListener('click', () => {
             abrirModalParaCrear();
+        });
+    }
+
+    if (btnGenerarBackup) {
+        btnGenerarBackup.addEventListener('click', () => {
+            generarBackup();
+        });
+    }
+
+    if (btnVerBackups) {
+        btnVerBackups.addEventListener('click', async () => {
+            mostrarMensajeBackup('');
+            setButtonLoading(btnVerBackups, true, 'Cargando...');
+
+            try {
+                await cargarBackups(true);
+            } finally {
+                setButtonLoading(btnVerBackups, false);
+            }
         });
     }
 
