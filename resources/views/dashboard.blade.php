@@ -275,6 +275,7 @@
                                     <th scope="col">Nombre del archivo</th>
                                     <th scope="col">Ruta del archivo</th>
                                     <th scope="col">Estado</th>
+                                    <th scope="col" class="backup-log__actions-header">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody data-backup-body></tbody>
@@ -724,8 +725,9 @@
     const citasStoreUrl     = "{{ route('citas.store') }}";
     const citasListUrl      = "{{ route('citas.list') }}";
     const citasEstadoBaseUrl = "{{ url('citas') }}";
-    const backupGenerateUrl = "{{ route('backups.generate') }}";
-    const backupListUrl     = "{{ route('backups.index') }}";
+    const backupGenerateUrl    = "{{ route('backups.generate') }}";
+    const backupListUrl        = "{{ route('backups.index') }}";
+    const backupDownloadBaseUrl = "{{ url('backup/download') }}";
     const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
     const csrfToken        = csrfTokenElement ? csrfTokenElement.getAttribute('content') : '';
 
@@ -1337,6 +1339,27 @@
         return 'backup-log__status';
     }
 
+    function crearBotonAccion(tipo, texto, icono, idRespaldo) {
+        const boton = document.createElement('button');
+        boton.type = 'button';
+        boton.className = 'backup-log__action';
+        boton.dataset.backupAction = tipo;
+
+        if (idRespaldo !== undefined && idRespaldo !== null) {
+            boton.dataset.backupId = String(idRespaldo);
+        } else {
+            boton.disabled = true;
+        }
+
+        if (tipo === 'restore') {
+            boton.classList.add('backup-log__action--restore');
+        }
+
+        boton.innerHTML = `<i class="${icono}" aria-hidden="true"></i><span>${texto}</span>`;
+
+        return boton;
+    }
+
     function renderBackups(registros = []) {
         if (!backupWrapper || !backupTableBody || !backupEmpty) {
             return;
@@ -1354,29 +1377,40 @@
 
         registros.forEach(registro => {
             const fila = document.createElement('tr');
+            const idCelda = document.createElement('td');
+            idCelda.textContent = registro?.id_respaldo ?? registro?.id ?? '--';
+            fila.appendChild(idCelda);
 
-            const columnas = [
-                registro?.id ?? '--',
-                formatearFechaRespaldo(registro?.fecha_respaldo),
-                registro?.nombre_archivo ?? '--',
-                registro?.ruta_archivo ?? '--',
-            ];
+            const fechaCelda = document.createElement('td');
+            fechaCelda.textContent = formatearFechaRespaldo(registro?.fecha_respaldo);
+            fila.appendChild(fechaCelda);
 
-            columnas.forEach((valor, indice) => {
-                const celda = document.createElement('td');
-                celda.textContent = valor;
+            const nombreCelda = document.createElement('td');
+            nombreCelda.textContent = registro?.nombre_archivo ?? '--';
+            fila.appendChild(nombreCelda);
 
-                if (indice === 3) {
-                    celda.classList.add('backup-log__path');
-                }
-
-                fila.appendChild(celda);
-            });
+            const rutaCelda = document.createElement('td');
+            const rutaTexto = registro?.ruta_archivo ?? '--';
+            rutaCelda.textContent = rutaTexto;
+            rutaCelda.title = rutaTexto;
+            rutaCelda.classList.add('backup-log__path');
+            fila.appendChild(rutaCelda);
 
             const estadoCelda = document.createElement('td');
             estadoCelda.textContent = registro?.estado ?? '--';
             estadoCelda.className = obtenerClaseEstadoRespaldo(registro?.estado);
             fila.appendChild(estadoCelda);
+
+            const accionesCelda = document.createElement('td');
+            accionesCelda.className = 'backup-log__actions-cell';
+
+            const descargarBtn = crearBotonAccion('download', 'Descargar', 'fas fa-download', registro?.id);
+            const restaurarBtn = crearBotonAccion('restore', 'Restaurar', 'fas fa-rotate-left', registro?.id);
+
+            accionesCelda.appendChild(descargarBtn);
+            accionesCelda.appendChild(restaurarBtn);
+
+            fila.appendChild(accionesCelda);
 
             fragment.appendChild(fila);
         });
@@ -2464,6 +2498,35 @@
                 await cargarBackups(true);
             } finally {
                 setButtonLoading(btnVerBackups, false);
+            }
+        });
+    }
+
+    if (backupTableBody) {
+        backupTableBody.addEventListener('click', event => {
+            const target = event.target && typeof event.target.closest === 'function'
+                ? event.target.closest('[data-backup-action]')
+                : null;
+
+            if (!target) {
+                return;
+            }
+
+            const accion = target.dataset.backupAction;
+            const respaldoId = target.dataset.backupId;
+
+            if (accion === 'download') {
+                if (!backupDownloadBaseUrl || !respaldoId) {
+                    mostrarMensajeBackup('No se pudo descargar el respaldo seleccionado.', 'error');
+                    return;
+                }
+
+                window.location.href = `${backupDownloadBaseUrl}/${encodeURIComponent(respaldoId)}`;
+                return;
+            }
+
+            if (accion === 'restore') {
+                mostrarMensajeBackup('La restauración de respaldos estará disponible próximamente.', 'error');
             }
         });
     }
