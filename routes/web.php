@@ -38,6 +38,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('backups/generate', [BackupController::class, 'generate'])->name('backups.generate');
     Route::get('backups', [BackupController::class, 'index'])->name('backups.index');
+    Route::get('backups/{respaldo}/download', [BackupController::class, 'download'])->name('backups.download');
+    Route::post('backup/restore/{respaldo}', [BackupController::class, 'restore'])->name('backups.restore');
 
     // ✅ Rutas Historia Clínica con AJAX
     Route::get('historia_clinicas/list', [HistoriaClinicaController::class,'list'])->name('historia_clinicas.list');

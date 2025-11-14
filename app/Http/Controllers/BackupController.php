@@ -3,85 +3,50 @@
 namespace App\Http\Controllers;
 
 use App\Models\RespaldoDato;
+use App\Services\DatabaseBackupService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use RuntimeException;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Throwable;
 
 class BackupController extends Controller
 {
+    public function __construct(private readonly DatabaseBackupService $backupService)
+    {
+    }
+
     /**
      * Genera una nueva copia de seguridad completa de la base de datos.
      */
     public function generate(): JsonResponse
     {
-        $connectionName = config('database.default');
-        $connection = config("database.connections.{$connectionName}");
-        $driver = is_array($connection) ? ($connection['driver'] ?? null) : null;
-
-        if (!is_string($driver)) {
-            return response()->json([
-                'message' => 'No se encontró la configuración de la conexión a la base de datos.',
-            ], 422);
-        }
-
-        $driver = strtolower($driver);
-
-        if (!in_array($driver, ['mysql', 'mariadb', 'sqlite'], true)) {
-            return response()->json([
-                'message' => 'La copia de seguridad solo está disponible para conexiones MySQL, MariaDB o SQLite.',
-            ], 422);
-        }
-
-        $timestamp = now();
-        $extension = $driver === 'sqlite' ? 'sqlite' : 'sql';
-        $fileName = 'backup_' . $timestamp->format('Y_m_d_His') . '.' . $extension;
-        $storageDirectory = storage_path('backups');
-        $fullPath = $storageDirectory . DIRECTORY_SEPARATOR . $fileName;
-        $relativePath = 'storage/backups/' . $fileName;
-
-        if (!File::isDirectory($storageDirectory)) {
-            File::makeDirectory($storageDirectory, 0755, true);
-        }
-
-        $estado = 'Correcto';
-        $mensaje = 'La copia de seguridad se generó correctamente.';
-
         try {
-            if ($driver === 'sqlite') {
-                $this->generateSqliteBackup($connection, $fullPath);
-            } else {
-                $dump = $this->generateMysqlDump($connectionName);
-                File::put($fullPath, $dump);
-            }
-        } catch (\Throwable $exception) {
-            $estado = 'Fallido';
-            $mensaje = 'No se pudo generar la copia de seguridad.';
-            Log::error('Error al generar la copia de seguridad', [
+            $resultado = $this->backupService->createBackup();
+        } catch (RuntimeException $exception) {
+            return response()->json([
+                'message' => $exception->getMessage(),
+            ], 422);
+        } catch (Throwable $exception) {
+            Log::error('Error inesperado al generar la copia de seguridad', [
                 'exception' => $exception->getMessage(),
             ]);
 
-            if (File::exists($fullPath)) {
-                File::delete($fullPath);
-            }
+            return response()->json([
+                'message' => 'Ocurrió un error inesperado al generar la copia de seguridad.',
+            ], 500);
         }
 
-        $respaldo = RespaldoDato::create([
-            'fecha_respaldo' => $timestamp,
-            'nombre_archivo' => $fileName,
-            'ruta_archivo' => $relativePath,
-            'estado' => $estado,
-        ]);
+        $respaldo = $resultado['respaldo'];
+        $estado = $resultado['estado'];
+        $mensaje = $resultado['mensaje'];
 
         return response()->json([
             'message' => $mensaje,
-            'respaldo' => [
-                'id' => $respaldo->id,
-                'fecha_respaldo' => optional($respaldo->fecha_respaldo)->toIso8601String(),
-                'nombre_archivo' => $respaldo->nombre_archivo,
-                'ruta_archivo' => $respaldo->ruta_archivo,
-                'estado' => $respaldo->estado,
-            ],
+            'respaldo' => $this->formatRespaldo($respaldo),
         ], $estado === 'Correcto' ? 201 : 500);
     }
 
@@ -93,138 +58,96 @@ class BackupController extends Controller
         $respaldos = RespaldoDato::query()
             ->orderByDesc('fecha_respaldo')
             ->get()
-            ->map(fn (RespaldoDato $respaldo) => [
-                'id' => $respaldo->id,
-                'fecha_respaldo' => optional($respaldo->fecha_respaldo)->toIso8601String(),
-                'nombre_archivo' => $respaldo->nombre_archivo,
-                'ruta_archivo' => $respaldo->ruta_archivo,
-                'estado' => $respaldo->estado,
-            ]);
+            ->map(fn (RespaldoDato $respaldo) => $this->formatRespaldo($respaldo));
 
         return response()->json([
             'data' => $respaldos,
         ]);
     }
 
-    /**
-     * Genera una copia de seguridad para conexiones MySQL/MariaDB.
-     */
-    private function generateMysqlDump(string $connectionName): string
+    public function download(RespaldoDato $respaldo): BinaryFileResponse|StreamedResponse
     {
-        $connection = DB::connection($connectionName);
+        $localPath = $this->backupService->resolveLocalPath($respaldo);
 
-        $lines = [
-            '-- Respaldo generado el ' . now()->toDateTimeString(),
-            'SET FOREIGN_KEY_CHECKS=0;',
-            'SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";',
-            'START TRANSACTION;',
-        ];
+        if ($localPath && File::exists($localPath)) {
+            $mime = File::mimeType($localPath) ?: 'application/octet-stream';
 
-        $tables = collect($connection->select('SHOW FULL TABLES'))
-            ->filter(function ($row) {
-                $values = array_values((array) $row);
+            return response()->download($localPath, $respaldo->nombre_archivo, [
+                'Content-Type' => $mime,
+            ]);
+        }
 
-                return ($values[1] ?? 'BASE TABLE') === 'BASE TABLE';
-            })
-            ->map(fn ($row) => (string) array_values((array) $row)[0])
-            ->values();
+        $remotePath = $this->backupService->resolveRemotePath($respaldo);
 
-        foreach ($tables as $table) {
-            $createResult = (array) $connection->selectOne("SHOW CREATE TABLE `{$table}`");
-            $createSql = $createResult['Create Table'] ?? (array_values($createResult)[1] ?? null);
+        if ($remotePath) {
+            try {
+                $disk = Storage::disk('google');
+            } catch (Throwable $exception) {
+                Log::error('No se pudo acceder al disco de Google Drive para la descarga.', [
+                    'exception' => $exception->getMessage(),
+                ]);
 
-            if (!$createSql) {
-                continue;
+                abort(500, 'No se pudo acceder al servicio de almacenamiento en la nube.');
             }
 
-            $lines[] = sprintf('DROP TABLE IF EXISTS `%s`;', $table);
-            $lines[] = $createSql . ';';
+            if ($disk->exists($remotePath)) {
+                $stream = $disk->readStream($remotePath);
 
-            $rows = $connection->table($table)->get();
+                if ($stream === false) {
+                    abort(500, 'No se pudo acceder al archivo en Google Drive.');
+                }
 
-            if ($rows->isEmpty()) {
-                continue;
-            }
+                $mime = 'application/octet-stream';
 
-            $columns = array_keys((array) $rows->first());
-            $escapedColumns = array_map(fn ($column) => sprintf('`%s`', $column), $columns);
+                try {
+                    $mimeType = $disk->mimeType($remotePath);
 
-            foreach ($rows->chunk(100) as $chunk) {
-                $values = $chunk->map(function ($row) use ($columns) {
-                    $rowArray = (array) $row;
-                    $rowValues = [];
-
-                    foreach ($columns as $column) {
-                        $rowValues[] = $this->quoteMysqlValue($rowArray[$column] ?? null);
+                    if (is_string($mimeType) && $mimeType !== '') {
+                        $mime = $mimeType;
                     }
+                } catch (Throwable $exception) {
+                    Log::warning('No se pudo determinar el tipo MIME del archivo de Drive.', [
+                        'ruta' => $remotePath,
+                        'exception' => $exception->getMessage(),
+                    ]);
+                }
 
-                    return '(' . implode(', ', $rowValues) . ')';
-                });
+                return response()->streamDownload(function () use ($stream) {
+                    fpassthru($stream);
 
-                $lines[] = sprintf(
-                    'INSERT INTO `%s` (%s) VALUES %s;',
-                    $table,
-                    implode(', ', $escapedColumns),
-                    implode(",\n", $values->all())
-                );
+                    if (is_resource($stream)) {
+                        fclose($stream);
+                    }
+                }, $respaldo->nombre_archivo, [
+                    'Content-Type' => $mime,
+                ]);
             }
         }
 
-        $lines[] = 'COMMIT;';
-        $lines[] = 'SET FOREIGN_KEY_CHECKS=1;';
-
-        return implode("\n\n", $lines) . "\n";
+        abort(404, 'No se encontró el archivo de respaldo solicitado.');
     }
 
-    /**
-     * Copia el archivo de base de datos SQLite a la ruta indicada.
-     */
-    private function generateSqliteBackup(array $connection, string $destination): void
+    public function restore(RespaldoDato $respaldo): JsonResponse
     {
-        $databasePath = $connection['database'] ?? null;
+        Log::info('Solicitud de restauración recibida para un respaldo.', [
+            'respaldo_id' => $respaldo->id,
+        ]);
 
-        if (!$databasePath || $databasePath === ':memory:') {
-            throw new \RuntimeException('No se puede respaldar una base de datos SQLite en memoria.');
-        }
-
-        if (!File::exists($databasePath)) {
-            $guessedPath = base_path($databasePath);
-
-            if (File::exists($guessedPath)) {
-                $databasePath = $guessedPath;
-            }
-        }
-
-        if (!File::exists($databasePath)) {
-            throw new \RuntimeException('No se encontró el archivo de base de datos SQLite.');
-        }
-
-        File::copy($databasePath, $destination);
+        return response()->json([
+            'message' => 'La solicitud de restauración fue recibida. Proceda con el proceso de restauración de forma manual.',
+        ]);
     }
 
-    /**
-     * Escapa los valores para los inserts en el respaldo MySQL.
-     */
-    private function quoteMysqlValue(mixed $value): string
+    private function formatRespaldo(RespaldoDato $respaldo): array
     {
-        if ($value === null) {
-            return 'NULL';
-        }
-
-        if (is_bool($value)) {
-            return $value ? '1' : '0';
-        }
-
-        if (is_int($value) || is_float($value)) {
-            return (string) $value;
-        }
-
-        $escaped = str_replace(
-            ["\\", "\0", "\n", "\r", "'", '"', "\x1a"],
-            ["\\\\", "\\0", "\\n", "\\r", "\\'", '\\"', "\\Z"],
-            (string) $value
-        );
-
-        return "'{$escaped}'";
+        return [
+            'id' => $respaldo->id,
+            'id_respaldo' => $respaldo->id,
+            'fecha_respaldo' => optional($respaldo->fecha_respaldo)->toIso8601String(),
+            'nombre_archivo' => $respaldo->nombre_archivo,
+            'ruta_archivo' => $respaldo->ruta_archivo,
+            'ruta_remota' => $respaldo->ruta_remota,
+            'estado' => $respaldo->estado,
+        ];
     }
 }

@@ -15,6 +15,7 @@ class RespaldoDato extends Model
         'fecha_respaldo',
         'nombre_archivo',
         'ruta_archivo',
+        'ruta_remota',
         'estado',
     ];
 

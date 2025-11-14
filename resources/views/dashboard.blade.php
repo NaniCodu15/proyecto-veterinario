@@ -270,11 +270,12 @@
                         <table class="backup-log__table">
                             <thead>
                                 <tr>
-                                    <th scope="col">ID</th>
+                                    <th scope="col">ID Respaldo</th>
                                     <th scope="col">Fecha de respaldo</th>
                                     <th scope="col">Nombre del archivo</th>
                                     <th scope="col">Ruta del archivo</th>
                                     <th scope="col">Estado</th>
+                                    <th scope="col">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody data-backup-body></tbody>
@@ -724,8 +725,10 @@
     const citasStoreUrl     = "{{ route('citas.store') }}";
     const citasListUrl      = "{{ route('citas.list') }}";
     const citasEstadoBaseUrl = "{{ url('citas') }}";
-    const backupGenerateUrl = "{{ route('backups.generate') }}";
-    const backupListUrl     = "{{ route('backups.index') }}";
+    const backupGenerateUrl        = "{{ route('backups.generate') }}";
+    const backupListUrl            = "{{ route('backups.index') }}";
+    const backupDownloadUrlTemplate = "{{ route('backups.download', ['respaldo' => '__ID__']) }}";
+    const backupRestoreUrlTemplate  = "{{ route('backups.restore', ['respaldo' => '__ID__']) }}";
     const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
     const csrfToken        = csrfTokenElement ? csrfTokenElement.getAttribute('content') : '';
 
@@ -1337,6 +1340,84 @@
         return 'backup-log__status';
     }
 
+    function construirUrlBackup(template, id) {
+        if (!template || !id) {
+            return '';
+        }
+
+        return template.replace('__ID__', encodeURIComponent(String(id)));
+    }
+
+    async function descargarBackup(id, nombreArchivo = '') {
+        const url = construirUrlBackup(backupDownloadUrlTemplate, id);
+
+        if (!url) {
+            mostrarMensajeBackup('No se pudo determinar la ruta de descarga del respaldo.', 'error');
+            return;
+        }
+
+        const enlace = document.createElement('a');
+        enlace.href = url;
+
+        if (nombreArchivo) {
+            enlace.setAttribute('download', nombreArchivo);
+        }
+
+        enlace.style.display = 'none';
+        document.body.appendChild(enlace);
+        enlace.click();
+        document.body.removeChild(enlace);
+    }
+
+    async function restaurarBackup(id, nombreArchivo = '', boton = null) {
+        const url = construirUrlBackup(backupRestoreUrlTemplate, id);
+
+        if (!url) {
+            mostrarMensajeBackup('No se pudo determinar la ruta para restaurar el respaldo.', 'error');
+            return;
+        }
+
+        const nombre = nombreArchivo || `ID ${id}`;
+        const confirmado = window.confirm(`¿Desea restaurar la copia de seguridad ${nombre}?`);
+
+        if (!confirmado) {
+            return;
+        }
+
+        mostrarMensajeBackup('');
+
+        if (boton) {
+            setButtonLoading(boton, true, 'Restaurando...');
+        }
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                },
+                body: JSON.stringify({}),
+            });
+
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(data?.message || 'No se pudo iniciar la restauración.');
+            }
+
+            mostrarMensajeBackup(data?.message || 'La restauración se solicitó correctamente.', 'success');
+        } catch (error) {
+            console.error(error);
+            mostrarMensajeBackup(error.message || 'No se pudo iniciar la restauración.', 'error');
+        } finally {
+            if (boton) {
+                setButtonLoading(boton, false);
+            }
+        }
+    }
+
     function renderBackups(registros = []) {
         if (!backupWrapper || !backupTableBody || !backupEmpty) {
             return;
@@ -1347,6 +1428,11 @@
         if (!Array.isArray(registros) || registros.length === 0) {
             backupWrapper.hidden = true;
             backupEmpty.hidden = false;
+
+            if (backupLoader) {
+                backupLoader.hidden = true;
+            }
+
             return;
         }
 
@@ -1354,11 +1440,21 @@
 
         registros.forEach(registro => {
             const fila = document.createElement('tr');
+            const idRespaldo = registro?.id_respaldo ?? registro?.id ?? '';
+            const nombreArchivo = registro?.nombre_archivo ?? '';
+
+            if (idRespaldo) {
+                fila.dataset.backupId = String(idRespaldo);
+            }
+
+            if (nombreArchivo) {
+                fila.dataset.backupNombre = nombreArchivo;
+            }
 
             const columnas = [
-                registro?.id ?? '--',
+                idRespaldo || '--',
                 formatearFechaRespaldo(registro?.fecha_respaldo),
-                registro?.nombre_archivo ?? '--',
+                nombreArchivo || '--',
                 registro?.ruta_archivo ?? '--',
             ];
 
@@ -1378,12 +1474,51 @@
             estadoCelda.className = obtenerClaseEstadoRespaldo(registro?.estado);
             fila.appendChild(estadoCelda);
 
+            const accionesCelda = document.createElement('td');
+            accionesCelda.classList.add('backup-log__actions');
+
+            const descargarBtn = document.createElement('button');
+            descargarBtn.type = 'button';
+            descargarBtn.className = 'btn btn-outline btn-sm';
+            descargarBtn.textContent = 'Descargar';
+            descargarBtn.dataset.backupAction = 'download';
+
+            if (idRespaldo) {
+                descargarBtn.dataset.backupId = String(idRespaldo);
+            }
+
+            if (nombreArchivo) {
+                descargarBtn.dataset.backupNombre = nombreArchivo;
+            }
+
+            const restaurarBtn = document.createElement('button');
+            restaurarBtn.type = 'button';
+            restaurarBtn.className = 'btn btn-primary btn-sm';
+            restaurarBtn.textContent = 'Restaurar';
+            restaurarBtn.dataset.backupAction = 'restore';
+
+            if (idRespaldo) {
+                restaurarBtn.dataset.backupId = String(idRespaldo);
+            }
+
+            if (nombreArchivo) {
+                restaurarBtn.dataset.backupNombre = nombreArchivo;
+            }
+
+            accionesCelda.appendChild(descargarBtn);
+            accionesCelda.appendChild(restaurarBtn);
+            fila.appendChild(accionesCelda);
+
             fragment.appendChild(fila);
         });
 
         backupTableBody.appendChild(fragment);
         backupEmpty.hidden = true;
         backupWrapper.hidden = false;
+
+        if (backupLoader) {
+            backupLoader.hidden = true;
+        }
     }
 
     async function cargarBackups(force = false) {
@@ -1393,6 +1528,11 @@
 
         if (respaldosCargados && !force) {
             backupContenedor.hidden = false;
+
+            if (backupLoader) {
+                backupLoader.hidden = true;
+            }
+
             return;
         }
 
@@ -2464,6 +2604,36 @@
                 await cargarBackups(true);
             } finally {
                 setButtonLoading(btnVerBackups, false);
+            }
+        });
+    }
+
+    if (backupTableBody) {
+        backupTableBody.addEventListener('click', async event => {
+            const boton = event.target.closest('[data-backup-action]');
+
+            if (!boton) {
+                return;
+            }
+
+            event.preventDefault();
+
+            const accion = boton.dataset.backupAction;
+            const id = boton.dataset.backupId || boton.closest('tr')?.dataset.backupId;
+            const nombre = boton.dataset.backupNombre || boton.closest('tr')?.dataset.backupNombre || '';
+
+            if (!id) {
+                mostrarMensajeBackup('No se encontró el identificador del respaldo seleccionado.', 'error');
+                return;
+            }
+
+            if (accion === 'download') {
+                await descargarBackup(id, nombre);
+                return;
+            }
+
+            if (accion === 'restore') {
+                await restaurarBackup(id, nombre, boton);
             }
         });
     }
