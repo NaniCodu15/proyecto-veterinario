@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ConsultaController;
 use App\Http\Controllers\HistoriaClinicaController;
 use App\Http\Controllers\CitaController;
@@ -24,7 +23,13 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // ✅ Rutas protegidas
 Route::middleware(['auth'])->group(function () {
 
-    Route::get('/dashboard', [DashboardController::class,'index'])->name('dashboard');
+    Route::view('/dashboard', 'dashboard_home')->name('dashboard');
+    Route::view('/panel', 'dashboard_home')->name('dashboard.blade.php');
+
+    Route::view('/panel/historias/clinicas', 'historias_clinicas')->name('historias.clinicas');
+    Route::view('/panel/historias/registradas', 'historias_registradas')->name('historias.registradas');
+    Route::view('/panel/citas', 'citas')->name('citas');
+    Route::view('/panel/citas/agendadas', 'citas_agendadas')->name('citas.agendadas');
 
     Route::get('citas/list', [CitaController::class, 'list'])->name('citas.list');
     Route::patch('citas/{cita}/estado', [CitaController::class, 'updateEstado'])->name('citas.estado');
