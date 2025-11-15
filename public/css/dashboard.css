@@ -1467,7 +1467,7 @@ img {
 .citas-table-container {
     max-height: 460px;
     overflow-y: auto;
-    overflow-x: auto;
+    overflow-x: hidden;
     scrollbar-width: thin;
     scrollbar-color: rgba(122, 168, 255, 0.7) rgba(228, 240, 255, 0.6);
 }
@@ -1487,10 +1487,48 @@ img {
 
 .citas-table {
     width: 100%;
+    table-layout: fixed;
     border-collapse: separate;
     border-spacing: 0;
-    min-width: 760px;
     color: var(--text-dark);
+}
+
+.citas-table thead th,
+.citas-table tbody td {
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+.citas-table th:nth-child(1),
+.citas-table td:nth-child(1) {
+    width: 64px;
+}
+
+.citas-table th:nth-child(2),
+.citas-table td:nth-child(2),
+.citas-table th:nth-child(3),
+.citas-table td:nth-child(3) {
+    width: 140px;
+}
+
+.citas-table th:nth-child(4),
+.citas-table td:nth-child(4) {
+    width: 120px;
+}
+
+.citas-table th:nth-child(5),
+.citas-table td:nth-child(5) {
+    width: 90px;
+}
+
+.citas-table th:nth-child(7),
+.citas-table td:nth-child(7) {
+    width: 110px;
+}
+
+.citas-table th:nth-child(8),
+.citas-table td:nth-child(8) {
+    width: 150px;
 }
 
 .citas-table thead th {
@@ -1539,10 +1577,7 @@ img {
 }
 
 .citas-table__motivo {
-    max-width: 240px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    max-width: none;
 }
 
 .citas-table__acciones {
