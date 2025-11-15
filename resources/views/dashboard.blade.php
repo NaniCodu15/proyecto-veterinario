@@ -270,7 +270,7 @@
                         <table class="backup-log__table">
                             <thead>
                                 <tr>
-                                    <th scope="col">ID</th>
+                                    <th scope="col">ID respaldo</th>
                                     <th scope="col">Fecha de respaldo</th>
                                     <th scope="col">Nombre del archivo</th>
                                     <th scope="col">Ruta del archivo</th>
@@ -1342,12 +1342,30 @@
             return;
         }
 
+        if (backupLoader) {
+            backupLoader.hidden = true;
+        }
+
         backupTableBody.innerHTML = '';
 
         if (!Array.isArray(registros) || registros.length === 0) {
-            backupWrapper.hidden = true;
-            backupEmpty.hidden = false;
+            if (backupWrapper) {
+                backupWrapper.hidden = true;
+            }
+
+            if (backupEmpty) {
+                backupEmpty.hidden = false;
+            }
+
             return;
+        }
+
+        if (backupEmpty) {
+            backupEmpty.hidden = true;
+        }
+
+        if (backupWrapper) {
+            backupWrapper.hidden = false;
         }
 
         const fragment = document.createDocumentFragment();
@@ -1356,7 +1374,7 @@
             const fila = document.createElement('tr');
 
             const columnas = [
-                registro?.id ?? '--',
+                registro?.id_respaldo ?? registro?.id ?? '--',
                 formatearFechaRespaldo(registro?.fecha_respaldo),
                 registro?.nombre_archivo ?? '--',
                 registro?.ruta_archivo ?? '--',
@@ -1382,8 +1400,6 @@
         });
 
         backupTableBody.appendChild(fragment);
-        backupEmpty.hidden = true;
-        backupWrapper.hidden = false;
     }
 
     async function cargarBackups(force = false) {

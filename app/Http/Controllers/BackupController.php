@@ -15,6 +15,8 @@ class BackupController extends Controller
      */
     public function generate(): JsonResponse
     {
+        $this->cleanupLegacyBackupsDirectory();
+
         $connectionName = config('database.default');
         $connection = config("database.connections.{$connectionName}");
         $driver = is_array($connection) ? ($connection['driver'] ?? null) : null;
@@ -75,7 +77,8 @@ class BackupController extends Controller
         return response()->json([
             'message' => $mensaje,
             'respaldo' => [
-                'id' => $respaldo->id,
+                'id' => $respaldo->getKey(),
+                'id_respaldo' => $respaldo->getAttribute('id_respaldo') ?? $respaldo->getKey(),
                 'fecha_respaldo' => optional($respaldo->fecha_respaldo)->toIso8601String(),
                 'nombre_archivo' => $respaldo->nombre_archivo,
                 'ruta_archivo' => $respaldo->ruta_archivo,
@@ -89,11 +92,14 @@ class BackupController extends Controller
      */
     public function index(): JsonResponse
     {
+        $this->cleanupLegacyBackupsDirectory();
+
         $respaldos = RespaldoDato::query()
             ->orderByDesc('fecha_respaldo')
             ->get()
             ->map(fn (RespaldoDato $respaldo) => [
-                'id' => $respaldo->id,
+                'id' => $respaldo->getKey(),
+                'id_respaldo' => $respaldo->getAttribute('id_respaldo') ?? $respaldo->getKey(),
                 'fecha_respaldo' => optional($respaldo->fecha_respaldo)->toIso8601String(),
                 'nombre_archivo' => $respaldo->nombre_archivo,
                 'ruta_archivo' => $respaldo->ruta_archivo,
@@ -225,5 +231,33 @@ class BackupController extends Controller
         );
 
         return "'{$escaped}'";
+    }
+
+    private function cleanupLegacyBackupsDirectory(): void
+    {
+        static $cleaned = false;
+
+        if ($cleaned) {
+            return;
+        }
+
+        $legacyDirectory = storage_path('backups');
+
+        if (!File::exists($legacyDirectory)) {
+            $cleaned = true;
+
+            return;
+        }
+
+        try {
+            File::deleteDirectory($legacyDirectory);
+        } catch (\Throwable $exception) {
+            Log::warning('No se pudo limpiar la carpeta legacy de respaldos.', [
+                'ruta' => $legacyDirectory,
+                'exception' => $exception->getMessage(),
+            ]);
+        }
+
+        $cleaned = true;
     }
 }
