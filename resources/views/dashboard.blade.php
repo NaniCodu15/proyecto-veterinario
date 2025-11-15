@@ -584,11 +584,6 @@
         </div>
 
         <div id="section-citas-agendadas" class="section">
-            <div class="citas-header">
-                <h1 class="titulo">Citas Agendadas</h1>
-                <p>Visualiza y gestiona cada cita registrada en el sistema.</p>
-            </div>
-
             <section class="citas-card citas-card--list" id="listadoCitasCard">
                 <div class="citas-card__header">
                     <div>
@@ -608,25 +603,27 @@
                 </div>
 
                 <div class="citas-table-wrapper">
-                    <table class="citas-table">
-                        <thead>
-                            <tr>
-                                <th>🆔 ID de la cita</th>
-                                <th>🐾 Nombre de la mascota</th>
-                                <th>🧍‍♀️ Nombre del propietario</th>
-                                <th>📅 Fecha de la cita</th>
-                                <th>⏰ Hora de la cita</th>
-                                <th>💬 Motivo</th>
-                                <th>🔖 Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tablaCitas">
-                            <tr class="citas-table__empty">
-                                <td colspan="8">No hay citas registradas todavía.</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="citas-table-container">
+                        <table class="citas-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Mascota</th>
+                                    <th>Propietario</th>
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                    <th>Motivo</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaCitas">
+                                <tr class="citas-table__empty">
+                                    <td colspan="8">No hay citas registradas todavía.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
         </div>
