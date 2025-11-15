@@ -36,12 +36,11 @@ class BackupController extends Controller
         $timestamp = now();
         $extension = $driver === 'sqlite' ? 'sqlite' : 'sql';
         $fileName = 'backup_' . $timestamp->format('Y_m_d_His') . '.' . $extension;
-        $storageDirectory = storage_path('backups');
-        $fullPath = $storageDirectory . DIRECTORY_SEPARATOR . $fileName;
-        $relativePath = 'storage/backups/' . $fileName;
+        $backupDirectory = 'D:\\RespaldosVeterinario\\';
+        $fullPath = $backupDirectory . $fileName;
 
-        if (!File::isDirectory($storageDirectory)) {
-            File::makeDirectory($storageDirectory, 0755, true);
+        if (!File::isDirectory($backupDirectory)) {
+            File::makeDirectory($backupDirectory, 0755, true);
         }
 
         $estado = 'Correcto';
@@ -69,7 +68,7 @@ class BackupController extends Controller
         $respaldo = RespaldoDato::create([
             'fecha_respaldo' => $timestamp,
             'nombre_archivo' => $fileName,
-            'ruta_archivo' => $relativePath,
+            'ruta_archivo' => $fullPath,
             'estado' => $estado,
         ]);
 
