@@ -25,35 +25,49 @@
         .pdf-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             padding-bottom: 12px;
             border-bottom: 3px solid #2563eb;
         }
 
-        .pdf-header__brand {
-            display: flex;
-            align-items: center;
-            gap: 16px;
+        .pdf-header__main {
+            flex: 1;
+            text-align: center;
         }
 
-        .pdf-header__logo {
-            width: 72px;
-            height: 72px;
-            object-fit: contain;
+        .pdf-header__hospital {
+            margin: 0;
+            font-size: 26px;
+            letter-spacing: 0.12em;
+            font-weight: 800;
+            color: #0f172a;
         }
 
         .pdf-header__title {
-            margin: 0;
-            font-size: 20px;
-            letter-spacing: 0.08em;
+            margin: 6px 0 0;
+            font-size: 18px;
+            letter-spacing: 0.1em;
             font-weight: 800;
             color: #111827;
         }
 
         .pdf-header__subtitle {
-            margin: 2px 0 0;
+            margin: 8px 0 0;
             color: #4b5563;
             font-size: 11px;
+        }
+
+        .pdf-header__side {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+        }
+
+        .pdf-header__logo {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
         }
 
         .pdf-header__code {
@@ -211,42 +225,21 @@
 <body>
     <div class="pdf-wrapper">
         <header class="pdf-header">
-            <div class="pdf-header__brand">
-                @if ($logoPath && file_exists($logoPath))
-                    <img class="pdf-header__logo" src="{{ $logoPath }}" alt="Logo">
-                @endif
-                <div>
-                    <h1 class="pdf-header__title">HISTORIA CLÍNICA</h1>
-                    <p class="pdf-header__subtitle">Emitido el {{ $fecha_emision }}</p>
-                </div>
+            <div class="pdf-header__main">
+                <h1 class="pdf-header__hospital">HOSPITAL VETERINARIO</h1>
+                <h2 class="pdf-header__title">HISTORIA CLÍNICA</h2>
+                <p class="pdf-header__subtitle">Emitido el {{ $fecha_emision }}</p>
             </div>
-            <div class="pdf-header__code">
-                <div>Código HC</div>
-                <div style="font-size: 16px;">{{ $codigo }}</div>
+            <div class="pdf-header__side">
+                @if ($logoPath && file_exists($logoPath))
+                    <img class="pdf-header__logo" src="{{ $logoPath }}" alt="Logo Dra. Alfaro">
+                @endif
+                <div class="pdf-header__code">
+                    <div>Código HC</div>
+                    <div style="font-size: 16px;">{{ $codigo }}</div>
+                </div>
             </div>
         </header>
-
-        <section class="pdf-section">
-            <h2 class="pdf-section__title">Datos del propietario</h2>
-            <div class="info-grid">
-                <div class="info-grid__item">
-                    <span class="info-grid__label">Nombre</span>
-                    <span class="info-grid__value">{{ $propietario['nombre'] }}</span>
-                </div>
-                <div class="info-grid__item">
-                    <span class="info-grid__label">Documento</span>
-                    <span class="info-grid__value">{{ $propietario['dni'] }}</span>
-                </div>
-                <div class="info-grid__item">
-                    <span class="info-grid__label">Teléfono</span>
-                    <span class="info-grid__value">{{ $propietario['telefono'] }}</span>
-                </div>
-                <div class="info-grid__item">
-                    <span class="info-grid__label">Dirección</span>
-                    <span class="info-grid__value">{{ $propietario['direccion'] }}</span>
-                </div>
-            </div>
-        </section>
 
         <section class="pdf-section">
             <h2 class="pdf-section__title">Datos de la mascota</h2>
@@ -274,6 +267,28 @@
                 <div class="info-grid__item">
                     <span class="info-grid__label">Fecha de apertura</span>
                     <span class="info-grid__value">{{ $fecha_apertura }}</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="pdf-section">
+            <h2 class="pdf-section__title">Datos del propietario</h2>
+            <div class="info-grid">
+                <div class="info-grid__item">
+                    <span class="info-grid__label">Nombre</span>
+                    <span class="info-grid__value">{{ $propietario['nombre'] }}</span>
+                </div>
+                <div class="info-grid__item">
+                    <span class="info-grid__label">Documento</span>
+                    <span class="info-grid__value">{{ $propietario['dni'] }}</span>
+                </div>
+                <div class="info-grid__item">
+                    <span class="info-grid__label">Teléfono</span>
+                    <span class="info-grid__value">{{ $propietario['telefono'] }}</span>
+                </div>
+                <div class="info-grid__item">
+                    <span class="info-grid__label">Dirección</span>
+                    <span class="info-grid__value">{{ $propietario['direccion'] }}</span>
                 </div>
             </div>
         </section>
