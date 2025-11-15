@@ -24,8 +24,8 @@
 
         .pdf-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            gap: 16px;
             padding-bottom: 12px;
             border-bottom: 3px solid #2563eb;
         }
@@ -34,6 +34,7 @@
             display: flex;
             align-items: center;
             gap: 16px;
+            flex: 1;
         }
 
         .pdf-header__logo {
@@ -50,6 +51,17 @@
             color: #111827;
         }
 
+        .pdf-header__main-title {
+            flex: 1;
+            margin: 0;
+            text-align: center;
+            font-size: 20px;
+            letter-spacing: 0.08em;
+            font-weight: 800;
+            color: #111827;
+            text-transform: uppercase;
+        }
+
         .pdf-header__subtitle {
             margin: 2px 0 0;
             color: #4b5563;
@@ -60,6 +72,7 @@
             text-align: right;
             font-weight: 700;
             color: #2563eb;
+            flex: 1;
         }
 
         .pdf-section {
@@ -220,33 +233,12 @@
                     <p class="pdf-header__subtitle">Emitido el {{ $fecha_emision }}</p>
                 </div>
             </div>
+            <h1 class="pdf-header__main-title">HOSPITAL VETERINARIO</h1>
             <div class="pdf-header__code">
                 <div>Código HC</div>
                 <div style="font-size: 16px;">{{ $codigo }}</div>
             </div>
         </header>
-
-        <section class="pdf-section">
-            <h2 class="pdf-section__title">Datos del propietario</h2>
-            <div class="info-grid">
-                <div class="info-grid__item">
-                    <span class="info-grid__label">Nombre</span>
-                    <span class="info-grid__value">{{ $propietario['nombre'] }}</span>
-                </div>
-                <div class="info-grid__item">
-                    <span class="info-grid__label">Documento</span>
-                    <span class="info-grid__value">{{ $propietario['dni'] }}</span>
-                </div>
-                <div class="info-grid__item">
-                    <span class="info-grid__label">Teléfono</span>
-                    <span class="info-grid__value">{{ $propietario['telefono'] }}</span>
-                </div>
-                <div class="info-grid__item">
-                    <span class="info-grid__label">Dirección</span>
-                    <span class="info-grid__value">{{ $propietario['direccion'] }}</span>
-                </div>
-            </div>
-        </section>
 
         <section class="pdf-section">
             <h2 class="pdf-section__title">Datos de la mascota</h2>
@@ -274,6 +266,28 @@
                 <div class="info-grid__item">
                     <span class="info-grid__label">Fecha de apertura</span>
                     <span class="info-grid__value">{{ $fecha_apertura }}</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="pdf-section">
+            <h2 class="pdf-section__title">Datos del propietario</h2>
+            <div class="info-grid">
+                <div class="info-grid__item">
+                    <span class="info-grid__label">Nombre</span>
+                    <span class="info-grid__value">{{ $propietario['nombre'] }}</span>
+                </div>
+                <div class="info-grid__item">
+                    <span class="info-grid__label">Documento</span>
+                    <span class="info-grid__value">{{ $propietario['dni'] }}</span>
+                </div>
+                <div class="info-grid__item">
+                    <span class="info-grid__label">Teléfono</span>
+                    <span class="info-grid__value">{{ $propietario['telefono'] }}</span>
+                </div>
+                <div class="info-grid__item">
+                    <span class="info-grid__label">Dirección</span>
+                    <span class="info-grid__value">{{ $propietario['direccion'] }}</span>
                 </div>
             </div>
         </section>
