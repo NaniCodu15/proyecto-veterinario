@@ -26,14 +26,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 12px;
-            border-bottom: 3px solid #2563eb;
+            padding: 12px 0 20px;
         }
 
-        .pdf-header__brand {
-            display: flex;
-            align-items: center;
-            gap: 16px;
+        .pdf-header__content {
+            flex: 1;
+            text-align: center;
         }
 
         .pdf-header__logo {
@@ -44,22 +42,42 @@
 
         .pdf-header__title {
             margin: 0;
-            font-size: 20px;
-            letter-spacing: 0.08em;
+            font-size: 22px;
+            letter-spacing: 0.12em;
             font-weight: 800;
             color: #111827;
+            text-transform: uppercase;
         }
 
         .pdf-header__subtitle {
-            margin: 2px 0 0;
-            color: #4b5563;
-            font-size: 11px;
+            margin: 6px 0 0;
+            color: #111827;
+            font-size: 14px;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            font-weight: 700;
         }
 
         .pdf-header__code {
-            text-align: right;
+            margin-top: 12px;
+            display: inline-flex;
+            flex-direction: column;
+            gap: 2px;
+            text-align: center;
             font-weight: 700;
-            color: #2563eb;
+            color: #1f2937;
+            font-size: 12px;
+        }
+
+        .pdf-header__code-value {
+            font-size: 18px;
+        }
+
+        .pdf-header__emision {
+            margin: 8px 0 0;
+            font-size: 11px;
+            color: #4b5563;
+            letter-spacing: 0.08em;
         }
 
         .pdf-section {
@@ -211,19 +229,18 @@
 <body>
     <div class="pdf-wrapper">
         <header class="pdf-header">
-            <div class="pdf-header__brand">
-                @if ($logoPath && file_exists($logoPath))
-                    <img class="pdf-header__logo" src="{{ $logoPath }}" alt="Logo">
-                @endif
-                <div>
-                    <h1 class="pdf-header__title">HISTORIA CLÍNICA</h1>
-                    <p class="pdf-header__subtitle">Emitido el {{ $fecha_emision }}</p>
+            <div class="pdf-header__content">
+                <h1 class="pdf-header__title">HOSPITAL VETERINARIO</h1>
+                <p class="pdf-header__subtitle">HISTORIA CLÍNICA</p>
+                <div class="pdf-header__code">
+                    <span>Código HC</span>
+                    <span class="pdf-header__code-value">{{ $codigo }}</span>
                 </div>
+                <p class="pdf-header__emision">Emitido el {{ $fecha_emision }}</p>
             </div>
-            <div class="pdf-header__code">
-                <div>Código HC</div>
-                <div style="font-size: 16px;">{{ $codigo }}</div>
-            </div>
+            @if ($logoPath && file_exists($logoPath))
+                <img class="pdf-header__logo" src="{{ $logoPath }}" alt="Logo">
+            @endif
         </header>
 
         <section class="pdf-section">
