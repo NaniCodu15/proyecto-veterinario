@@ -1,0 +1,156 @@
+/*
+|--------------------------------------------------------------------------
+| Estilos del módulo de historias clínicas
+| Mantiene la presentación del formulario y la tabla principal.
+|--------------------------------------------------------------------------
+*/
+
+.module-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 32px;
+    border-radius: 28px;
+    background: linear-gradient(135deg, rgba(122, 168, 255, 0.16), rgba(255, 156, 216, 0.18));
+    border: 1px solid rgba(123, 164, 255, 0.25);
+}
+
+.module-header__eyebrow {
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 0 0 8px;
+    color: #4f5a86;
+}
+
+.module-header__title {
+    margin: 0;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    color: #1f274d;
+}
+
+.module-header__subtitle {
+    margin: 8px 0 0;
+    color: #5c6c99;
+}
+
+.module-card {
+    margin-top: 32px;
+    padding: 32px;
+    border-radius: 28px;
+    background: #fff;
+    box-shadow: 0 20px 45px rgba(31, 62, 136, 0.08);
+    border: 1px solid rgba(123, 164, 255, 0.18);
+}
+
+.module-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 24px;
+}
+
+.module-card__title {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #1c2647;
+}
+
+.module-card__chip {
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    background: rgba(123, 164, 255, 0.15);
+    color: #3c55a5;
+}
+
+.historia-form {
+    display: grid;
+    gap: 18px;
+}
+
+.historia-form__group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.historia-form__group label {
+    font-weight: 600;
+    color: #344266;
+}
+
+.historia-form__group input,
+.historia-form__group textarea {
+    border-radius: 16px;
+    border: 1px solid rgba(51, 77, 140, 0.25);
+    padding: 12px 16px;
+    font-size: 1rem;
+    background: #f9fbff;
+}
+
+.historia-form__group textarea {
+    resize: vertical;
+}
+
+.historia-form__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.historia-table__wrapper {
+    overflow-x: auto;
+}
+
+.historia-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+.historia-table th,
+.historia-table td {
+    padding: 14px 18px;
+    text-align: left;
+    border-bottom: 1px solid rgba(18, 34, 84, 0.08);
+}
+
+.historia-table thead th {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #5b6a92;
+}
+
+.historia-table__empty {
+    text-align: center;
+    color: #7c8cb5;
+    font-style: italic;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: none;
+    border-radius: 14px;
+    font-weight: 600;
+    padding: 12px 20px;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #7ba4ff, #ff9cd8);
+    color: #fff;
+}
+
+.btn-secondary,
+.btn-outline {
+    background: transparent;
+    border: 1px solid rgba(123, 164, 255, 0.35);
+    color: #36509e;
+}

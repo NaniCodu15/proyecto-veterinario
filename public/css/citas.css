@@ -1,0 +1,91 @@
+/*
+|--------------------------------------------------------------------------
+| Panel de programación de citas
+| Estilos del formulario y la tabla de disponibilidad.
+|--------------------------------------------------------------------------
+*/
+
+.module-header,
+.module-card {
+    border-radius: 28px;
+    border: 1px solid rgba(120, 156, 255, 0.25);
+    background: #fff;
+    padding: 28px;
+    box-shadow: 0 20px 45px rgba(31, 62, 136, 0.08);
+}
+
+.module-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    background: linear-gradient(135deg, rgba(123, 164, 255, 0.15), rgba(255, 156, 216, 0.18));
+}
+
+.module-header__title {
+    margin: 0;
+}
+
+.cita-form__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.cita-form__grid label {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-weight: 600;
+    color: #2f3a60;
+}
+
+.cita-form__grid input,
+.cita-form__grid textarea {
+    border-radius: 16px;
+    border: 1px solid rgba(43, 74, 143, 0.2);
+    padding: 12px 14px;
+    background: #f8fbff;
+}
+
+.cita-form__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.agenda-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 18px;
+}
+
+.agenda-grid__empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: #6f7da6;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 16px;
+    padding: 12px 20px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #7ba4ff, #ff9cd8);
+    border: none;
+    color: #fff;
+}
+
+.btn-secondary,
+.btn-outline {
+    border: 1px solid rgba(123, 164, 255, 0.4);
+    background: transparent;
+    color: #3d4f91;
+}
