@@ -515,11 +515,6 @@
 
         <!-- SECCIÓN CITAS -->
         <div id="section-citas" class="section">
-            <div class="citas-header">
-                <h1 class="titulo">Citas</h1>
-                <p>Coordina las citas con información actualizada de cada paciente y su familia en pocos pasos.</p>
-            </div>
-
             <div class="citas-grid citas-grid--single">
                 <section class="citas-card" id="registrarCitaCard">
                     <div class="citas-card__header">
