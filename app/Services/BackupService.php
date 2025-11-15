@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\RespaldoDato;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
@@ -72,6 +73,8 @@ class BackupService
             if (File::exists($fullPath)) {
                 File::delete($fullPath);
             }
+        } finally {
+            $this->cleanupBackupsDirectory($backupDirectory);
         }
 
         $respaldo = RespaldoDato::create([
@@ -95,6 +98,33 @@ class BackupService
                 ],
             ],
         ];
+    }
+
+    /**
+     * Elimina los respaldos con más de 30 días de antigüedad.
+     */
+    private function cleanupBackupsDirectory(string $directory, int $days = 30): void
+    {
+        if (!File::exists($directory)) {
+            return;
+        }
+
+        $threshold = Carbon::now()->subDays($days);
+
+        try {
+            foreach (File::files($directory) as $file) {
+                $lastModified = Carbon::createFromTimestamp($file->getMTime());
+
+                if ($lastModified->lessThan($threshold)) {
+                    File::delete($file->getRealPath());
+                }
+            }
+        } catch (\Throwable $exception) {
+            Log::warning('No se pudieron limpiar los respaldos antiguos.', [
+                'ruta' => $directory,
+                'exception' => $exception->getMessage(),
+            ]);
+        }
     }
 
     /**
