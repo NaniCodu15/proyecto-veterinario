@@ -280,13 +280,14 @@
         <div id="section-historias-registradas" class="section">
             <div class="historias-registradas">
                 <div class="historias-registradas__header">
-                    <div>
-                        <h1 class="titulo">Historias Registradas</h1>
-                        <p>Consulta, edita y coordina la información clínica de tus pacientes en una vista cuidada y cómoda.</p>
+                    <div class="historias-registradas__header-content">
+                        <span class="historias-registradas__eyebrow">Panel de historias</span>
+                        <h1 class="historias-registradas__title titulo">Historias Registradas</h1>
+                        <p class="historias-registradas__subtitle">Consulta, edita y coordina la información clínica de tus pacientes en una vista cuidada y cómoda.</p>
                     </div>
-                    <button type="button" class="btn btn-outline" id="btnIrCrearHistoria">
-                        <i class="fas fa-plus-circle"></i>
-                        Crear nueva historia
+                    <button type="button" class="historias-registradas__create-btn" id="btnIrCrearHistoria">
+                        <span class="historias-registradas__create-icon" aria-hidden="true"><i class="fas fa-plus"></i></span>
+                        <span class="historias-registradas__create-label">Crear nueva historia</span>
                     </button>
                 </div>
 
@@ -646,10 +647,10 @@
 
 <div id="confirmModal" class="confirm-modal" role="alertdialog" aria-modal="true" aria-labelledby="confirmModalMessage" hidden>
     <div class="confirm-modal__dialog">
-        <p id="confirmModalMessage" class="confirm-modal__message">¿Desea eliminar esta historia clínica?</p>
+        <p id="confirmModalMessage" class="confirm-modal__message">¿Desea anular esta historia clínica?</p>
         <div class="confirm-modal__actions">
             <button type="button" class="btn btn-confirm-cancel" data-confirm="cancel">Cancelar</button>
-            <button type="button" class="btn btn-confirm-accept" data-confirm="accept">Aceptar</button>
+            <button type="button" class="btn btn-confirm-accept" data-confirm="accept">Sí, anular</button>
         </div>
     </div>
 </div>
@@ -723,7 +724,7 @@
     const csrfToken        = csrfTokenElement ? csrfTokenElement.getAttribute('content') : '';
 
     let historiaEditandoId = null;
-    let historiaPorEliminarId = null;
+    let historiaPorAnularId = null;
     let proximoNumeroHistoria = 'HC-00001';
     let citasBusquedaActual = '';
     let citasCache = [];
@@ -1089,13 +1090,13 @@
         }
 
         if (!confirmModal) {
-            if (window.confirm('¿Desea eliminar esta historia clínica?')) {
+            if (window.confirm('¿Desea anular esta historia clínica?')) {
                 eliminarHistoria(id);
             }
             return;
         }
 
-        historiaPorEliminarId = id;
+        historiaPorAnularId = id;
         confirmModal.hidden = false;
         confirmModal.classList.add('is-visible');
         window.setTimeout(() => {
@@ -1105,13 +1106,13 @@
 
     function cerrarConfirmacion() {
         if (!confirmModal) {
-            historiaPorEliminarId = null;
+            historiaPorAnularId = null;
             return;
         }
 
         confirmModal.classList.remove('is-visible');
         confirmModal.hidden = true;
-        historiaPorEliminarId = null;
+        historiaPorAnularId = null;
     }
 
     function reiniciarFormulario() {
@@ -2316,12 +2317,12 @@
         btnEditar.title = 'Editar historia';
         btnEditar.innerHTML = '<i class="fas fa-edit"></i> Editar';
 
-        const btnEliminar = document.createElement('button');
-        btnEliminar.className = 'btn btn-danger btn-sm btnEliminar';
-        btnEliminar.title = 'Eliminar historia';
-        btnEliminar.innerHTML = '<i class="fas fa-trash"></i> Eliminar';
+        const btnAnular = document.createElement('button');
+        btnAnular.className = 'btn btn-sm btnAnular';
+        btnAnular.title = 'Anular historia';
+        btnAnular.innerHTML = '<i class="fas fa-ban" aria-hidden="true"></i> Anular';
 
-        acciones.append(btnVerPdf, btnVerConsultas, btnEditar, btnEliminar);
+        acciones.append(btnVerPdf, btnVerConsultas, btnEditar, btnAnular);
 
         card.append(header, body, acciones);
 
@@ -2716,14 +2717,14 @@
             });
 
             if (!response.ok) {
-                throw new Error('No se pudo eliminar la historia clínica.');
+                throw new Error('No se pudo anular la historia clínica.');
             }
 
-            mostrarMensajeHistoria('Historia clínica eliminada correctamente.');
+            mostrarMensajeHistoria('Historia clínica anulada correctamente.');
             await cargarHistorias();
         } catch (error) {
             console.error(error);
-            mostrarMensajeHistoria(error.message || 'No se pudo eliminar la historia clínica.', 'error');
+            mostrarMensajeHistoria(error.message || 'No se pudo anular la historia clínica.', 'error');
         }
     }
 
@@ -2735,12 +2736,12 @@
 
     if (confirmAcceptButton) {
         confirmAcceptButton.addEventListener('click', async () => {
-            if (!historiaPorEliminarId) {
+            if (!historiaPorAnularId) {
                 cerrarConfirmacion();
                 return;
             }
 
-            const id = historiaPorEliminarId;
+            const id = historiaPorAnularId;
             cerrarConfirmacion();
             await eliminarHistoria(id);
         });
@@ -2784,7 +2785,7 @@
         tablaHistorias.addEventListener('click', event => {
             const botonConsultas = event.target.closest('.btnConsultas');
             const botonEditar = event.target.closest('.btnEditar');
-            const botonEliminar = event.target.closest('.btnEliminar');
+            const botonAnular = event.target.closest('.btnAnular');
 
             if (botonConsultas) {
                 const tarjeta = botonConsultas.closest('.historia-card');
@@ -2802,8 +2803,8 @@
                 }
             }
 
-            if (botonEliminar) {
-                const tarjeta = botonEliminar.closest('.historia-card');
+            if (botonAnular) {
+                const tarjeta = botonAnular.closest('.historia-card');
                 const id = tarjeta?.dataset.historiaId;
                 if (id) {
                     abrirConfirmacionPara(id);
@@ -3142,50 +3143,218 @@
             color: #6c7a91;
         }
 
+        .historias-registradas__header {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: clamp(18px, 4vw, 40px);
+            padding: clamp(24px, 4vw, 36px);
+            border-radius: 32px;
+            background: linear-gradient(135deg, rgba(255, 224, 242, 0.92) 0%, rgba(217, 230, 255, 0.95) 55%, rgba(222, 210, 255, 0.9) 100%);
+            box-shadow: 0 25px 60px rgba(132, 160, 255, 0.18);
+            overflow: hidden;
+            border: 1px solid rgba(168, 195, 255, 0.35);
+        }
+
+        .historias-registradas__header::after {
+            content: '';
+            position: absolute;
+            width: 280px;
+            height: 280px;
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 70%);
+            top: -120px;
+            right: -80px;
+            pointer-events: none;
+            mix-blend-mode: screen;
+        }
+
+        .historias-registradas__header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .historias-registradas__eyebrow {
+            font-size: 0.8rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(82, 67, 170, 0.7);
+            font-weight: 700;
+        }
+
+        .historias-registradas__title {
+            margin: 0;
+            font-size: clamp(1.6rem, 4vw, 2.2rem);
+            color: #2c2f66;
+            font-weight: 800;
+        }
+
+        .historias-registradas__subtitle {
+            margin: 0;
+            max-width: 600px;
+            color: rgba(48, 52, 110, 0.75);
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .historias-registradas__create-btn {
+            position: relative;
+            z-index: 1;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            border: none;
+            border-radius: 999px;
+            padding: 14px 26px;
+            background: linear-gradient(135deg, rgba(122, 168, 255, 0.95), rgba(255, 170, 214, 0.92));
+            color: #1d2150;
+            font-weight: 700;
+            font-size: 0.95rem;
+            letter-spacing: 0.01em;
+            box-shadow: 0 18px 36px rgba(132, 160, 255, 0.25);
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .historias-registradas__create-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 24px 48px rgba(132, 160, 255, 0.3);
+        }
+
+        .historias-registradas__create-btn:focus-visible {
+            outline: 3px solid rgba(255, 255, 255, 0.9);
+            outline-offset: 4px;
+        }
+
+        .historias-registradas__create-icon {
+            display: grid;
+            place-items: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.85);
+            color: #5b3d8a;
+            font-size: 1.1rem;
+        }
+
+        .historias-registradas__create-label {
+            white-space: nowrap;
+        }
+
         .historias-registradas__toolbar {
             display: flex;
             justify-content: flex-end;
             align-items: center;
             flex-wrap: wrap;
             gap: 16px;
-            margin: 24px 0 20px;
+            margin: 26px 0 20px;
         }
 
         .historias-registradas__search {
             position: relative;
-            flex: 1 1 280px;
-            max-width: 360px;
+            flex: 1 1 320px;
+            max-width: 420px;
+            padding: 2px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, rgba(255, 220, 244, 0.8), rgba(190, 210, 255, 0.85));
+            box-shadow: 0 20px 36px rgba(132, 160, 255, 0.18);
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .historias-registradas__search:focus-within {
+            box-shadow: 0 26px 48px rgba(132, 160, 255, 0.26);
+            transform: translateY(-1px);
         }
 
         .historias-registradas__search-input {
             width: 100%;
-            border-radius: var(--radius-md);
-            border: 1px solid rgba(122, 168, 255, 0.3);
-            padding: 12px 16px 12px 44px;
+            border-radius: 16px;
+            border: none;
+            padding: 12px 18px 12px 48px;
             font-size: 0.95rem;
-            background: rgba(255, 255, 255, 0.95);
-            color: var(--text-dark);
-            box-shadow: inset 0 1px 2px rgba(122, 168, 255, 0.12);
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            background: rgba(255, 255, 255, 0.96);
+            color: #2d2f62;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            transition: box-shadow 0.2s ease, background-color 0.2s ease;
         }
 
         .historias-registradas__search-input::placeholder {
-            color: rgba(63, 91, 150, 0.55);
+            color: rgba(71, 78, 120, 0.6);
         }
 
         .historias-registradas__search-input:focus {
             outline: none;
-            border-color: var(--primary-dark);
-            box-shadow: 0 0 0 4px rgba(156, 194, 255, 0.22);
+            background: rgba(255, 255, 255, 1);
+            box-shadow: inset 0 0 0 1px rgba(142, 170, 255, 0.35), 0 0 0 4px rgba(196, 210, 255, 0.35);
         }
 
         .historias-registradas__search-icon {
             position: absolute;
-            left: 16px;
+            left: 18px;
             top: 50%;
             transform: translateY(-50%);
-            color: rgba(63, 91, 150, 0.55);
-            font-size: 0.95rem;
+            color: rgba(71, 78, 120, 0.6);
+            font-size: 1rem;
+        }
+
+        .btnAnular {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            border-radius: 999px;
+            padding: 10px 18px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, rgba(255, 210, 220, 0.95), rgba(255, 160, 180, 0.9));
+            color: #6f2030;
+            box-shadow: 0 12px 24px rgba(255, 163, 186, 0.25);
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btnAnular:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 16px 30px rgba(255, 150, 180, 0.32);
+        }
+
+        .btnAnular:focus-visible {
+            outline: 3px solid rgba(255, 220, 228, 0.9);
+            outline-offset: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .historias-registradas__header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .historias-registradas__create-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .historias-registradas__create-label {
+                white-space: normal;
+            }
+
+            .historias-registradas__toolbar {
+                justify-content: center;
+            }
+
+            .historias-registradas__search {
+                max-width: unset;
+            }
+
+            .historias-registradas__header::after {
+                width: 200px;
+                height: 200px;
+                top: -90px;
+                right: -60px;
+            }
         }
 
         .modal--historia .modal-content--historia {
