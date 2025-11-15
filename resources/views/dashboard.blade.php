@@ -256,16 +256,6 @@
                 <div class="alert backup-panel__alert" role="status" data-backup-mensaje hidden></div>
 
                 <div id="backupRegistros" class="backup-log" hidden>
-                    <div class="backup-log__loader" data-backup-loader hidden>
-                        <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
-                        <span>Cargando registros de copias de seguridad...</span>
-                    </div>
-
-                    <div class="backup-log__empty" data-backup-empty hidden>
-                        <i class="fas fa-box-open" aria-hidden="true"></i>
-                        <p>No hay copias de seguridad registradas.</p>
-                    </div>
-
                     <div class="tabla-wrapper backup-log__wrapper" data-backup-wrapper hidden>
                         <table class="backup-log__table">
                             <thead>
@@ -916,8 +906,6 @@
     const btnVerBackups       = document.getElementById('btnVerBackups');
     const backupMensaje       = document.querySelector('[data-backup-mensaje]');
     const backupContenedor    = document.getElementById('backupRegistros');
-    const backupLoader        = backupContenedor?.querySelector('[data-backup-loader]') ?? null;
-    const backupEmpty         = backupContenedor?.querySelector('[data-backup-empty]') ?? null;
     const backupWrapper       = backupContenedor?.querySelector('[data-backup-wrapper]') ?? null;
     const backupTableBody     = backupContenedor?.querySelector('[data-backup-body]') ?? null;
     const detalleCamposCita   = modalDetalleCita ? {
@@ -1338,35 +1326,18 @@
     }
 
     function renderBackups(registros = []) {
-        if (!backupWrapper || !backupTableBody || !backupEmpty) {
+        if (!backupWrapper || !backupTableBody) {
             return;
-        }
-
-        if (backupLoader) {
-            backupLoader.hidden = true;
         }
 
         backupTableBody.innerHTML = '';
 
         if (!Array.isArray(registros) || registros.length === 0) {
-            if (backupWrapper) {
-                backupWrapper.hidden = true;
-            }
-
-            if (backupEmpty) {
-                backupEmpty.hidden = false;
-            }
-
+            backupWrapper.hidden = false;
             return;
         }
 
-        if (backupEmpty) {
-            backupEmpty.hidden = true;
-        }
-
-        if (backupWrapper) {
-            backupWrapper.hidden = false;
-        }
+        backupWrapper.hidden = false;
 
         const fragment = document.createDocumentFragment();
 
@@ -1418,14 +1389,6 @@
             backupWrapper.hidden = true;
         }
 
-        if (backupEmpty) {
-            backupEmpty.hidden = true;
-        }
-
-        if (backupLoader) {
-            backupLoader.hidden = false;
-        }
-
         try {
             const response = await fetch(backupListUrl, {
                 headers: { Accept: 'application/json' },
@@ -1447,14 +1410,6 @@
 
             if (backupWrapper) {
                 backupWrapper.hidden = true;
-            }
-
-            if (backupEmpty) {
-                backupEmpty.hidden = true;
-            }
-        } finally {
-            if (backupLoader) {
-                backupLoader.hidden = true;
             }
         }
     }
