@@ -258,12 +258,10 @@
                 <div id="backupRegistros" class="backup-log" hidden>
                     <div class="backup-log__loader" data-backup-loader hidden>
                         <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
-                        <span>Cargando registros de copias de seguridad...</span>
                     </div>
 
                     <div class="backup-log__empty" data-backup-empty hidden>
                         <i class="fas fa-box-open" aria-hidden="true"></i>
-                        <p>No hay copias de seguridad registradas.</p>
                     </div>
 
                     <div class="tabla-wrapper backup-log__wrapper" data-backup-wrapper hidden>
