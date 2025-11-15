@@ -2288,6 +2288,21 @@
         const acciones = document.createElement('div');
         acciones.className = 'historia-card__actions';
 
+        const btnVerPdf = document.createElement('a');
+        btnVerPdf.className = 'btn btn-info btn-sm';
+        btnVerPdf.title = 'Ver historia clínica';
+        btnVerPdf.innerHTML = '<i class="fas fa-file-pdf"></i> Ver';
+
+        if (historia.id) {
+            btnVerPdf.href = `${historiaBaseUrl}/${historia.id}/ver`;
+            btnVerPdf.target = '_blank';
+            btnVerPdf.rel = 'noopener';
+        } else {
+            btnVerPdf.href = '#';
+            btnVerPdf.setAttribute('aria-disabled', 'true');
+            btnVerPdf.classList.add('disabled');
+        }
+
         const btnVerConsultas = document.createElement('button');
         btnVerConsultas.className = 'btn btn-primary btn-sm btnConsultas';
         btnVerConsultas.title = 'Ver historial clínico';
@@ -2303,7 +2318,7 @@
         btnEliminar.title = 'Eliminar historia';
         btnEliminar.innerHTML = '<i class="fas fa-trash"></i> Eliminar';
 
-        acciones.append(btnVerConsultas, btnEditar, btnEliminar);
+        acciones.append(btnVerPdf, btnVerConsultas, btnEditar, btnEliminar);
 
         card.append(header, body, acciones);
 

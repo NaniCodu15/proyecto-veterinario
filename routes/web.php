@@ -41,6 +41,8 @@ Route::middleware(['auth'])->group(function () {
 
     // ✅ Rutas Historia Clínica con AJAX
     Route::get('historia_clinicas/list', [HistoriaClinicaController::class,'list'])->name('historia_clinicas.list');
+    Route::get('historia_clinicas/{id}/ver', [HistoriaClinicaController::class, 'ver'])->name('historia_clinicas.ver');
+    Route::get('historia_clinicas/{historia}/pdf', [HistoriaClinicaController::class, 'pdf'])->name('historia_clinicas.pdf');
     Route::get('historia_clinicas/{id}', [HistoriaClinicaController::class,'show'])->name('historia_clinicas.show');
     Route::post('historia_clinicas', [HistoriaClinicaController::class,'store'])->name('historia_clinicas.store');
     Route::put('historia_clinicas/{id}', [HistoriaClinicaController::class,'update'])->name('historia_clinicas.update');

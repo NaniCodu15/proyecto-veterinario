@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\HistoriaClinica;
 use App\Models\Mascota;
 use App\Models\Propietario;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class HistoriaClinicaController extends Controller
@@ -206,6 +208,38 @@ class HistoriaClinicaController extends Controller
         return response()->json(['success' => true]);
     }
 
+    public function ver($id)
+    {
+        $historia = $this->obtenerHistoriaCompleta($id);
+
+        $codigo = $historia->numero_historia ?: sprintf('HC-%05d', $historia->id_historia);
+
+        return view('historia_clinicas.ver', [
+            'historia' => $historia,
+            'codigo' => $codigo,
+            'pdfUrl' => route('historia_clinicas.pdf', ['historia' => $historia->id_historia]),
+            'downloadUrl' => route('historia_clinicas.pdf', ['historia' => $historia->id_historia, 'download' => 1]),
+        ]);
+    }
+
+    public function pdf(Request $request, $id)
+    {
+        $historia = $this->obtenerHistoriaCompleta($id);
+        $codigo = $historia->numero_historia ?: sprintf('HC-%05d', $historia->id_historia);
+
+        $datosPdf = $this->prepararDatosPdf($historia, $codigo);
+
+        $pdf = Pdf::loadView('historia_clinicas.pdf', $datosPdf)->setPaper('a4');
+
+        $nombreArchivo = 'historia_clinica_' . Str::of($codigo)->replace([' ', '/'], '_') . '.pdf';
+
+        if ($request->boolean('download')) {
+            return $pdf->download($nombreArchivo);
+        }
+
+        return $pdf->stream($nombreArchivo);
+    }
+
     private function separarNombreCompleto(string $nombreCompleto): array
     {
         $partes = preg_split('/\s+/', trim($nombreCompleto));
@@ -240,6 +274,69 @@ class HistoriaClinicaController extends Controller
             ->value('id_historia') ?? 0;
 
         return sprintf('HC-%05d', $ultimoId + 1);
+    }
+
+    private function obtenerHistoriaCompleta($id): HistoriaClinica
+    {
+        return HistoriaClinica::with([
+            'mascota.propietario',
+            'consultas' => fn ($query) => $query
+                ->orderBy('fecha_consulta')
+                ->orderBy('id_consulta'),
+            'consultas.tratamientos' => fn ($query) => $query->orderBy('id_tratamiento'),
+        ])->findOrFail($id);
+    }
+
+    private function prepararDatosPdf(HistoriaClinica $historia, string $codigo): array
+    {
+        $mascota = $historia->mascota;
+        $propietario = $mascota?->propietario;
+
+        $consultas = $historia->consultas->map(function ($consulta) {
+            return [
+                'fecha' => optional($consulta->fecha_consulta)->format('d/m/Y'),
+                'hora' => optional($consulta->fecha_consulta)->format('H:i'),
+                'sintomas' => $consulta->sintomas,
+                'diagnostico' => $consulta->diagnostico,
+                'tratamiento' => $consulta->tratamiento,
+                'observaciones' => $consulta->observaciones,
+                'peso' => $consulta->peso,
+                'temperatura' => $consulta->temperatura,
+                'tratamientos_detallados' => $consulta->tratamientos->map(fn ($tratamiento) => [
+                    'medicamento' => $tratamiento->medicamento,
+                    'dosis' => $tratamiento->dosis,
+                    'duracion' => $tratamiento->duracion,
+                    'indicaciones' => $tratamiento->indicaciones,
+                ])->filter(function ($datos) {
+                    return collect($datos)->filter()->isNotEmpty();
+                })->values(),
+            ];
+        })->values();
+
+        $edad = $this->calcularEdadDesdeFecha($mascota?->fecha_nacimiento);
+
+        return [
+            'codigo' => $codigo,
+            'historia' => $historia,
+            'propietario' => [
+                'nombre' => trim(($propietario->nombres ?? '') . ' ' . ($propietario->apellidos ?? '')) ?: '—',
+                'dni' => $propietario->dni ?? '—',
+                'telefono' => $propietario->telefono ?? '—',
+                'direccion' => $propietario->direccion ?? '—',
+            ],
+            'mascota' => [
+                'nombre' => $mascota->nombre ?? '—',
+                'especie' => $mascota->especie ?? '—',
+                'raza' => $mascota->raza ?? '—',
+                'sexo' => $mascota->sexo ?? '—',
+                'edad' => $edad !== null ? $edad . ' año' . ($edad === 1 ? '' : 's') : '—',
+                'peso' => $historia->peso ?? '—',
+            ],
+            'fecha_apertura' => optional($historia->fecha_apertura)->format('d/m/Y') ?? '—',
+            'consultas' => $consultas,
+            'logoPath' => public_path('images/logo.png'),
+            'fecha_emision' => Carbon::now()->format('d/m/Y H:i'),
+        ];
     }
 
     private function formatearHistoria(HistoriaClinica $historia): array
