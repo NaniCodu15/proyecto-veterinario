@@ -62,6 +62,9 @@
 
     <!-- CONTENIDO PRINCIPAL (CAMBIA SEGÚN OPCIÓN) -->
     <div id="main-content" class="content">
+        <header class="content-header">
+            <h1 class="content-header__title">HOSPITAL VETERINARIO</h1>
+        </header>
         <!-- SECCIÓN INICIO -->
         <div id="section-inicio" class="section active">
             <div class="home-hero">
