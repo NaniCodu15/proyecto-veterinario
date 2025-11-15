@@ -1247,10 +1247,12 @@ img {
     display: grid;
     gap: 24px;
     grid-template-columns: minmax(0, 1fr);
+    width: 100%;
 }
 
 .citas-grid--single {
-    max-width: 760px;
+    max-width: none;
+    width: 100%;
 }
 
 @media (min-width: 1100px) {
@@ -1270,6 +1272,7 @@ img {
     padding: 32px;
     box-shadow: var(--shadow-soft);
     border: 1px solid rgba(122, 168, 255, 0.25);
+    width: 100%;
 }
 
 .citas-card__header {
@@ -1305,6 +1308,7 @@ img {
     display: flex;
     flex-direction: column;
     gap: 18px;
+    width: 100%;
 }
 
 .cita-form__group {
