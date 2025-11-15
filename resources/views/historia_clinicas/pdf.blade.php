@@ -51,17 +51,6 @@
             color: #111827;
         }
 
-        .pdf-header__main-title {
-            flex: 1;
-            margin: 0;
-            text-align: center;
-            font-size: 20px;
-            letter-spacing: 0.08em;
-            font-weight: 800;
-            color: #111827;
-            text-transform: uppercase;
-        }
-
         .pdf-header__subtitle {
             margin: 2px 0 0;
             color: #4b5563;
@@ -233,7 +222,6 @@
                     <p class="pdf-header__subtitle">Emitido el {{ $fecha_emision }}</p>
                 </div>
             </div>
-            <h1 class="pdf-header__main-title">HOSPITAL VETERINARIO</h1>
             <div class="pdf-header__code">
                 <div>Código HC</div>
                 <div style="font-size: 16px;">{{ $codigo }}</div>

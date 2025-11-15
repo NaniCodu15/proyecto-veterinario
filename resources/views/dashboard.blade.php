@@ -62,9 +62,6 @@
 
     <!-- CONTENIDO PRINCIPAL (CAMBIA SEGÚN OPCIÓN) -->
     <div id="main-content" class="content">
-        <header class="content-header">
-            <h1 class="content-header__title">HOSPITAL VETERINARIO</h1>
-        </header>
         <!-- SECCIÓN INICIO -->
         <div id="section-inicio" class="section active">
             <div class="home-hero">
@@ -284,6 +281,17 @@
                         <span class="historias-registradas__eyebrow">Panel de historias</span>
                         <h1 class="historias-registradas__title titulo">Historias Registradas</h1>
                         <p class="historias-registradas__subtitle">Consulta, edita y coordina la información clínica de tus pacientes en una vista cuidada y cómoda.</p>
+                        <div class="historias-registradas__search" role="search">
+                            <i class="fas fa-search historias-registradas__search-icon" aria-hidden="true"></i>
+                            <input
+                                type="search"
+                                id="buscarHistorias"
+                                class="historias-registradas__search-input"
+                                placeholder="Buscar por número, propietario o mascota"
+                                aria-label="Buscar historias clínicas"
+                                autocomplete="off"
+                            >
+                        </div>
                     </div>
                     <button type="button" class="historias-registradas__create-btn" id="btnIrCrearHistoria">
                         <span class="historias-registradas__create-icon" aria-hidden="true"><i class="fas fa-plus"></i></span>
@@ -292,20 +300,6 @@
                 </div>
 
                 <div class="alert historias-registradas__alert" role="status" aria-live="polite" data-historia-mensaje hidden></div>
-
-                <div class="historias-registradas__toolbar">
-                    <div class="historias-registradas__search">
-                        <i class="fas fa-search historias-registradas__search-icon" aria-hidden="true"></i>
-                        <input
-                            type="search"
-                            id="buscarHistorias"
-                            class="historias-registradas__search-input"
-                            placeholder="Buscar por número, propietario o mascota"
-                            aria-label="Buscar historias clínicas"
-                            autocomplete="off"
-                        >
-                    </div>
-                </div>
 
                 <div class="historias-registradas__grid" id="tablaHistorias">
                     <div class="historias-registradas__empty">
@@ -2295,7 +2289,8 @@
         const btnVerPdf = document.createElement('a');
         btnVerPdf.className = 'btn btn-info btn-sm';
         btnVerPdf.title = 'Ver historia clínica';
-        btnVerPdf.innerHTML = '<i class="fas fa-file-pdf"></i> Ver';
+        btnVerPdf.setAttribute('aria-label', 'Ver historia clínica');
+        btnVerPdf.innerHTML = '<i class="fas fa-eye"></i>';
 
         if (historia.id) {
             btnVerPdf.href = `${historiaBaseUrl}/${historia.id}/ver`;
@@ -2315,7 +2310,8 @@
         const btnEditar = document.createElement('button');
         btnEditar.className = 'btn btn-warning btn-sm btnEditar';
         btnEditar.title = 'Editar historia';
-        btnEditar.innerHTML = '<i class="fas fa-edit"></i> Editar';
+        btnEditar.setAttribute('aria-label', 'Editar historia');
+        btnEditar.innerHTML = '<i class="fas fa-pen"></i>';
 
         const btnAnular = document.createElement('button');
         btnAnular.className = 'btn btn-sm btnAnular';
@@ -3244,28 +3240,21 @@
             white-space: nowrap;
         }
 
-        .historias-registradas__toolbar {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 16px;
-            margin: 26px 0 20px;
-        }
-
         .historias-registradas__search {
             position: relative;
-            flex: 1 1 320px;
-            max-width: 420px;
-            padding: 2px;
-            border-radius: 18px;
-            background: linear-gradient(135deg, rgba(255, 220, 244, 0.8), rgba(190, 210, 255, 0.85));
-            box-shadow: 0 20px 36px rgba(132, 160, 255, 0.18);
+            width: min(100%, 520px);
+            margin-top: 12px;
+            padding: 3px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(240, 246, 255, 0.85));
+            border: 1px solid rgba(168, 195, 255, 0.45);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65), 0 20px 40px rgba(132, 160, 255, 0.18);
             transition: box-shadow 0.2s ease, transform 0.2s ease;
+            backdrop-filter: blur(8px);
         }
 
         .historias-registradas__search:focus-within {
-            box-shadow: 0 26px 48px rgba(132, 160, 255, 0.26);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75), 0 26px 48px rgba(132, 160, 255, 0.26);
             transform: translateY(-1px);
         }
 
@@ -3341,12 +3330,8 @@
                 white-space: normal;
             }
 
-            .historias-registradas__toolbar {
-                justify-content: center;
-            }
-
             .historias-registradas__search {
-                max-width: unset;
+                width: 100%;
             }
 
             .historias-registradas__header::after {
