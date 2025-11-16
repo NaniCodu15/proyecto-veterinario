@@ -683,7 +683,7 @@
             }
 
             const payload = {
-                historia_id: historiaId,
+                id_historia: historiaId,
                 fecha,
                 peso: consultaCampos.peso?.value || null,
                 temperatura: consultaCampos.temperatura?.value || null,
