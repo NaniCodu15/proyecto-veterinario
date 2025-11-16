@@ -1,7 +1,10 @@
+// JS para el módulo Registro de Citas: selecciona historias, valida datos y envía nuevas citas.
 (() => {
+    // Obtiene configuración global del dashboard o del elemento incrustado en la página.
     const configElement = document.getElementById('dashboard-config');
     let moduleConfig = window.dashboardConfig;
 
+    // Asegura la disponibilidad de las rutas y evita referencias indefinidas.
     if (!moduleConfig || typeof moduleConfig !== 'object') {
         moduleConfig = {};
         if (configElement) {
@@ -14,14 +17,17 @@
         window.dashboardConfig = moduleConfig;
     }
 
+    // Rutas y tokens para enviar la cita registrada.
     const citasStoreUrl = moduleConfig.citasStoreUrl || '';
     const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
     const csrfToken = csrfTokenElement ? csrfTokenElement.getAttribute('content') : '';
 
+    // Referencias a formularios y campos del flujo de registro de cita.
     const formularioCita = document.getElementById('formRegistrarCita');
     const historiaSelectCita = document.getElementById('historiaSelectCitas');
     const citaMensaje = document.getElementById('citaMensaje');
 
+    // Campos individuales del formulario para mostrar o asignar datos.
     const citaCampos = {
         propietarioNombre: document.getElementById('citaPropietarioNombre'),
         propietarioDni: document.getElementById('citaPropietarioDni'),
@@ -32,10 +38,12 @@
         hora: document.getElementById('citaHora'),
     };
 
+    // Estados auxiliares: selección actual, catálogos y componente TomSelect.
     let historiaSeleccionadaParaCita = null;
     let historiasDisponibles = [];
     let tomSelectHistoria = null;
 
+    // Muestra alertas específicas del formulario de citas y las oculta tras unos segundos.
     function mostrarMensajeCita(texto, tipo = 'success') {
         if (!citaMensaje) {
             return;
@@ -61,6 +69,7 @@
 
     window.mostrarMensajeCita = mostrarMensajeCita;
 
+    // Limpia los campos dependientes de la historia cuando no hay selección.
     function limpiarDatosHistoriaEnCita() {
         ['propietarioNombre', 'propietarioDni', 'propietarioTelefono', 'mascotaNombre'].forEach(clave => {
             const campo = citaCampos[clave];
@@ -70,6 +79,7 @@
         });
     }
 
+    // Rellena los campos de propietario y mascota con la historia escogida.
     function rellenarDatosHistoriaEnCita(historia) {
         if (!historia) {
             limpiarDatosHistoriaEnCita();
@@ -93,6 +103,7 @@
         }
     }
 
+    // Prepara la estructura de datos que TomSelect requiere para mostrar opciones.
     function formatearHistoriaParaOpcion(historia) {
         if (!historia || !historia.id) {
             return null;
@@ -113,6 +124,7 @@
         };
     }
 
+    // Sincroniza las opciones de TomSelect con la lista de historias disponibles.
     function sincronizarTomSelectHistorias() {
         if (!tomSelectHistoria) {
             return;
@@ -152,6 +164,7 @@
         tomSelectHistoria.refreshOptions(false);
     }
 
+    // Rellena el select de historias con la data disponible y conserva selección previa.
     function poblarHistoriasParaCitas(lista = []) {
         if (!historiaSelectCita) {
             return;
@@ -192,6 +205,7 @@
 
     window.poblarHistoriasParaCitas = poblarHistoriasParaCitas;
 
+    // Inicializa el componente TomSelect para buscar historias clínicas.
     window.inicializarBuscadorHistorias = function inicializarBuscadorHistorias() {
         if (!historiaSelectCita || typeof TomSelect === 'undefined') {
             return;
@@ -282,6 +296,7 @@
         sincronizarTomSelectHistorias();
     };
 
+    // Ejecuta la inicialización del buscador según el estado de carga del DOM.
     const iniciarBuscadorHistorias = () => {
         if (typeof window.inicializarBuscadorHistorias === 'function') {
             window.inicializarBuscadorHistorias();
@@ -294,6 +309,7 @@
         iniciarBuscadorHistorias();
     }
 
+    // Cambio de la historia seleccionada: obtiene detalle vía AJAX y rellena campos.
     if (historiaSelectCita) {
         historiaSelectCita.addEventListener('change', async event => {
             const id = event.target.value;
@@ -314,6 +330,7 @@
         });
     }
 
+    // Evento submit del formulario de citas: valida, arma payload y lo envía.
     if (formularioCita) {
         formularioCita.addEventListener('submit', async event => {
             event.preventDefault();

@@ -1,11 +1,19 @@
+// JS para el módulo Dashboard principal: controla navegación lateral, secciones visibles y panel de citas próximas.
+// Selecciona todos los enlaces del menú lateral para gestionar el estado activo en la navegación.
 const links = Array.from(document.querySelectorAll('.sidebar-menu a.nav-link'));
+// Selecciona cada sección del contenido principal para mostrar u ocultar según la opción activa.
 const sections = Array.from(document.querySelectorAll('#main-content .section'));
+// Nodo que expone la configuración JSON embebida en el DOM.
 const configElement = document.getElementById('dashboard-config');
+// Botón que redirige directamente a la sección de historias clínicas desde tarjetas o accesos rápidos.
 const btnIrHistorias = document.querySelector('.btn-ir-historias');
+// Lista donde se renderizan las citas próximas en el inicio.
 const listaCitasProximas = document.getElementById('citasProximasLista');
 
+// Configuración global compartida entre módulos del dashboard.
 let dashboardConfig = window.dashboardConfig;
 
+// Si no existe configuración previa, intenta obtenerla desde el elemento oculto en el HTML.
 if (!dashboardConfig || typeof dashboardConfig !== 'object') {
     dashboardConfig = {};
     if (configElement) {
@@ -18,9 +26,12 @@ if (!dashboardConfig || typeof dashboardConfig !== 'object') {
     window.dashboardConfig = dashboardConfig;
 }
 
+// URL para obtener las citas próximas mediante fetch.
 const citasUpcomingUrl = dashboardConfig.citasUpcomingUrl || '';
+// Identificador del intervalo que refresca automáticamente la lista de citas próximas.
 let citasProximasIntervalId = null;
 
+// Muestra la sección cuyo id coincide con la clave recibida y oculta el resto.
 function showSection(key) {
     sections.forEach(sec => {
         const activa = sec.id === `section-${key}`;
@@ -29,10 +40,12 @@ function showSection(key) {
     });
 }
 
+// Quita los estilos de enlace activo en todos los links del menú.
 function clearActiveLinks() {
     links.forEach(link => link.classList.remove('active', 'nav-link--parent-active'));
 }
 
+// Marca un enlace como activo y resalta su padre si pertenece a un submenú.
 function setActiveLink(link) {
     if (!link) {
         return;
@@ -50,6 +63,7 @@ function setActiveLink(link) {
     }
 }
 
+// Controla el flujo de navegación al hacer clic en un enlace del menú lateral.
 function manejarNavegacion(link) {
     if (!link) {
         return;
@@ -72,6 +86,7 @@ function manejarNavegacion(link) {
     }
 }
 
+// Navega programáticamente a la sección de historias clínicas desde otros componentes.
 function navegarAHistorias() {
     const linkHistorias = document.querySelector('.sidebar-menu a[data-section="historias"]');
     if (linkHistorias) {
@@ -79,8 +94,10 @@ function navegarAHistorias() {
     }
 }
 
+// Expone la función de navegación a historias para ser invocada desde otros módulos.
 window.navegarAHistorias = navegarAHistorias;
 
+// Evento click en cada enlace de menú: evita navegación por defecto y usa manejo SPA.
 links.forEach(link => {
     link.addEventListener('click', event => {
         event.preventDefault();
@@ -88,6 +105,7 @@ links.forEach(link => {
     });
 });
 
+// Botón de acceso directo a historias clínicas en la tarjeta de resumen.
 if (btnIrHistorias) {
     btnIrHistorias.addEventListener('click', event => {
         event.preventDefault();
@@ -95,6 +113,7 @@ if (btnIrHistorias) {
     });
 }
 
+// Devuelve una fecha corta legible para la lista de citas próximas.
 function formatearFechaCorta(fechaIso = '', fechaLegible = '', fechaCorta = '') {
     if (fechaLegible) {
         return fechaLegible;
@@ -117,6 +136,7 @@ function formatearFechaCorta(fechaIso = '', fechaLegible = '', fechaCorta = '') 
     return `${dia}/${mes}`;
 }
 
+// Asegura que la hora se muestre siempre con dos dígitos.
 function formatearHoraCita(hora = '') {
     if (!hora) {
         return '--:--';
@@ -125,6 +145,7 @@ function formatearHoraCita(hora = '') {
     return hora.toString().padStart(5, '0');
 }
 
+// Convierte una fecha ISO (YYYY-MM-DD) a objeto Date seguro.
 function parseFechaIso(fecha = '') {
     if (!fecha) {
         return null;
@@ -140,6 +161,7 @@ function parseFechaIso(fecha = '') {
     return Number.isNaN(date.getTime()) ? null : date;
 }
 
+// Devuelve la clase CSS que corresponde al estado textual de la cita.
 function obtenerClaseEstadoCitaProxima(estado = '') {
     const normalizado = String(estado || '').trim().toLowerCase();
 
@@ -156,6 +178,7 @@ function obtenerClaseEstadoCitaProxima(estado = '') {
     }
 }
 
+// Pinta la lista de citas próximas en el panel inicial.
 function renderCitasProximas(lista = []) {
     if (!listaCitasProximas) {
         return;
@@ -243,6 +266,7 @@ function renderCitasProximas(lista = []) {
     listaCitasProximas.appendChild(fragment);
 }
 
+// Obtiene las citas próximas mediante fetch y actualiza la vista.
 async function cargarCitasProximas() {
     if (!citasUpcomingUrl || !listaCitasProximas) {
         return;
@@ -265,6 +289,7 @@ async function cargarCitasProximas() {
     }
 }
 
+// Inicia la actualización periódica de las citas próximas (carga inicial y cada 60s).
 function iniciarActualizacionCitasProximas() {
     if (!listaCitasProximas || !citasUpcomingUrl) {
         return;
@@ -280,8 +305,10 @@ function iniciarActualizacionCitasProximas() {
     }, 60000);
 }
 
+// Enlace predefinido para seleccionar la sección de inicio cuando carga la página.
 const enlaceInicio = document.querySelector('.sidebar-menu a[data-section="inicio"]');
 
+// Al cargar el DOM, activa la sección inicio, carga historias, citas y programa refresco de próximas.
 document.addEventListener('DOMContentLoaded', () => {
     if (enlaceInicio) {
         manejarNavegacion(enlaceInicio);
