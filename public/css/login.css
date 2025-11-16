@@ -35,6 +35,18 @@ html, body {
     position: relative; /* Posición relativa para elementos internos posicionados absolutamente */
 }
 
+.login-error {
+    background: rgba(242, 65, 215, 0.08); /* Fondo sutil */
+    border: 1px solid rgba(242, 65, 215, 0.4); /* Borde fino y moderno */
+    border-radius: 12px; /* Bordes suaves */
+    color: #c2185b; /* Texto elegante */
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    text-align: center;
+}
+
 .login-logo img.logo {
     width: 180px;      /* más pequeño */
     height: auto;

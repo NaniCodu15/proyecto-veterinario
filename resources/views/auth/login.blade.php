@@ -14,8 +14,8 @@
         </div>
 
         {{-- Mensaje de error --}}
-        @if($errors->any())
-            <div class="error">{{ $errors->first() }}</div>
+        @if($errors->has('email'))
+            <div class="login-error" role="alert">Las credenciales no son correctas.</div>
         @endif
 
         {{-- Formulario --}}
@@ -41,7 +41,7 @@
         <script>
             // Selecciona todos los inputs del formulario
             const inputs = document.querySelectorAll('.login-form input');
-            const errorDiv = document.querySelector('.login-form .error');
+            const errorDiv = document.querySelector('.login-form .login-error');
 
             if(errorDiv){
                 inputs.forEach(input => {
