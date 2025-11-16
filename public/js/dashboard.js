@@ -1019,8 +1019,12 @@
         });
     }
 
+    function normalizarEstadoCita(estado = '') {
+        return String(estado || '').trim().toLowerCase();
+    }
+
     function obtenerClaseEstadoCita(estado = '') {
-        const normalizado = String(estado || '').trim().toLowerCase();
+        const normalizado = normalizarEstadoCita(estado);
 
         switch (normalizado) {
             case 'atendida':
@@ -1033,6 +1037,58 @@
             default:
                 return 'cita-status--pending';
         }
+    }
+
+    function obtenerPrioridadEstadoCita(estado = '') {
+        const normalizado = normalizarEstadoCita(estado);
+
+        switch (normalizado) {
+            case 'pendiente':
+                return 0;
+            case 'reprogramada':
+                return 1;
+            case 'cancelada':
+                return 2;
+            case 'atendida':
+                return 3;
+            default:
+                return 1;
+        }
+    }
+
+    function convertirFechaLegibleAISO(fechaLegible = '') {
+        if (!fechaLegible) {
+            return null;
+        }
+
+        const partes = fechaLegible.split('/');
+        if (partes.length !== 3) {
+            return null;
+        }
+
+        const [dia, mes, anio] = partes.map(parte => parte.padStart(2, '0'));
+        if (!anio || !mes || !dia) {
+            return null;
+        }
+
+        return `${anio}-${mes}-${dia}`;
+    }
+
+    function obtenerTimestampCita(cita = {}) {
+        if (!cita) {
+            return Number.MAX_SAFE_INTEGER;
+        }
+
+        const hora = String(cita.hora ?? '00:00');
+        const horaNormalizada = hora.length === 5 ? hora : `${hora}:00`;
+        const fechaIso = cita.fecha ?? convertirFechaLegibleAISO(cita.fecha_legible ?? '');
+
+        if (!fechaIso) {
+            return Number.MAX_SAFE_INTEGER;
+        }
+
+        const marcaDeTiempo = Date.parse(`${fechaIso}T${horaNormalizada}`);
+        return Number.isNaN(marcaDeTiempo) ? Number.MAX_SAFE_INTEGER : marcaDeTiempo;
     }
 
     function crearFilaCita(cita = {}) {
@@ -1061,6 +1117,7 @@
         fila.appendChild(motivoCell);
 
         const estadoCell = document.createElement('td');
+        const estadoNormalizado = normalizarEstadoCita(cita.estado);
         const estadoPill = document.createElement('span');
         estadoPill.className = `cita-status ${obtenerClaseEstadoCita(cita.estado)}`;
         estadoPill.textContent = cita.estado ?? 'Pendiente';
@@ -1101,16 +1158,32 @@
         btnEstado.className = 'btn btn-warning btn-sm btnEstadoCita';
         btnEstado.innerHTML = '<i class="fas fa-exchange-alt"></i> Cambiar estado';
 
-        if (String(cita.estado || '').trim().toLowerCase() === 'atendida') {
+        if (estadoNormalizado === 'atendida') {
             btnEstado.disabled = true;
             btnEstado.classList.add('is-disabled');
             btnEstado.setAttribute('aria-disabled', 'true');
             btnEstado.title = 'Las citas atendidas no pueden modificarse.';
         }
 
+        const btnAnular = document.createElement('button');
+        btnAnular.type = 'button';
+        btnAnular.className = 'btn btn-danger btn-sm btnAnularCita';
+        btnAnular.innerHTML = '<i class="fas fa-ban"></i> Anular';
+
+        if (estadoNormalizado === 'cancelada' || estadoNormalizado === 'atendida') {
+            btnAnular.disabled = true;
+            btnAnular.classList.add('is-disabled');
+            btnAnular.setAttribute('aria-disabled', 'true');
+            btnAnular.title =
+                estadoNormalizado === 'cancelada'
+                    ? 'La cita ya se encuentra anulada.'
+                    : 'Las citas atendidas no pueden anularse.';
+        }
+
         accionesWrapper.appendChild(whatsappLink);
         accionesWrapper.appendChild(btnDetalles);
         accionesWrapper.appendChild(btnEstado);
+        accionesWrapper.appendChild(btnAnular);
         accionesCell.appendChild(accionesWrapper);
         fila.appendChild(accionesCell);
 
@@ -1122,7 +1195,22 @@
             return;
         }
 
-        citasCache = Array.isArray(lista) ? lista : [];
+        if (Array.isArray(lista)) {
+            citasCache = [...lista].sort((a, b) => {
+                const prioridadA = obtenerPrioridadEstadoCita(a?.estado);
+                const prioridadB = obtenerPrioridadEstadoCita(b?.estado);
+
+                if (prioridadA !== prioridadB) {
+                    return prioridadA - prioridadB;
+                }
+
+                const fechaA = obtenerTimestampCita(a);
+                const fechaB = obtenerTimestampCita(b);
+                return fechaA - fechaB;
+            });
+        } else {
+            citasCache = [];
+        }
 
         tablaCitas.innerHTML = '';
 
@@ -1244,6 +1332,46 @@
         }
 
         abrirModalGenerico(modalEstadoCita);
+    }
+
+    async function manejarAnulacionCita(cita) {
+        if (!cita || !cita.id) {
+            mostrarMensajeListadoCitas('No se pudo identificar la cita seleccionada.', 'error');
+            return;
+        }
+
+        const estadoNormalizado = normalizarEstadoCita(cita.estado);
+
+        if (estadoNormalizado === 'cancelada') {
+            mostrarMensajeListadoCitas('La cita ya se encuentra anulada.', 'info');
+            return;
+        }
+
+        if (estadoNormalizado === 'atendida') {
+            mostrarMensajeListadoCitas('Las citas atendidas no se pueden anular.', 'info');
+            return;
+        }
+
+        const confirmar = window.confirm('¿Deseas anular esta cita? Esta acción no se puede deshacer.');
+
+        if (!confirmar) {
+            return;
+        }
+
+        try {
+            const citaActualizada = await actualizarEstadoCita(cita.id, { estado: 'Cancelada' });
+            await cargarCitas(citasBusquedaActual);
+
+            if (citaActualizada) {
+                const citaDesdeLista = obtenerCitaPorId(citaActualizada.id);
+                actualizarDetalleCitaSiCorresponde(citaDesdeLista ?? citaActualizada);
+            }
+
+            mostrarMensajeListadoCitas('La cita fue anulada correctamente.', 'success');
+        } catch (error) {
+            console.error(error);
+            mostrarMensajeListadoCitas(error.message || 'No se pudo anular la cita seleccionada.', 'error');
+        }
     }
 
     async function cargarCitas(query = '') {
@@ -1809,8 +1937,9 @@
 
             const botonDetalles = event.target.closest('.btnVerCita');
             const botonEstado = event.target.closest('.btnEstadoCita');
+            const botonAnular = event.target.closest('.btnAnularCita');
 
-            if (!botonDetalles && !botonEstado) {
+            if (!botonDetalles && !botonEstado && !botonAnular) {
                 return;
             }
 
@@ -1827,12 +1956,17 @@
                 return;
             }
 
-            if (botonEstado?.disabled) {
+            if (botonEstado?.disabled || botonAnular?.disabled) {
                 return;
             }
 
             if (botonEstado && cita) {
                 prepararModalEstado(cita);
+                return;
+            }
+
+            if (botonAnular && cita) {
+                manejarAnulacionCita(cita);
             }
         });
     }
