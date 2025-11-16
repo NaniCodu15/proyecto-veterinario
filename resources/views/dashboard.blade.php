@@ -263,7 +263,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label>Peso inicial (kg):</label>
+                                <label>Peso:</label>
                                 <input type="number" id="peso" name="peso" step="0.01" min="0" required>
                             </div>
                         </div>
