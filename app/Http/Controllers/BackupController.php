@@ -8,12 +8,19 @@ use Illuminate\Http\JsonResponse;
 
 class BackupController extends Controller
 {
+    /**
+     * Inyecta el servicio encargado de generar y limpiar respaldos.
+     *
+     * @param BackupService $backupService Servicio que ejecuta las operaciones de backup.
+     */
     public function __construct(private readonly BackupService $backupService)
     {
     }
 
     /**
      * Genera una nueva copia de seguridad completa de la base de datos.
+     *
+     * @return JsonResponse Respuesta con el estado de la operación y la ruta del archivo generado.
      */
     public function generate(): JsonResponse
     {
@@ -24,6 +31,8 @@ class BackupController extends Controller
 
     /**
      * Devuelve el listado de copias de seguridad registradas.
+     *
+     * @return JsonResponse Respuesta JSON con la colección de respaldos ordenados por fecha.
      */
     public function index(): JsonResponse
     {

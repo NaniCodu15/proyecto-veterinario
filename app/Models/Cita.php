@@ -13,6 +13,10 @@ class Cita extends Model
     protected $primaryKey = 'id_cita';
     public $timestamps = false;
 
+    /**
+     * Campos asignables en masa para crear o actualizar citas.
+     * Incluyen la historia clínica relacionada y los datos de programación y estado.
+     */
     protected $fillable = [
         'id_historia',
         'fecha_cita',
@@ -21,7 +25,10 @@ class Cita extends Model
         'estado',
     ];
 
-    // Relación: una cita pertenece a una historia clínica
+    /**
+     * Relación: una cita pertenece a una historia clínica.
+     * Permite acceder a la historia mediante $cita->historiaClinica.
+     */
     public function historiaClinica()
     {
         return $this->belongsTo(HistoriaClinica::class, 'id_historia', 'id_historia');

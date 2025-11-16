@@ -13,6 +13,10 @@ class Mascota extends Model
     protected $primaryKey = 'id_mascota';
     public $timestamps = true;
 
+    /**
+     * Campos que pueden asignarse en masa al crear o actualizar una mascota.
+     * Incluyen datos básicos, fechas y referencia al propietario.
+     */
     protected $fillable = [
         'nombre',
         'especie',
@@ -24,19 +28,29 @@ class Mascota extends Model
         'fecha_registro'
     ];
 
-    // Relación: una mascota pertenece a un propietario
+    /**
+     * Relación: una mascota pertenece a un propietario.
+     * Permite acceder al dueño mediante $mascota->propietario.
+     */
     public function propietario()
     {
         return $this->belongsTo(Propietario::class, 'propietario_id', 'id_propietario');
     }
 
-    // Relación: una mascota tiene una historia clínica
+    /**
+     * Relación: una mascota tiene una historia clínica asociada.
+     * Se obtiene con $mascota->historiaClinica.
+     */
     public function historiaClinica()
     {
         return $this->hasOne(HistoriaClinica::class, 'id_mascota', 'id_mascota');
     }
 
-    // Relación: una mascota tiene una historia clínica
+    /**
+     * Relación auxiliar hacia la historia clínica por identificador.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function historia()
     {
     return $this->belongsTo(HistoriaClinica::class, 'id_historia', 'id_historia');

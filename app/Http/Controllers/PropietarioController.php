@@ -7,7 +7,9 @@ use Illuminate\Http\Request;
 class PropietarioController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Presenta el listado completo de propietarios registrados.
+     *
+     * @return void Previsto para devolver una vista con la colección de propietarios.
      */
     public function index()
     {
@@ -15,7 +17,9 @@ class PropietarioController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Despliega el formulario de creación de un nuevo propietario.
+     *
+     * @return void Debería renderizar la vista de alta de propietario.
      */
     public function create()
     {
@@ -23,7 +27,10 @@ class PropietarioController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Almacena un nuevo propietario tras validar la información enviada.
+     *
+     * @param Request $request Solicitud con datos como DNI, nombres, contacto y dirección.
+     * @return void La respuesta esperada es una redirección al índice con mensaje de éxito.
      */
     public function store(Request $request)
     {
@@ -31,7 +38,10 @@ class PropietarioController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Muestra la información detallada de un propietario específico.
+     *
+     * @param string $id Identificador del propietario a consultar.
+     * @return void Previsto para cargar la vista de detalle del propietario.
      */
     public function show(string $id)
     {
@@ -39,7 +49,10 @@ class PropietarioController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Muestra el formulario para editar un propietario existente.
+     *
+     * @param string $id Identificador del propietario a editar.
+     * @return void Debe entregar la vista con los datos precargados.
      */
     public function edit(string $id)
     {
@@ -47,7 +60,11 @@ class PropietarioController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Actualiza la información de un propietario después de validar los cambios.
+     *
+     * @param Request $request Solicitud con los nuevos datos del propietario.
+     * @param string $id Identificador del propietario a actualizar.
+     * @return void Espera redirigir al listado con confirmación de éxito.
      */
     public function update(Request $request, string $id)
     {
@@ -55,7 +72,10 @@ class PropietarioController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Elimina un propietario registrado.
+     *
+     * @param string $id Identificador del propietario a eliminar.
+     * @return void Debería responder con redirección o JSON según el contexto.
      */
     public function destroy(string $id)
     {

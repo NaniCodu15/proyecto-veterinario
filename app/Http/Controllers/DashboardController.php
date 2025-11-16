@@ -13,6 +13,11 @@ use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
+    /**
+     * Compila las estadísticas generales y listados recientes para el panel principal.
+     *
+     * @return \Illuminate\View\View Vista `dashboard` con métricas, paginación de mascotas y citas próximas.
+     */
     public function index()
     {
         // Estadísticas generales

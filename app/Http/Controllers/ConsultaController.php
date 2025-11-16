@@ -10,6 +10,12 @@ use Illuminate\Validation\Rule;
 
 class ConsultaController extends Controller
 {
+    /**
+     * Lista las consultas, pudiendo filtrarlas por historia clínica.
+     *
+     * @param Request $request Solicitud con el parámetro opcional `id_historia` para filtrar.
+     * @return \Illuminate\Http\JsonResponse Respuesta JSON con las consultas formateadas.
+     */
     public function index(Request $request)
     {
         $historiaId = $request->query('id_historia');
@@ -24,6 +30,12 @@ class ConsultaController extends Controller
         return response()->json(['data' => $consultas]);
     }
 
+    /**
+     * Crea una nueva consulta asociada a una historia clínica.
+     *
+     * @param Request $request Solicitud con fecha, síntomas, diagnóstico, tratamiento y métricas clínicas.
+     * @return \Illuminate\Http\JsonResponse Respuesta JSON con la consulta guardada y estatus 201.
+     */
     public function store(Request $request)
     {
         $validated = $this->validarConsulta($request);
@@ -43,6 +55,12 @@ class ConsultaController extends Controller
         ], 201);
     }
 
+    /**
+     * Devuelve una consulta específica.
+     *
+     * @param Consulta $consulta Consulta inyectada desde la ruta.
+     * @return \Illuminate\Http\JsonResponse Respuesta con la consulta formateada.
+     */
     public function show(Consulta $consulta)
     {
         return response()->json([
@@ -50,6 +68,13 @@ class ConsultaController extends Controller
         ]);
     }
 
+    /**
+     * Actualiza los datos de una consulta existente.
+     *
+     * @param Request $request Solicitud con la información validada de la consulta.
+     * @param Consulta $consulta Consulta a modificar, inyectada automáticamente.
+     * @return \Illuminate\Http\JsonResponse Respuesta JSON con la consulta actualizada.
+     */
     public function update(Request $request, Consulta $consulta)
     {
         $validated = $this->validarConsulta($request, $consulta);
@@ -71,6 +96,12 @@ class ConsultaController extends Controller
         ]);
     }
 
+    /**
+     * Elimina una consulta y actualiza la fecha de modificación de la historia asociada.
+     *
+     * @param Consulta $consulta Consulta a eliminar.
+     * @return \Illuminate\Http\JsonResponse Respuesta JSON indicando éxito.
+     */
     public function destroy(Consulta $consulta)
     {
         $consulta->loadMissing('historiaClinica');
@@ -81,6 +112,12 @@ class ConsultaController extends Controller
         return response()->json(['success' => true]);
     }
 
+    /**
+     * Obtiene todas las consultas pertenecientes a una historia clínica concreta.
+     *
+     * @param int $historiaId Identificador de la historia clínica.
+     * @return \Illuminate\Http\JsonResponse Respuesta JSON con las consultas formateadas y ordenadas.
+     */
     public function porHistoria($historiaId)
     {
         $historia = HistoriaClinica::findOrFail($historiaId);
@@ -94,6 +131,13 @@ class ConsultaController extends Controller
         return response()->json(['data' => $consultas]);
     }
 
+    /**
+     * Valida los campos permitidos para registrar o actualizar una consulta.
+     *
+     * @param Request $request Solicitud con los datos clínicos.
+     * @param Consulta|null $consulta Consulta existente cuando se trata de una actualización.
+     * @return array Arreglo con los datos validados listos para asignar al modelo.
+     */
     private function validarConsulta(Request $request, ?Consulta $consulta = null): array
     {
         return $request->validate([
@@ -108,11 +152,23 @@ class ConsultaController extends Controller
         ]);
     }
 
+    /**
+     * Convierte la fecha recibida en instancia de Carbon o null.
+     *
+     * @param mixed $fecha Fecha en formato cadena.
+     * @return Carbon|null Fecha parseada para almacenar en base de datos.
+     */
     private function parsearFecha($fecha): ?Carbon
     {
         return $fecha ? Carbon::parse($fecha) : null;
     }
 
+    /**
+     * Estructura la consulta en un arreglo legible para el frontend.
+     *
+     * @param Consulta $consulta Consulta a transformar.
+     * @return array Datos preparados con formato de fechas y campos clínicos.
+     */
     private function formatearConsulta(Consulta $consulta): array
     {
         return [

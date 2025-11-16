@@ -11,12 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Se añaden columnas de auditoría si aún no existen para registrar creación y actualización.
         Schema::table('respaldo_datos', function (Blueprint $table) {
             if (!Schema::hasColumn('respaldo_datos', 'created_at')) {
+                // Marca temporal de creación del respaldo.
                 $table->timestamp('created_at')->nullable()->after('estado');
             }
 
             if (!Schema::hasColumn('respaldo_datos', 'updated_at')) {
+                // Marca temporal de última actualización del registro de respaldo.
                 $table->timestamp('updated_at')->nullable()->after('created_at');
             }
         });

@@ -13,6 +13,10 @@ class Vacuna extends Model
     protected $primaryKey = 'id_vacuna';
     public $timestamps = false;
 
+    /**
+     * Campos asignables en masa para registrar las vacunas de una mascota.
+     * Incluyen las fechas de aplicación y próxima dosis junto a observaciones.
+     */
     protected $fillable = [
         'id_mascota',
         'nombre_vacuna',
@@ -21,8 +25,10 @@ class Vacuna extends Model
         'observaciones',
     ];
 
-    // Relación: una vacuna pertenece a una mascota
-    // Podemos acceder a la mascota usando $vacuna->mascota
+    /**
+     * Relación: una vacuna pertenece a una mascota.
+     * Permite acceder al animal vacunado mediante $vacuna->mascota.
+     */
     public function mascota()
     {
         return $this->belongsTo(Mascota::class, 'id_mascota', 'id_mascota');
