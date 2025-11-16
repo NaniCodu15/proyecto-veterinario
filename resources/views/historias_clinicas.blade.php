@@ -66,3 +66,95 @@
                 </div>
             </div>
         </div>
+
+        <!-- MODAL NUEVA/EDITAR HISTORIA -->
+        <div id="modalHistoria" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2 id="modalTitulo">Nueva Historia Clínica</h2>
+                <form id="formHistoria">
+                    <div class="form-section">
+                        <h3 class="form-section__title"><span>🐶</span>Datos de la mascota</h3>
+                        <div class="form-grid">
+                            <div class="form-group full-width">
+                                <label>ID de Historia Clínica:</label>
+                                <input type="text" id="numero_historia" name="numero_historia" readonly>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Nombre de la Mascota:</label>
+                                <input type="text" id="nombreMascota" name="nombreMascota" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Especie:</label>
+                                <select id="especie" name="especie" required>
+                                    <option value="" selected disabled>Seleccione una opción</option>
+                                    <option value="perro">Perro</option>
+                                    <option value="gato">Gato</option>
+                                    <option value="otro">Otros</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group full-width" id="grupoEspecieOtro" style="display: none;">
+                                <label>Especifique la especie:</label>
+                                <input type="text" id="especieOtro" name="especieOtro">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Edad (años):</label>
+                                <input type="number" id="edad" name="edad" min="0">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Raza:</label>
+                                <input type="text" id="raza" name="raza" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Sexo:</label>
+                                <select id="sexo" name="sexo" required>
+                                    <option value="" selected disabled>Seleccione una opción</option>
+                                    <option value="macho">Macho</option>
+                                    <option value="hembra">Hembra</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Peso:</label>
+                                <input type="number" id="peso" name="peso" step="0.01" min="0" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="form-section__title"><span>👤</span>Datos del propietario</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Nombre del Propietario:</label>
+                                <input type="text" id="nombrePropietario" name="nombrePropietario" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Teléfono:</label>
+                                <input type="text" id="telefono" name="telefono" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Dirección:</label>
+                                <input type="text" id="direccion" name="direccion" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>DNI:</label>
+                                <input type="text" id="dni" name="dni" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success btn-guardar">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>

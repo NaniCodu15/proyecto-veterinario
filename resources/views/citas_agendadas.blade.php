@@ -42,3 +42,55 @@
                 </div>
             </section>
         </div>
+
+        <div id="modalDetalleCita" class="modal modal--cita" aria-hidden="true">
+            <div class="modal-content modal-content--cita">
+                <span class="close" data-close="detalleCita">&times;</span>
+                <h2>Detalle de la cita</h2>
+                <div class="cita-detalle">
+                    <div class="cita-detalle__row"><span class="cita-detalle__label">ID</span><span class="cita-detalle__value" data-detalle="id">—</span></div>
+                    <div class="cita-detalle__row"><span class="cita-detalle__label">Historia clínica</span><span class="cita-detalle__value" data-detalle="numero_historia">—</span></div>
+                    <div class="cita-detalle__row"><span class="cita-detalle__label">Mascota</span><span class="cita-detalle__value" data-detalle="mascota">—</span></div>
+                    <div class="cita-detalle__row"><span class="cita-detalle__label">Propietario</span><span class="cita-detalle__value" data-detalle="propietario">—</span></div>
+                    <div class="cita-detalle__row"><span class="cita-detalle__label">Teléfono</span><span class="cita-detalle__value" data-detalle="propietario_telefono">—</span></div>
+                    <div class="cita-detalle__row"><span class="cita-detalle__label">Fecha</span><span class="cita-detalle__value" data-detalle="fecha_legible">—</span></div>
+                    <div class="cita-detalle__row"><span class="cita-detalle__label">Hora</span><span class="cita-detalle__value" data-detalle="hora">—</span></div>
+                    <div class="cita-detalle__row"><span class="cita-detalle__label">Estado</span><span class="cita-detalle__value" data-detalle="estado">—</span></div>
+                    <div class="cita-detalle__row cita-detalle__row--full"><span class="cita-detalle__label">Motivo</span><span class="cita-detalle__value" data-detalle="motivo">—</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="modalEstadoCita" class="modal modal--cita" aria-hidden="true">
+            <div class="modal-content modal-content--cita">
+                <span class="close" data-close="estadoCita">&times;</span>
+                <h2>Actualizar estado de la cita</h2>
+                <p class="cita-estado__subtitle">Selecciona el estado que refleje el seguimiento actual de la cita.</p>
+                <form id="formEstadoCita" class="cita-estado-form">
+                    <div class="form-group">
+                        <label for="selectEstadoCita">Estado</label>
+                        <select id="selectEstadoCita" required>
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="Atendida">Atendida</option>
+                            <option value="Reprogramada">Reprogramada</option>
+                            <option value="Cancelada">Cancelada</option>
+                        </select>
+                    </div>
+
+                    <div id="reprogramarCampos" class="reprogramar-campos" hidden>
+                        <div class="form-group">
+                            <label for="citaReprogramadaFecha">Nueva fecha</label>
+                            <input type="date" id="citaReprogramadaFecha">
+                        </div>
+                        <div class="form-group">
+                            <label for="citaReprogramadaHora">Nueva hora</label>
+                            <input type="time" id="citaReprogramadaHora">
+                        </div>
+                    </div>
+                    <div class="cita-estado-actions">
+                        <button type="button" class="btn btn-outline" data-close="estadoCita">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
