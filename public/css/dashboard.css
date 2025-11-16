@@ -1,3 +1,6 @@
+/*
+ * Variables globales con la paleta de colores, sombras y radios utilizados en todo el dashboard.
+ */
 :root {
     --primary: #7ba4ff;
     --primary-dark: #4e7dff;
@@ -22,10 +25,16 @@
     --radius-sm: 12px;
 }
 
+/*
+ * Reset básico para asegurar el cálculo de tamaño de caja coherente.
+ */
 * {
     box-sizing: border-box;
 }
 
+/*
+ * Contenedor principal del dashboard que fija el alto y define el fondo degradado.
+ */
 .dashboard-layout {
     margin: 0;
     padding: 0;
@@ -38,15 +47,18 @@
     overflow: hidden;
 }
 
+/* Evita el desplazamiento del body cuando se abre un modal. */
 body.modal-open {
     overflow: hidden;
 }
 
+/* Asegura que las imágenes no excedan el contenedor y se muestren como bloques. */
 img {
     max-width: 100%;
     display: block;
 }
 
+/* Estructura flex general que aloja la barra lateral y el contenido principal. */
 .dashboard-container {
     width: 100%;
     height: 100vh;
@@ -58,6 +70,7 @@ img {
     box-sizing: border-box;
 }
 
+/* Barra lateral fija con fondo translúcido y bordes redondeados. */
 .sidebar {
     position: fixed;
     top: 16px;
@@ -76,15 +89,18 @@ img {
     overflow: hidden;
 }
 
+/* Cabecera de la barra lateral que centra el logo. */
 .sidebar-header {
     text-align: center;
 }
 
+/* Ajusta el ancho del logo dentro del sidebar. */
 .sidebar-logo {
     width: 150px;
     margin: 0 auto;
 }
 
+/* Lista principal de navegación lateral. */
 .sidebar-menu {
     list-style: none;
     padding: 0;
@@ -94,10 +110,12 @@ img {
     gap: 12px;
 }
 
+/* Elimina márgenes individuales en cada ítem de menú. */
 .sidebar-menu li {
     margin: 0;
 }
 
+/* Enlaces del menú con espaciado, esquinas redondeadas y transición al interactuar. */
 .sidebar-menu a {
     display: flex;
     align-items: center;
@@ -111,10 +129,12 @@ img {
     transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease;
 }
 
+/* Tamaño de íconos dentro de los enlaces de navegación. */
 .sidebar-menu a i {
     font-size: 18px;
 }
 
+/* Estilo resaltado para el enlace activo o al pasar el cursor. */
 .sidebar-menu a:hover,
 .sidebar-menu a.active {
     background: linear-gradient(135deg, rgba(123, 164, 255, 0.18), rgba(255, 156, 216, 0.22));
@@ -122,18 +142,21 @@ img {
     transform: translateX(6px);
 }
 
+/* Indica que un enlace padre de submenú está activo. */
 .sidebar-menu a.nav-link--parent-active {
     background: linear-gradient(135deg, rgba(123, 164, 255, 0.18), rgba(255, 156, 216, 0.22));
     color: var(--primary-dark);
     transform: translateX(6px);
 }
 
+/* Contenedor de elementos con submenús anidados. */
 .sidebar-item--has-submenu {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
 
+/* Lista de submenús con indentación y separación vertical. */
 .sidebar-submenu {
     list-style: none;
     padding: 0;
@@ -143,6 +166,7 @@ img {
     gap: 8px;
 }
 
+/* Enlaces dentro de submenús con tipografía ligeramente reducida. */
 .sidebar-submenu .nav-link {
     font-size: 0.92rem;
     padding: 10px 16px;
@@ -150,10 +174,12 @@ img {
     gap: 10px;
 }
 
+/* Íconos específicos de los submenús. */
 .sidebar-submenu .nav-link i {
     font-size: 16px;
 }
 
+/* Tarjeta inferior que muestra datos del usuario y botón de salida. */
 .user-card {
     margin-top: auto;
     display: flex;
@@ -166,6 +192,7 @@ img {
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 
+/* Agrupa avatar y datos personales dentro de la tarjeta de usuario. */
 .user-card__info {
     display: flex;
     align-items: center;
@@ -174,6 +201,7 @@ img {
     min-width: 0;
 }
 
+/* Avatar circular con sombra suave. */
 .user-card__avatar {
     width: 48px;
     height: 48px;
@@ -182,6 +210,7 @@ img {
     box-shadow: 0 8px 18px rgba(122, 168, 255, 0.25);
 }
 
+/* La imagen llena el contenedor y mantiene proporciones. */
 .user-card__avatar img {
     width: 100%;
     height: 100%;
@@ -189,6 +218,7 @@ img {
     display: block;
 }
 
+/* Columna con nombre y correo dentro de la tarjeta de usuario. */
 .user-card__details {
     display: flex;
     flex-direction: column;
@@ -196,6 +226,7 @@ img {
     min-width: 0;
 }
 
+/* Nombre destacado del usuario. */
 .user-card__name {
     font-weight: 700;
     font-size: 0.95rem;
@@ -206,6 +237,7 @@ img {
     word-break: break-word;
 }
 
+/* Correo con estilo secundario. */
 .user-card__email {
     font-size: 0.82rem;
     color: var(--text-muted);
@@ -215,10 +247,12 @@ img {
     word-break: break-word;
 }
 
+/* Contenedor del botón de cierre de sesión. */
 .user-card__logout {
     display: flex;
 }
 
+/* Botón de salir con sombra y transición al interactuar. */
 .user-card__logout button {
     background: rgba(255, 255, 255, 0.65);
     border: none;
@@ -235,12 +269,14 @@ img {
     box-shadow: 0 6px 12px rgba(255, 159, 207, 0.18);
 }
 
+/* Acentúa el botón al pasar el cursor. */
 .user-card__logout button:hover {
     background: rgba(255, 255, 255, 0.9);
     color: var(--primary-dark);
     transform: translateX(3px);
 }
 
+/* Área principal de contenido con fondo claro y desplazamiento vertical. */
 .content {
     flex: 1;
     background: rgba(255, 255, 255, 0.96);
@@ -254,11 +290,13 @@ img {
     overflow-y: auto;
 }
 
+/* Cabecera centralizada dentro del contenido. */
 .content-header {
     text-align: center;
     margin-bottom: 28px;
 }
 
+/* Título principal de cada sección. */
 .content-header__title {
     margin: 0;
     font-size: clamp(1.8rem, 2.4vw, 2.6rem);
@@ -267,16 +305,19 @@ img {
     color: var(--primary-dark);
 }
 
+/* Secciones que se ocultan por defecto y se muestran según estado activo. */
 .section {
     display: none;
     animation: fadeIn 0.6s ease;
 }
 
+/* Visibilidad cuando la sección está activa. */
 .section.active {
     display: block;
 }
 
 
+/* Hero de bienvenida con layout en grid y fondo degradado. */
 .home-hero {
     position: relative;
     display: grid;
@@ -291,6 +332,7 @@ img {
     overflow: hidden;
 }
 
+/* Brillo superior que añade profundidad al hero. */
 .home-hero::after {
     content: '';
     position: absolute;
@@ -299,6 +341,7 @@ img {
     pointer-events: none;
 }
 
+/* Columna izquierda con textos y botones. */
 .home-hero__content {
     position: relative;
     z-index: 1;
@@ -307,6 +350,7 @@ img {
     gap: 18px;
 }
 
+/* Insignia redondeada con fondo translúcido. */
 .home-hero__badge {
     display: inline-flex;
     align-items: center;
@@ -320,6 +364,7 @@ img {
     font-size: 0.78rem;
 }
 
+/* Título grande del hero con sombra de texto. */
 .home-hero__title {
     margin: 0;
     font-size: clamp(2.4rem, 3vw, 3.2rem);
@@ -328,6 +373,7 @@ img {
     text-shadow: 0 18px 32px rgba(27, 37, 65, 0.35);
 }
 
+/* Subtítulo descriptivo en color tenue. */
 .home-hero__subtitle {
     margin: 0;
     color: rgba(255, 255, 255, 0.85);
@@ -335,6 +381,7 @@ img {
     font-size: 1.02rem;
 }
 
+/* Contenedor flexible para botones de acción. */
 .home-hero__actions {
     display: flex;
     flex-wrap: wrap;
@@ -342,6 +389,7 @@ img {
     margin-top: 12px;
 }
 
+/* Columna de imagen decorativa dentro del hero. */
 .home-hero__visual {
     position: relative;
     z-index: 1;
@@ -350,6 +398,7 @@ img {
     justify-content: center;
 }
 
+/* Burbujas decorativas posicionadas de forma absoluta. */
 .home-hero__bubble {
     position: absolute;
     border-radius: 50%;
@@ -357,6 +406,7 @@ img {
     opacity: 0.9;
 }
 
+/* Burbuja principal con degradado azul. */
 .home-hero__bubble--one {
     width: 220px;
     height: 220px;
@@ -365,6 +415,7 @@ img {
     right: 10%;
 }
 
+/* Burbuja secundaria rosada. */
 .home-hero__bubble--two {
     width: 180px;
     height: 180px;
@@ -373,12 +424,14 @@ img {
     left: 0;
 }
 
+/* Imagen central con sombra de recorte. */
 .home-hero__image {
     position: relative;
     width: 200px;
     filter: drop-shadow(0 22px 44px rgba(31, 42, 68, 0.32));
 }
 
+/* Grid que aloja tarjetas de métricas adaptables. */
 .metrics-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -386,6 +439,7 @@ img {
     margin-bottom: 36px;
 }
 
+/* Tarjetas de métricas con degradado y efecto hover. */
 .metric-card {
     position: relative;
     display: flex;
@@ -401,6 +455,7 @@ img {
     transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
+/* Capa de brillo encima de cada tarjeta. */
 .metric-card::after {
     content: '';
     position: absolute;
@@ -409,11 +464,13 @@ img {
     pointer-events: none;
 }
 
+/* Elevación al interactuar con la tarjeta. */
 .metric-card:hover {
     transform: translateY(-6px);
     box-shadow: 0 28px 60px rgba(123, 164, 255, 0.24);
 }
 
+/* Encabezado de la tarjeta con etiqueta e ícono. */
 .metric-card__header {
     display: flex;
     justify-content: space-between;
@@ -422,12 +479,14 @@ img {
     z-index: 1;
 }
 
+/* Texto descriptivo de la métrica. */
 .metric-card__label {
     font-weight: 600;
     color: var(--text-dark);
     font-size: 0.98rem;
 }
 
+/* Contenedor del ícono de la métrica. */
 .metric-card__icon {
     width: 48px;
     height: 48px;
@@ -439,23 +498,27 @@ img {
     font-size: 1.2rem;
 }
 
+/* Zona central de valores numéricos. */
 .metric-card__body {
     position: relative;
     z-index: 1;
 }
 
+/* Valor principal destacado. */
 .metric-card__value {
     margin: 0;
     font-size: 2.6rem;
     line-height: 1;
 }
 
+/* Texto secundario bajo el valor. */
 .metric-card__description {
     margin: 6px 0 0;
     color: var(--text-muted);
     font-size: 0.95rem;
 }
 
+/* Fila inferior para insignias o leyendas. */
 .metric-card__footer {
     display: flex;
     gap: 6px;
@@ -463,6 +526,7 @@ img {
     z-index: 1;
 }
 
+/* Punto decorativo para acompañar leyendas. */
 .metric-card__dot {
     width: 12px;
     height: 12px;
@@ -471,6 +535,7 @@ img {
     box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.6);
 }
 
+/* Variantes de color según el tipo de métrica. */
 .metric-card--patients {
     background: linear-gradient(145deg, rgba(237, 243, 255, 0.92), rgba(191, 214, 255, 0.72));
 }
@@ -487,6 +552,7 @@ img {
     background: linear-gradient(145deg, rgba(236, 255, 248, 0.94), rgba(197, 242, 228, 0.68));
 }
 
+/* Distribución de secciones analíticas principales. */
 .overview-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
@@ -495,12 +561,14 @@ img {
     width: 100%;
 }
 
+/* Grid combinado para paneles de citas e insights. */
 .insight-grid {
     display: grid;
     grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
     gap: 24px;
 }
 
+/* Paneles genéricos con fondo claro y sombra. */
 .panel {
     background: rgba(255, 255, 255, 0.92);
     border-radius: var(--radius-lg);
@@ -512,14 +580,17 @@ img {
     gap: 24px;
 }
 
+/* Variación de panel para el bloque de citas. */
 .panel--appointments {
     background: linear-gradient(150deg, rgba(237, 243, 255, 0.95), rgba(255, 248, 255, 0.9));
 }
 
+/* Variación de panel para estadísticas e insights. */
 .panel--insights {
     background: linear-gradient(150deg, rgba(255, 232, 247, 0.95), rgba(241, 248, 255, 0.92));
 }
 
+/* Encabezado de los paneles que alinea título y acciones. */
 .panel__header {
     display: flex;
     align-items: flex-start;
@@ -527,18 +598,21 @@ img {
     gap: 16px;
 }
 
+/* Título principal dentro de un panel. */
 .panel__title {
     margin: 0;
     font-size: 1.5rem;
     color: var(--primary-dark);
 }
 
+/* Texto auxiliar debajo del título del panel. */
 .panel__subtitle {
     margin: 6px 0 0;
     color: var(--text-muted);
     font-size: 0.95rem;
 }
 
+/* Etiqueta en forma de chip para resaltar estados o categorías. */
 .panel__chip {
     align-self: flex-start;
     display: inline-flex;
@@ -554,10 +628,12 @@ img {
     color: var(--primary-dark);
 }
 
+/* Ajusta el tamaño del ícono dentro del chip. */
 .panel__chip i {
     font-size: 0.85rem;
 }
 
+/* Lista de próximas citas mostradas en formato de tarjeta. */
 .appointment-list {
     list-style: none;
     margin: 0;
@@ -567,6 +643,7 @@ img {
     gap: 18px;
 }
 
+/* Tarjeta de cita con layout en columnas para hora, detalles y estado. */
 .appointment-list__item {
     display: grid;
     grid-template-columns: 88px minmax(0, 1fr) auto;
@@ -579,12 +656,14 @@ img {
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
+/* Estilo de estado vacío cuando no hay citas. */
 .appointment-list__item--empty {
     grid-template-columns: minmax(0, 1fr);
     text-align: left;
     color: var(--text-muted);
 }
 
+/* Contenedor de hora y fecha de la cita. */
 .appointment-list__time {
     display: flex;
     flex-direction: column;
@@ -594,22 +673,26 @@ img {
     color: var(--primary-dark);
 }
 
+/* Hora principal en formato grande. */
 .appointment-list__hour {
     font-size: 1.3rem;
     letter-spacing: 0.04em;
 }
 
+/* Fecha en estilo secundario. */
 .appointment-list__date {
     font-size: 0.85rem;
     color: var(--text-muted);
 }
 
+/* Columna con información del paciente y dueño. */
 .appointment-list__details {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
 
+/* Nombre de la mascota resaltado. */
 .appointment-list__pet {
     margin: 0;
     font-weight: 600;
@@ -617,16 +700,19 @@ img {
     color: var(--text-dark);
 }
 
+/* Color diferente para datos adicionales de la mascota. */
 .appointment-list__pet span {
     color: var(--accent-dark);
     font-weight: 500;
 }
 
+/* Información del dueño en texto tenue. */
 .appointment-list__owner {
     font-size: 0.86rem;
     color: var(--text-muted);
 }
 
+/* Pastilla que indica el estado de la cita. */
 .appointment-list__status {
     display: inline-flex;
     align-items: center;
@@ -640,32 +726,38 @@ img {
     letter-spacing: 0.02em;
 }
 
+/* Colores para cita pendiente. */
 .appointment-list__status.is-pending {
     background: rgba(255, 190, 138, 0.25);
     color: #c27b3a;
 }
 
+/* Colores para cita completada. */
 .appointment-list__status.is-done {
     background: rgba(70, 197, 165, 0.22);
     color: #2f8c72;
 }
 
+/* Colores para cita cancelada. */
 .appointment-list__status.is-cancelled {
     background: rgba(255, 143, 157, 0.24);
     color: #c24758;
 }
 
+/* Colores para cita reprogramada. */
 .appointment-list__status.is-rescheduled {
     background: rgba(123, 164, 255, 0.24);
     color: var(--primary-dark);
 }
 
+/* Grid de tarjetas pequeñas con información resumida. */
 .insight-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 18px;
 }
 
+/* Tarjetas compactas para métricas o notas rápidas. */
 .insight-card {
     display: flex;
     gap: 14px;
@@ -677,6 +769,7 @@ img {
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
+/* Icono dentro de la tarjeta de insight. */
 .insight-card__icon {
     display: inline-flex;
     align-items: center;
@@ -689,30 +782,35 @@ img {
     font-size: 1.1rem;
 }
 
+/* Título breve del insight. */
 .insight-card h3 {
     margin: 0 0 4px;
     font-size: 1rem;
     color: var(--text-dark);
 }
 
+/* Descripción o texto secundario en las tarjetas de insight. */
 .insight-card p {
     margin: 0;
     color: var(--text-muted);
     font-size: 0.9rem;
 }
 
+/* Lista vertical de barras de progreso de cuidado. */
 .care-progress {
     display: flex;
     flex-direction: column;
     gap: 18px;
 }
 
+/* Cada item del progreso con etiqueta y barra. */
 .care-progress__item {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
+/* Distribuye nombre del indicador y valor numérico. */
 .care-progress__label {
     display: flex;
     justify-content: space-between;
@@ -721,6 +819,7 @@ img {
     color: var(--primary-dark);
 }
 
+/* Pista de fondo para las barras de progreso. */
 .care-progress__track {
     height: 10px;
     border-radius: 999px;
@@ -728,18 +827,21 @@ img {
     overflow: hidden;
 }
 
+/* Barra activa con degradado que muestra avance. */
 .care-progress__bar {
     display: block;
     height: 100%;
     border-radius: inherit;
     background: linear-gradient(90deg, rgba(123, 164, 255, 0.65), rgba(255, 156, 216, 0.65));
 }
+/* Tarjetas de notas rápidas relacionadas al cuidado. */
 .care-notes {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 14px;
 }
 
+/* Estilo de cada nota con borde y color verde. */
 .care-note {
     padding: 12px 14px;
     border-radius: var(--radius-md);
@@ -752,14 +854,17 @@ img {
     gap: 8px;
 }
 
+/* Ícono que acompaña el texto de la nota. */
 .care-note i {
     font-size: 1rem;
 }
 
+/* Permite que un panel ocupe todo el ancho disponible en el grid. */
 .panel--wide {
     grid-column: 1 / -1;
 }
 
+/* Titular de secciones secundarias. */
 .titulo {
     margin: 0;
     color: var(--primary-dark);
@@ -767,6 +872,7 @@ img {
     letter-spacing: -0.02em;
 }
 
+/* Alertas de estado con icono y sombra. */
 .alert {
     display: inline-flex;
     align-items: center;
@@ -778,21 +884,25 @@ img {
     box-shadow: 0 14px 30px rgba(74, 199, 161, 0.18);
 }
 
+/* Oculta completamente la alerta cuando se usa el atributo hidden. */
 .alert[hidden] {
     display: none !important;
 }
 
+/* Variante verde para mensajes exitosos. */
 .alert--success {
     background: rgba(74, 199, 161, 0.18);
     color: #1b9d78;
 }
 
+/* Variante roja para mensajes de error. */
 .alert--error {
     background: rgba(255, 143, 143, 0.18);
     color: #d03f3f;
     box-shadow: 0 14px 30px rgba(255, 143, 143, 0.18);
 }
 
+/* Botón base reutilizable con alineación centrada y transición suave. */
 .btn {
     border: none;
     border-radius: var(--radius-md);
@@ -807,6 +917,7 @@ img {
     transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
 }
 
+/* Estado deshabilitado para evitar interacción y quitar sombras. */
 .btn.is-disabled,
 .btn:disabled {
     cursor: not-allowed;
@@ -815,25 +926,30 @@ img {
     transform: none;
 }
 
+/* Evita efectos hover en botones deshabilitados. */
 .btn.is-disabled:hover,
 .btn:disabled:hover {
     transform: none;
 }
 
+/* Ligero movimiento al pasar el cursor sobre botones activos. */
 .btn:hover {
     transform: translateY(-2px);
 }
 
+/* Botón principal con degradado azul. */
 .btn-primary {
     background: linear-gradient(135deg, var(--primary-dark), var(--primary));
     color: #fff;
     box-shadow: 0 24px 45px rgba(95, 141, 229, 0.3);
 }
 
+/* Intensifica el degradado del botón principal al pasar el cursor. */
 .btn-primary:hover {
     background: linear-gradient(135deg, #4c75d6, var(--primary-dark));
 }
 
+/* Botón con borde rosa y fondo transparente. */
 .btn-outline {
     background: transparent;
     color: var(--accent-dark);
@@ -841,10 +957,12 @@ img {
     box-shadow: none;
 }
 
+/* Rellena suavemente el fondo en el hover del outline. */
 .btn-outline:hover {
     background: var(--accent-soft);
 }
 
+/* Botón de estilo fantasma para fondos oscuros. */
 .btn-ghost {
     background: rgba(255, 255, 255, 0.15);
     color: var(--surface);
@@ -852,36 +970,43 @@ img {
     box-shadow: none;
 }
 
+/* Incrementa la opacidad del fondo fantasma al interactuar. */
 .btn-ghost:hover {
     background: rgba(255, 255, 255, 0.3);
 }
 
+/* Botón de acción exitosa en verde. */
 .btn-success {
     background: var(--success);
     color: #fff;
     box-shadow: 0 20px 40px rgba(74, 199, 161, 0.25);
 }
 
+/* Botón de advertencia en tono ámbar. */
 .btn-warning {
     background: rgba(255, 190, 118, 0.22);
     color: #c37a2d;
 }
 
+/* Botón de error con fondo rojizo. */
 .btn-danger {
     background: rgba(255, 143, 143, 0.22);
     color: #d03f3f;
 }
 
+/* Variante pequeña para botones compactos. */
 .btn-sm {
     padding: 8px 14px;
     border-radius: var(--radius-sm);
     font-size: 0.85rem;
 }
 
+/* Ajusta ancho mínimo para el botón de guardar. */
 .btn-guardar {
     min-width: 180px;
 }
 
+/* Contenedor del modal superpuesto con fondo semitransparente. */
 .modal {
     display: none;
     position: fixed;
@@ -893,6 +1018,7 @@ img {
     overflow-y: auto;
 }
 
+/* Caja central del modal con sombra profunda. */
 .modal-content {
     background: var(--surface);
     margin: auto;
@@ -903,11 +1029,13 @@ img {
     position: relative;
 }
 
+/* Título del modal. */
 .modal-content h2 {
     margin: 0 0 12px;
     color: var(--text-dark);
 }
 
+/* Botón de cierre posicionado en la esquina del modal. */
 .close {
     position: absolute;
     top: 18px;
@@ -918,10 +1046,12 @@ img {
     transition: color 0.2s ease;
 }
 
+/* Cambia el color del ícono de cerrar al pasar el cursor. */
 .close:hover {
     color: var(--primary-dark);
 }
 
+/* Bloques de formulario con fondo suave y borde sutil. */
 .form-section {
     background: rgba(235, 243, 255, 0.55);
     border: 1px solid rgba(122, 168, 255, 0.18);
@@ -931,10 +1061,12 @@ img {
     margin-top: 20px;
 }
 
+/* Reduce el margen superior en el primer bloque de formulario. */
 .form-section:first-of-type {
     margin-top: 12px;
 }
 
+/* Encabezado de cada sección de formulario. */
 .form-section__title {
     margin: 0 0 16px;
     font-size: 1.05rem;
@@ -945,10 +1077,12 @@ img {
     color: var(--primary-dark);
 }
 
+/* Tamaño del ícono que acompaña al título del formulario. */
 .form-section__title span {
     font-size: 1.25rem;
 }
 
+/* Layout responsivo para campos de formulario en columnas. */
 .form-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -956,26 +1090,31 @@ img {
     margin-top: 24px;
 }
 
+/* Elimina el margen superior cuando el grid está dentro de una sección. */
 .form-section .form-grid {
     margin-top: 0;
 }
 
+/* Agrupa etiqueta y control de entrada. */
 .form-group {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
+/* Hace que el campo ocupe el ancho completo del grid. */
 .form-group.full-width {
     grid-column: 1 / -1;
 }
 
+/* Etiquetas de los campos con énfasis. */
 .form-group label {
     font-weight: 600;
     color: var(--text-dark);
     font-size: 0.9rem;
 }
 
+/* Estilos compartidos para inputs, selects y áreas de texto. */
 .form-group input,
 .form-group select,
 .form-group textarea {
@@ -989,6 +1128,7 @@ img {
     transition: border 0.2s ease, box-shadow 0.2s ease;
 }
 
+/* Resalta el borde y añade halo al enfocar un campo. */
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
@@ -997,17 +1137,20 @@ img {
     outline: none;
 }
 
+/* Permite redimensionar verticalmente las áreas de texto. */
 .form-group textarea {
     resize: vertical;
     min-height: 110px;
 }
 
+/* Contenedor para alinear los botones del formulario a la derecha. */
 .form-actions {
     display: flex;
     justify-content: flex-end;
     margin-top: 28px;
 }
 
+/* Modal de confirmación con fondo difuminado. */
 .confirm-modal {
     position: fixed;
     inset: 0;
@@ -1020,10 +1163,12 @@ img {
     padding: 24px;
 }
 
+/* Muestra el modal de confirmación cuando está activo. */
 .confirm-modal.is-visible {
     display: flex;
 }
 
+/* Caja interna del modal de confirmación. */
 .confirm-modal__dialog {
     background: rgba(255, 255, 255, 0.95);
     border-radius: var(--radius-xl);
@@ -1034,6 +1179,7 @@ img {
     text-align: center;
 }
 
+/* Texto principal que solicita la confirmación. */
 .confirm-modal__message {
     margin: 0 0 24px;
     font-size: 1.05rem;
@@ -1041,12 +1187,14 @@ img {
     font-weight: 600;
 }
 
+/* Distribuye los botones de acción en el modal de confirmación. */
 .confirm-modal__actions {
     display: flex;
     gap: 12px;
     justify-content: center;
 }
 
+/* Botón de aceptar con degradado rosa. */
 .btn-confirm-accept {
     background: linear-gradient(135deg, #ffb6dc, #ff9fcf);
     color: #fff;
@@ -1054,10 +1202,12 @@ img {
     box-shadow: 0 20px 40px rgba(255, 159, 207, 0.35);
 }
 
+/* Aumenta el contraste del botón de aceptar al pasar el cursor. */
 .btn-confirm-accept:hover {
     background: linear-gradient(135deg, #ff8dc2, #ff74b2);
 }
 
+/* Botón de cancelar con degradado azul. */
 .btn-confirm-cancel {
     background: linear-gradient(135deg, #8eb7ff, #7aa8ff);
     color: #fff;
@@ -1065,10 +1215,12 @@ img {
     box-shadow: 0 20px 40px rgba(122, 168, 255, 0.3);
 }
 
+/* Ajusta tonos del botón de cancelar al interactuar. */
 .btn-confirm-cancel:hover {
     background: linear-gradient(135deg, #6d95e6, #587fda);
 }
 
+/* Animación que suaviza la aparición vertical de secciones. */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -1080,6 +1232,7 @@ img {
     }
 }
 
+/* Ajustes responsivos para pantallas medianas. */
 @media (max-width: 1200px) {
     .dashboard-container {
         padding: 20px;
@@ -1108,6 +1261,7 @@ img {
     }
 }
 
+/* Reestructuración para tablets y pantallas pequeñas. */
 @media (max-width: 992px) {
     .dashboard-layout {
         height: auto;
@@ -1164,6 +1318,7 @@ img {
     }
 }
 
+/* Estilos específicos para móviles. */
 @media (max-width: 600px) {
     .dashboard-container {
         padding: 18px 12px 24px;

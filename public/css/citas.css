@@ -1,3 +1,4 @@
+/* Cabecera de la vista de citas con título y descripción. */
 .citas-header {
     display: flex;
     flex-direction: column;
@@ -5,12 +6,14 @@
     margin-bottom: 24px;
 }
 
+/* Texto introductorio bajo el título principal. */
 .citas-header p {
     color: var(--text-muted);
     max-width: 540px;
     font-size: 0.98rem;
 }
 
+/* Grid flexible que aloja formularios y listados. */
 .citas-grid {
     display: grid;
     gap: 24px;
@@ -18,11 +21,13 @@
     width: 100%;
 }
 
+/* Variante de grid cuando se muestra un solo panel. */
 .citas-grid--single {
     max-width: none;
     width: 100%;
 }
 
+/* Amplía a dos columnas en pantallas grandes. */
 @media (min-width: 1100px) {
     .citas-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -34,6 +39,7 @@
     }
 }
 
+/* Tarjetas principales que contienen formularios o resúmenes. */
 .citas-card {
     background: linear-gradient(145deg, rgba(255, 229, 244, 0.85), rgba(228, 240, 255, 0.85));
     border-radius: var(--radius-xl);
@@ -43,6 +49,7 @@
     width: 100%;
 }
 
+/* Encabezado de tarjeta con título y descripción. */
 .citas-card__header {
     display: flex;
     align-items: flex-start;
@@ -51,18 +58,21 @@
     margin-bottom: 24px;
 }
 
+/* Título de la tarjeta. */
 .citas-card__header h2 {
     margin: 0;
     font-size: 1.4rem;
     color: var(--text-dark);
 }
 
+/* Párrafo descriptivo dentro del encabezado. */
 .citas-card__header p {
     margin: 4px 0 0;
     color: var(--text-muted);
     font-size: 0.95rem;
 }
 
+/* Ícono decorativo que acompaña la cabecera de la tarjeta. */
 .citas-card__icon {
     font-size: 1.6rem;
     color: var(--accent-dark);
@@ -72,6 +82,7 @@
     box-shadow: 0 18px 36px rgba(255, 159, 207, 0.22);
 }
 
+/* Formulario principal para agendar o editar citas. */
 .cita-form {
     display: flex;
     flex-direction: column;
@@ -79,17 +90,20 @@
     width: 100%;
 }
 
+/* Agrupa etiqueta y campo de entrada. */
 .cita-form__group {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
+/* Etiquetas de los campos con énfasis. */
 .cita-form__group label {
     font-weight: 600;
     color: var(--text-dark);
 }
 
+/* Estilos comunes para los campos del formulario. */
 .cita-form__group input,
 .cita-form__group select,
 .cita-form__group textarea {
@@ -103,6 +117,7 @@
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+/* Resalta bordes y añade halo al enfocar. */
 .cita-form__group input:focus,
 .cita-form__group select:focus,
 .cita-form__group textarea:focus {
@@ -111,27 +126,32 @@
     box-shadow: 0 0 0 4px rgba(122, 168, 255, 0.18);
 }
 
+/* Ajusta altura mínima y permite redimensionado vertical. */
 .cita-form__group textarea {
     min-height: 110px;
     resize: vertical;
 }
 
+/* Distribuye campos en columnas adaptables. */
 .cita-form__grid {
     display: grid;
     gap: 16px;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
+/* Hace que un campo ocupe todo el ancho del grid. */
 .cita-form__group.full-width {
     grid-column: 1 / -1;
 }
 
+/* Contenedor para alinear botones de acción del formulario. */
 .cita-form__actions {
     display: flex;
     justify-content: flex-end;
     margin-top: 8px;
 }
 
+/* Alertas de feedback para el formulario de citas. */
 .cita-alert {
     border-radius: var(--radius-md);
     padding: 14px 18px;
@@ -139,26 +159,31 @@
     display: none;
 }
 
+/* Muestra la alerta cuando está activa. */
 .cita-alert.is-visible {
     display: block;
 }
 
+/* Variante verde para mensajes exitosos. */
 .cita-alert--success {
     background: rgba(74, 199, 161, 0.18);
     color: #1b9d78;
     box-shadow: 0 16px 32px rgba(74, 199, 161, 0.18);
 }
 
+/* Variante roja para errores. */
 .cita-alert--error {
     background: rgba(255, 143, 143, 0.18);
     color: #d03f3f;
     box-shadow: 0 16px 32px rgba(255, 143, 143, 0.18);
 }
 
-.cita-form__group .ts-wrapper {
+        /* Contenedor de TomSelect a ancho completo. */
+        .cita-form__group .ts-wrapper {
             width: 100%;
         }
 
+        /* Estilo de control seleccionado para el selector. */
         .cita-form__group .ts-wrapper.single .ts-control {
             border-radius: var(--radius-md);
             border: 1px solid rgba(122, 168, 255, 0.3);
@@ -171,6 +196,7 @@
             min-height: 52px;
         }
 
+        /* Halo y borde al enfocar o pasar el cursor por el control. */
         .cita-form__group .ts-wrapper.single.focus .ts-control,
         .cita-form__group .ts-wrapper.single .ts-control:hover {
             outline: none;
@@ -178,12 +204,14 @@
             box-shadow: 0 0 0 4px rgba(156, 194, 255, 0.25);
         }
 
+        /* Menú desplegable del selector con sombra. */
         .cita-form__group .ts-dropdown {
             border-radius: var(--radius-md);
             border: 1px solid rgba(122, 168, 255, 0.25);
             box-shadow: 0 18px 48px rgba(126, 142, 177, 0.18);
         }
 
+        /* Contenedor de cada opción mostrando datos en columna. */
         .ts-option__content {
             display: flex;
             flex-direction: column;
@@ -191,6 +219,7 @@
             padding: 4px 2px;
         }
 
+        /* Número o identificador destacado de la opción. */
         .ts-option__numero,
         .ts-item__numero {
             font-weight: 600;
@@ -198,18 +227,21 @@
             letter-spacing: 0.02em;
         }
 
+        /* Nombre de la mascota mostrado en el desplegable. */
         .ts-option__mascota,
         .ts-item__mascota {
             font-size: 0.9rem;
             color: #4d5f87;
         }
 
+        /* Datos del propietario con tipografía secundaria. */
         .ts-option__propietario,
         .ts-item__propietario {
             font-size: 0.8rem;
             color: #6c7a91;
         }
 
+        /* Caja que agrupa los textos seleccionados. */
         .ts-item__content {
             display: flex;
             flex-direction: column;
@@ -223,6 +255,7 @@
             min-width: 0;
         }
 
+        /* Mensaje informativo dentro del dropdown. */
         .ts-dropdown__message {
             padding: 12px;
             font-size: 0.85rem;

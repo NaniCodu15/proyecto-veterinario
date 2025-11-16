@@ -1,9 +1,11 @@
+/* Layout general de la página de historias registradas. */
 .historias-registradas {
     display: flex;
     flex-direction: column;
     gap: 24px;
 }
 
+/* Encabezado superior con resumen y acciones. */
 .historias-registradas__header {
     display: flex;
     align-items: flex-start;
@@ -12,6 +14,7 @@
     flex-wrap: wrap;
 }
 
+/* Descripción complementaria bajo el título. */
 .historias-registradas__header p {
     margin: 0;
     color: var(--text-muted);
@@ -20,16 +23,19 @@
     line-height: 1.6;
 }
 
+/* Espacio para mostrar alertas informativas. */
 .historias-registradas__alert {
     align-self: flex-start;
 }
 
+/* Grid responsivo que organiza las tarjetas de historias. */
 .historias-registradas__grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 20px;
 }
 
+/* Tarjeta individual de historia con degradado y sombra. */
 .historia-card {
     background: linear-gradient(150deg, rgba(228, 240, 255, 0.92), rgba(255, 229, 244, 0.9));
     border-radius: var(--radius-lg);
@@ -42,11 +48,13 @@
     transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
+/* Eleva ligeramente la tarjeta al pasar el cursor. */
 .historia-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 26px 50px rgba(122, 168, 255, 0.25);
 }
 
+/* Encabezado de tarjeta con badge y fecha. */
 .historia-card__header {
     display: flex;
     justify-content: space-between;
@@ -55,6 +63,7 @@
     flex-wrap: wrap;
 }
 
+/* Etiqueta que destaca el estado o tipo de historia. */
 .historia-card__badge {
     background: var(--surface);
     color: var(--primary-dark);
@@ -65,6 +74,7 @@
     box-shadow: 0 16px 30px rgba(122, 168, 255, 0.22);
 }
 
+/* Información de fecha con icono. */
 .historia-card__date {
     display: flex;
     align-items: center;
@@ -74,12 +84,14 @@
     font-weight: 600;
 }
 
+/* Contenido principal de la tarjeta. */
 .historia-card__body {
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
 
+/* Fila que separa etiquetas y valores. */
 .historia-card__row {
     display: flex;
     justify-content: space-between;
@@ -87,6 +99,7 @@
     gap: 12px;
 }
 
+/* Etiquetas con iconos para los campos. */
 .historia-card__label {
     display: flex;
     align-items: center;
@@ -96,10 +109,12 @@
     font-size: 0.9rem;
 }
 
+/* Color específico para los iconos de etiqueta. */
 .historia-card__label i {
     color: var(--accent-dark);
 }
 
+/* Valores alineados a la derecha. */
 .historia-card__value {
     font-weight: 600;
     color: var(--text-dark);
@@ -107,6 +122,7 @@
     text-align: right;
 }
 
+/* Botones de acción al final de cada tarjeta. */
 .historia-card__actions {
     display: flex;
     justify-content: flex-end;
@@ -114,6 +130,7 @@
     flex-wrap: wrap;
 }
 
+/* Estado vacío con mensaje centrado. */
 .historias-registradas__empty {
     display: flex;
     flex-direction: column;
@@ -129,11 +146,13 @@
     text-align: center;
 }
 
+/* Icono grande que acompaña al mensaje vacío. */
 .historias-registradas__empty i {
     font-size: 2rem;
     color: var(--primary-dark);
 }
 
+/* Ajustes móviles para filas y valores dentro de las tarjetas. */
 @media (max-width: 600px) {
     .historia-card__row {
         flex-direction: column;
@@ -145,11 +164,13 @@
     }
 }
 
+/* Mensaje centrado cuando no hay registros en la tabla. */
 .tabla-historias__empty td {
     text-align: center;
     color: var(--text-muted);
     padding: 24px;
 }
+/* Hero decorativo para la cabecera extendida de historias. */
 .historias-registradas__header {
             position: relative;
             display: flex;
@@ -164,6 +185,7 @@
             border: 1px solid rgba(168, 195, 255, 0.35);
         }
 
+        /* Halo decorativo en la esquina del hero. */
         .historias-registradas__header::after {
             content: '';
             position: absolute;
@@ -176,6 +198,7 @@
             mix-blend-mode: screen;
         }
 
+        /* Contenedor de textos dentro del hero. */
         .historias-registradas__header-content {
             position: relative;
             z-index: 1;
@@ -184,6 +207,7 @@
             gap: 10px;
         }
 
+        /* Etiqueta superior de pequeña tipografía. */
         .historias-registradas__eyebrow {
             font-size: 0.8rem;
             letter-spacing: 0.12em;
@@ -192,6 +216,7 @@
             font-weight: 700;
         }
 
+        /* Título prominente en el hero. */
         .historias-registradas__title {
             margin: 0;
             font-size: clamp(1.6rem, 4vw, 2.2rem);
@@ -199,6 +224,7 @@
             font-weight: 800;
         }
 
+        /* Subtítulo descriptivo bajo el título principal. */
         .historias-registradas__subtitle {
             margin: 0;
             max-width: 600px;
@@ -207,6 +233,7 @@
             line-height: 1.5;
         }
 
+        /* Botón redondeado para crear una nueva historia. */
         .historias-registradas__create-btn {
             position: relative;
             z-index: 1;
@@ -226,16 +253,19 @@
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
+        /* Eleva el botón de creación al hacer hover. */
         .historias-registradas__create-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 24px 48px rgba(132, 160, 255, 0.3);
         }
 
+        /* Borde visible al enfocar el botón desde teclado. */
         .historias-registradas__create-btn:focus-visible {
             outline: 3px solid rgba(255, 255, 255, 0.9);
             outline-offset: 4px;
         }
 
+        /* Ícono circular que acompaña al texto del botón. */
         .historias-registradas__create-icon {
             display: grid;
             place-items: center;
@@ -247,10 +277,12 @@
             font-size: 1.1rem;
         }
 
+        /* Asegura que el texto del botón no se rompa. */
         .historias-registradas__create-label {
             white-space: nowrap;
         }
 
+        /* Barra de búsqueda con degradado y sombra interior. */
         .historias-registradas__search {
             position: relative;
             width: min(100%, 520px);
@@ -264,11 +296,13 @@
             backdrop-filter: blur(8px);
         }
 
+        /* Resalta la barra de búsqueda al enfocarla. */
         .historias-registradas__search:focus-within {
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75), 0 26px 48px rgba(132, 160, 255, 0.26);
             transform: translateY(-1px);
         }
 
+        /* Campo de entrada dentro de la barra de búsqueda. */
         .historias-registradas__search-input {
             width: 100%;
             border-radius: 16px;
@@ -281,16 +315,19 @@
             transition: box-shadow 0.2s ease, background-color 0.2s ease;
         }
 
+        /* Color del texto placeholder. */
         .historias-registradas__search-input::placeholder {
             color: rgba(71, 78, 120, 0.6);
         }
 
+        /* Realza el borde y fondo al enfocar el campo de búsqueda. */
         .historias-registradas__search-input:focus {
             outline: none;
             background: rgba(255, 255, 255, 1);
             box-shadow: inset 0 0 0 1px rgba(142, 170, 255, 0.35), 0 0 0 4px rgba(196, 210, 255, 0.35);
         }
 
+        /* Posiciona el ícono de lupa dentro del campo. */
         .historias-registradas__search-icon {
             position: absolute;
             left: 18px;
@@ -300,6 +337,7 @@
             font-size: 1rem;
         }
 
+        /* Botón de anulación con degradado rosado. */
         .btnAnular {
             display: inline-flex;
             align-items: center;
@@ -316,16 +354,19 @@
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
+        /* Incrementa sombra y desplazamiento en hover. */
         .btnAnular:hover {
             transform: translateY(-1px);
             box-shadow: 0 16px 30px rgba(255, 150, 180, 0.32);
         }
 
+        /* Marca de foco para el botón de anular. */
         .btnAnular:focus-visible {
             outline: 3px solid rgba(255, 220, 228, 0.9);
             outline-offset: 2px;
         }
 
+        /* Ajustes responsivos del hero y controles en tablets. */
         @media (max-width: 768px) {
             .historias-registradas__header {
                 flex-direction: column;
@@ -353,6 +394,7 @@
             }
         }
 
+        /* Contenedor principal del modal de historia. */
         .modal--historia .modal-content--historia {
             max-width: 1100px;
             background: linear-gradient(135deg, rgba(244, 248, 255, 0.98), rgba(255, 255, 255, 0.98));
@@ -362,12 +404,14 @@
             box-shadow: 0 40px 80px rgba(132, 160, 255, 0.18);
         }
 
+        /* Layout de detalle de historia dentro del modal. */
         .historia-detalle {
             display: flex;
             flex-direction: column;
             gap: 28px;
         }
 
+        /* Encabezado del detalle con títulos y badges. */
         .historia-detalle__header {
             display: flex;
             justify-content: space-between;
@@ -375,6 +419,7 @@
             gap: 24px;
         }
 
+        /* Chip informativo que resume datos clave. */
         .historia-detalle__badge {
             display: inline-flex;
             align-items: center;
@@ -389,18 +434,21 @@
             font-weight: 600;
         }
 
+        /* Título principal del detalle. */
         .historia-detalle__title {
             font-size: 1.75rem;
             color: var(--text-dark);
             margin: 10px 0 6px;
         }
 
+        /* Subtítulo con información complementaria. */
         .historia-detalle__subtitle {
             color: rgba(43, 57, 144, 0.7);
             font-size: 0.95rem;
             margin: 0;
         }
 
+        /* Grid que organiza los datos básicos de la historia. */
         .historia-detalle__info-grid {
             display: grid;
             gap: 16px;
@@ -410,6 +458,7 @@
             padding: 18px 22px;
         }
 
+        /* Cada dato clave mostrado en columna. */
         .historia-detalle__info-item {
             display: flex;
             flex-direction: column;
@@ -417,6 +466,7 @@
             color: var(--text-dark);
         }
 
+        /* Etiqueta pequeña sobre cada dato. */
         .historia-detalle__info-item > span {
             font-size: 0.8rem;
             text-transform: uppercase;
@@ -424,23 +474,27 @@
             color: rgba(43, 57, 144, 0.55);
         }
 
+        /* Valor principal dentro del item. */
         .historia-detalle__info-item > strong {
             font-size: 1.1rem;
             font-weight: 600;
             color: var(--text-dark);
         }
 
+        /* Texto auxiliar adicional debajo del valor. */
         .historia-detalle__info-item > small {
             font-size: 0.85rem;
             color: rgba(43, 57, 144, 0.6);
         }
 
+        /* Cuerpo principal del detalle con pestañas y secciones. */
         .historia-detalle__body {
             display: flex;
             flex-direction: column;
             gap: 24px;
         }
 
+        /* Selector de pestañas con fondo claro y borde redondo. */
         .historia-detalle__tabs {
             display: inline-flex;
             gap: 12px;
@@ -452,6 +506,7 @@
             align-self: flex-start;
         }
 
+        /* Botones de pestaña. */
         .historia-detalle__tab {
             border: none;
             background: transparent;
@@ -463,29 +518,35 @@
             transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
         }
 
+        /* Cambia color al pasar el cursor por la pestaña. */
         .historia-detalle__tab:hover {
             color: var(--text-dark);
         }
 
+        /* Resalta pestaña enfocada por teclado. */
         .historia-detalle__tab:focus-visible {
             outline: 2px solid rgba(122, 168, 255, 0.6);
             outline-offset: 2px;
         }
 
+        /* Estilo de pestaña activa con degradado. */
         .historia-detalle__tab.is-active {
             background: linear-gradient(135deg, rgba(122, 168, 255, 0.28), rgba(178, 214, 255, 0.45));
             color: var(--text-dark);
             box-shadow: 0 6px 18px rgba(122, 168, 255, 0.25);
         }
 
+        /* Panel de contenido asociado a cada pestaña. */
         .historia-detalle__panel {
             display: none;
         }
 
+        /* Muestra el panel activo. */
         .historia-detalle__panel.is-active {
             display: block;
         }
 
+        /* Ajustes de tabs en pantallas pequeñas. */
         @media (max-width: 768px) {
             .historia-detalle__tabs {
                 width: 100%;
@@ -497,22 +558,26 @@
             }
         }
 
+        /* Encabezado para cada sección interna. */
         .historia-detalle__section-header {
             margin-bottom: 18px;
         }
 
+        /* Título de sección dentro del detalle. */
         .historia-detalle__section-header h3 {
             margin: 0;
             font-size: 1.2rem;
             color: var(--text-dark);
         }
 
+        /* Descripción secundaria bajo el título de sección. */
         .historia-detalle__section-header p {
             margin: 6px 0 0;
             color: rgba(43, 57, 144, 0.65);
             font-size: 0.95rem;
         }
 
+        /* Contenedor de la línea de tiempo de consultas. */
         .historia-detalle__timeline {
             background: rgba(255, 255, 255, 0.78);
             border-radius: 24px;
@@ -585,12 +650,14 @@
             letter-spacing: 0.08em;
         }
 
+        /* Título de cada consulta en la línea de tiempo. */
         .consulta-item__titulo {
             font-size: 1.15rem;
             margin: 0;
             color: var(--text-dark);
         }
 
+        /* Datos meta mostrados como chips. */
         .consulta-item__meta {
             display: flex;
             flex-wrap: wrap;
@@ -598,6 +665,7 @@
             margin-bottom: 12px;
         }
 
+        /* Chip individual dentro de la sección meta. */
         .consulta-item__meta-tag {
             display: inline-flex;
             align-items: center;
@@ -610,17 +678,20 @@
             font-size: 0.85rem;
         }
 
+        /* Contenedor de bloques de detalle de la consulta. */
         .consulta-item__body {
             display: grid;
             gap: 14px;
         }
 
+        /* Bloques con fondo azul claro para secciones de texto. */
         .consulta-item__block {
             background: rgba(237, 244, 255, 0.6);
             border-radius: 16px;
             padding: 12px 14px;
         }
 
+        /* Encabezado pequeño dentro de cada bloque. */
         .consulta-item__block-title {
             display: block;
             font-size: 0.78rem;
@@ -630,12 +701,14 @@
             margin-bottom: 6px;
         }
 
+        /* Texto principal del bloque de consulta. */
         .consulta-item__block-text {
             margin: 0;
             color: var(--text-dark);
             line-height: 1.5;
         }
 
+        /* Sección de formulario para registrar nuevas consultas. */
         .historia-detalle__form {
             background: rgba(255, 255, 255, 0.85);
             border-radius: 24px;
@@ -644,23 +717,27 @@
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
         }
 
+        /* Formulario de consulta con distribución en columna. */
         .consulta-form {
             display: flex;
             flex-direction: column;
             gap: 16px;
         }
 
+        /* Grid responsivo para los campos de la consulta. */
         .consulta-form__grid {
             display: grid;
             gap: 16px;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
         }
 
+        /* Refuerza el peso de las etiquetas dentro del formulario. */
         .consulta-form .form-group label {
             font-weight: 600;
             color: var(--text-dark);
         }
 
+        /* Estilos de inputs y áreas de texto de la consulta. */
         .consulta-form .form-group input,
         .consulta-form .form-group textarea {
             width: 100%;
@@ -673,11 +750,13 @@
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
+        /* Permite redimensionar y define alto mínimo de texto. */
         .consulta-form .form-group textarea {
             resize: vertical;
             min-height: 80px;
         }
 
+        /* Borde y sombra al enfocar campos del formulario. */
         .consulta-form .form-group input:focus,
         .consulta-form .form-group textarea:focus {
             outline: none;
@@ -685,6 +764,7 @@
             box-shadow: 0 0 0 4px rgba(156, 194, 255, 0.2);
         }
 
+        /* Alertas que muestran el resultado del envío. */
         .consulta-alert {
             border-radius: var(--radius-md);
             padding: 14px 16px;
@@ -692,16 +772,19 @@
             display: none;
         }
 
+        /* Hace visible la alerta cuando hay mensajes. */
         .consulta-alert.is-visible {
             display: block;
         }
 
+        /* Variante verde para éxito. */
         .consulta-alert--success {
             background: rgba(138, 199, 174, 0.18);
             color: rgba(23, 120, 88, 0.95);
             border: 1px solid rgba(138, 199, 174, 0.45);
         }
 
+        /* Variante roja para errores. */
         .consulta-alert--error {
             background: rgba(255, 179, 179, 0.18);
             color: rgba(186, 30, 30, 0.95);
