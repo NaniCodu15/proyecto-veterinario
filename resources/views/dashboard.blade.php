@@ -70,7 +70,7 @@
         <div id="section-inicio" class="section active">
             <div class="home-hero">
                 <div class="home-hero__content">
-                    <span class="home-hero__badge">CLÍNICA CENTRAL</span>
+                    <span class="home-hero__badge">HOSPITAL VETERINARIO</span>
                     <h1 class="home-hero__title">Seguimiento integral con una mirada moderna</h1>
                     <p class="home-hero__subtitle">
                         Centraliza la información clínica, anticipa citas críticas y brinda una experiencia confiable a cada familia.
