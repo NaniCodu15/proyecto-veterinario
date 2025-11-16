@@ -7,7 +7,9 @@ use Illuminate\Http\Request;
 class VacunaController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Lista todas las vacunas registradas en el sistema.
+     *
+     * @return void Se espera renderizar la vista de índice con las vacunas disponibles.
      */
     public function index()
     {
@@ -15,7 +17,9 @@ class VacunaController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Muestra el formulario para registrar una nueva vacuna.
+     *
+     * @return void Debe devolver la vista de creación para capturar los datos de la vacuna.
      */
     public function create()
     {
@@ -23,7 +27,10 @@ class VacunaController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Almacena una vacuna después de validar los datos de entrada.
+     *
+     * @param Request $request Solicitud con información como mascota, nombre de la vacuna y fechas de aplicación.
+     * @return void Previsto para redirigir al listado o responder en JSON según la petición.
      */
     public function store(Request $request)
     {
@@ -31,7 +38,10 @@ class VacunaController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Muestra los detalles de una vacuna específica.
+     *
+     * @param string $id Identificador de la vacuna a consultar.
+     * @return void Debería cargar la vista de detalle con la información completa.
      */
     public function show(string $id)
     {
@@ -39,7 +49,10 @@ class VacunaController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Presenta el formulario para editar una vacuna existente.
+     *
+     * @param string $id Identificador de la vacuna que se desea modificar.
+     * @return void Espera entregar la vista de edición con los datos actuales.
      */
     public function edit(string $id)
     {
@@ -47,7 +60,11 @@ class VacunaController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Actualiza los datos de una vacuna tras validar la solicitud.
+     *
+     * @param Request $request Solicitud con los nuevos valores de la vacuna.
+     * @param string $id Identificador de la vacuna a actualizar.
+     * @return void Debe responder con redirección o JSON indicando el resultado.
      */
     public function update(Request $request, string $id)
     {
@@ -55,7 +72,10 @@ class VacunaController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Elimina la vacuna indicada del registro.
+     *
+     * @param string $id Identificador de la vacuna a eliminar.
+     * @return void Previsto para redirigir al índice o devolver una respuesta JSON.
      */
     public function destroy(string $id)
     {

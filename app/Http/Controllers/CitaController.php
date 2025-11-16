@@ -12,6 +12,12 @@ class CitaController extends Controller
 {
     private const ESTADOS_PERMITIDOS = ['Pendiente', 'Atendida', 'Cancelada', 'Reprogramada'];
 
+    /**
+     * Lista todas las citas filtrando opcionalmente por el parámetro de búsqueda.
+     *
+     * @param Request $request Solicitud HTTP que puede incluir el parámetro `q` para buscar por nombre de mascota o propietario.
+     * @return \Illuminate\Http\JsonResponse Respuesta JSON con el arreglo de citas formateadas para la tabla administrativa.
+     */
     public function list(Request $request)
     {
         $search = trim((string) $request->input('q', ''));
@@ -50,6 +56,12 @@ class CitaController extends Controller
         ]);
     }
 
+    /**
+     * Obtiene las próximas citas pendientes dentro de los tres días siguientes.
+     *
+     * @param Request $request Solicitud HTTP sin parámetros adicionales.
+     * @return \Illuminate\Http\JsonResponse Respuesta JSON con las citas ordenadas por fecha y hora.
+     */
     public function upcoming(Request $request)
     {
         $today = Carbon::today();
@@ -69,20 +81,33 @@ class CitaController extends Controller
         ]);
     }
 
-    // Mostrar todas las citas
+    /**
+     * Muestra la vista con el listado completo de citas.
+     *
+     * @return \Illuminate\View\View Vista `citas.index` con todas las citas cargadas.
+     */
     public function index()
     {
         $citas = Cita::all();
         return view('citas.index', compact('citas'));
     }
 
-    // Formulario para crear nueva cita
+    /**
+     * Retorna el formulario para registrar una nueva cita.
+     *
+     * @return \Illuminate\View\View Vista `citas.create` sin datos adicionales.
+     */
     public function create()
     {
         return view('citas.create');
     }
 
-    // Guardar nueva cita
+    /**
+     * Almacena una nueva cita después de validar los datos requeridos.
+     *
+     * @param Request $request Solicitud con fecha, hora, motivo e identificador de historia clínica.
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse Respuesta JSON cuando es una petición AJAX o redirección a `citas.index`.
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -113,19 +138,35 @@ class CitaController extends Controller
         return redirect()->route('citas.index')->with('success', 'Cita creada correctamente.');
     }
 
-    // Mostrar una cita específica
+    /**
+     * Muestra la vista con el detalle de una cita concreta.
+     *
+     * @param Cita $cita Modelo inyectado con la cita solicitada.
+     * @return \Illuminate\View\View Vista `citas.show` con la cita a visualizar.
+     */
     public function show(Cita $cita)
     {
         return view('citas.show', compact('cita'));
     }
 
-    // Formulario para editar cita
+    /**
+     * Presenta el formulario de edición para una cita existente.
+     *
+     * @param Cita $cita Modelo de la cita a modificar.
+     * @return \Illuminate\View\View Vista `citas.edit` con los datos precargados.
+     */
     public function edit(Cita $cita)
     {
         return view('citas.edit', compact('cita'));
     }
 
-    // Actualizar cita
+    /**
+     * Actualiza los datos básicos de la cita luego de validar la información.
+     *
+     * @param Request $request Solicitud con fecha, hora e historia clínica seleccionada.
+     * @param Cita $cita Instancia de la cita a actualizar.
+     * @return \Illuminate\Http\RedirectResponse Redirección a `citas.index` con mensaje de éxito.
+     */
     public function update(Request $request, Cita $cita)
     {
         $request->validate([
@@ -143,7 +184,13 @@ class CitaController extends Controller
         return redirect()->route('citas.index')->with('success', 'Cita actualizada correctamente.');
     }
 
-    // Eliminar cita
+    /**
+     * Elimina la cita indicada y retorna la respuesta adecuada al contexto.
+     *
+     * @param Request $request Solicitud HTTP que determina si la respuesta será JSON.
+     * @param Cita $cita Cita que se desea eliminar.
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse Respuesta en JSON o redirección con mensaje de éxito.
+     */
     public function destroy(Request $request, Cita $cita)
     {
         $cita->delete();
@@ -157,6 +204,14 @@ class CitaController extends Controller
         return redirect()->route('citas.index')->with('success', 'Cita eliminada correctamente.');
     }
 
+    /**
+     * Actualiza únicamente el estado de la cita y permite reprogramar cuando corresponde.
+     *
+     * @param Request $request Solicitud con el nuevo estado y opcionalmente nueva fecha y hora.
+     * @param Cita $cita Cita cuyo estado se modificará.
+     * @return \Illuminate\Http\JsonResponse Respuesta JSON con el mensaje y la cita formateada.
+     * @throws ValidationException Cuando se intenta modificar una cita atendida o reprogramar sin fecha/hora.
+     */
     public function updateEstado(Request $request, Cita $cita)
     {
         $validated = $request->validate([
@@ -211,6 +266,12 @@ class CitaController extends Controller
         ]);
     }
 
+    /**
+     * Formatea la información de la cita para consumo por el frontend.
+     *
+     * @param Cita $cita Cita con sus relaciones cargadas.
+     * @return array Arreglo con campos de identificación, datos de mascota, propietario y programación.
+     */
     private function transformCita(Cita $cita): array
     {
         $cita->loadMissing(['historiaClinica.mascota.propietario']);
@@ -244,6 +305,12 @@ class CitaController extends Controller
         ];
     }
 
+    /**
+     * Normaliza una hora asegurando el formato HH:MM:SS.
+     *
+     * @param string|null $hora Hora recibida desde el formulario.
+     * @return string|null Cadena normalizada o null si no se proporcionó hora.
+     */
     private function normalizarHora(?string $hora): ?string
     {
         if ($hora === null || $hora === '') {

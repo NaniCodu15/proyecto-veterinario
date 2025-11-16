@@ -15,7 +15,11 @@ use Illuminate\Validation\Rule;
 
 class HistoriaClinicaController extends Controller
 {
-    // ✅ Listar historias para AJAX
+    /**
+     * Lista historias clínicas con datos de mascota y propietario para consumo vía AJAX.
+     *
+     * @return \Illuminate\Http\JsonResponse Respuesta JSON con las historias formateadas cronológicamente.
+     */
     public function list()
     {
         $historias = HistoriaClinica::with(['mascota.propietario'])
@@ -28,6 +32,12 @@ class HistoriaClinicaController extends Controller
         return response()->json(['data' => $historias]);
     }
 
+    /**
+     * Registra una nueva historia clínica junto con la mascota y propietario asociados.
+     *
+     * @param Request $request Solicitud con datos de mascota, propietario y parámetros clínicos iniciales.
+     * @return \Illuminate\Http\JsonResponse Respuesta JSON con la historia creada y código HTTP 201.
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -113,7 +123,12 @@ class HistoriaClinicaController extends Controller
         ], 201);
     }
 
-    // ✅ Obtener 1 registro (para editar)
+    /**
+     * Devuelve la información de una historia clínica para su edición.
+     *
+     * @param int|string $id Identificador de la historia clínica.
+     * @return \Illuminate\Http\JsonResponse Respuesta con datos de la historia y sus consultas asociadas.
+     */
     public function show($id)
     {
         $historia = HistoriaClinica::with([
@@ -131,7 +146,13 @@ class HistoriaClinicaController extends Controller
         ]);
     }
 
-    // ✅ Actualizar historia clínica (AJAX)
+    /**
+     * Actualiza los datos de la historia clínica y sus entidades relacionadas.
+     *
+     * @param Request $request Solicitud con datos validados de mascota y propietario.
+     * @param int|string $id Identificador de la historia clínica a modificar.
+     * @return \Illuminate\Http\JsonResponse Respuesta JSON con la historia actualizada.
+     */
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
@@ -202,12 +223,24 @@ class HistoriaClinicaController extends Controller
         ]);
     }
 
+    /**
+     * Elimina una historia clínica específica.
+     *
+     * @param int|string $id Identificador de la historia a eliminar.
+     * @return \Illuminate\Http\JsonResponse Respuesta JSON de éxito.
+     */
     public function destroy($id)
     {
         HistoriaClinica::findOrFail($id)->delete();
         return response()->json(['success' => true]);
     }
 
+    /**
+     * Muestra la vista detallada de una historia clínica.
+     *
+     * @param int|string $id Identificador de la historia clínica.
+     * @return \Illuminate\View\View Vista `historia_clinicas.ver` con enlaces para PDF.
+     */
     public function ver($id)
     {
         $historia = $this->obtenerHistoriaCompleta($id);
@@ -222,6 +255,13 @@ class HistoriaClinicaController extends Controller
         ]);
     }
 
+    /**
+     * Genera o muestra el PDF de la historia clínica solicitada.
+     *
+     * @param Request $request Solicitud que puede incluir `download` para forzar descarga.
+     * @param int|string $id Identificador de la historia clínica.
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\Response Stream o descarga del PDF generado.
+     */
     public function pdf(Request $request, $id)
     {
         $historia = $this->obtenerHistoriaCompleta($id);
@@ -240,6 +280,12 @@ class HistoriaClinicaController extends Controller
         return $pdf->stream($nombreArchivo);
     }
 
+    /**
+     * Divide un nombre completo en nombres y apellidos utilizando espacios como separador.
+     *
+     * @param string $nombreCompleto Cadena ingresada por el usuario.
+     * @return array Arreglo con dos posiciones: [nombres, apellidos].
+     */
     private function separarNombreCompleto(string $nombreCompleto): array
     {
         $partes = preg_split('/\s+/', trim($nombreCompleto));
@@ -258,6 +304,12 @@ class HistoriaClinicaController extends Controller
         return [$nombres, $apellidos];
     }
 
+    /**
+     * Calcula una fecha de nacimiento aproximada restando años a la fecha actual.
+     *
+     * @param int|string|null $edad Edad en años proporcionada desde el formulario.
+     * @return string|null Fecha estimada de nacimiento o null si no se proporcionó edad.
+     */
     private function calcularFechaNacimiento($edad): ?string
     {
         if ($edad === null || $edad === '') {
@@ -267,6 +319,11 @@ class HistoriaClinicaController extends Controller
         return Carbon::now()->subYears((int) $edad)->toDateString();
     }
 
+    /**
+     * Genera un número de historia incremental con el formato HC-00001.
+     *
+     * @return string Código único para identificar la historia clínica.
+     */
     private function generarNumeroHistoria(): string
     {
         $ultimoId = HistoriaClinica::orderByDesc('id_historia')
@@ -276,6 +333,12 @@ class HistoriaClinicaController extends Controller
         return sprintf('HC-%05d', $ultimoId + 1);
     }
 
+    /**
+     * Recupera la historia clínica con todas sus relaciones necesarias para vistas y PDFs.
+     *
+     * @param int|string $id Identificador de la historia clínica.
+     * @return HistoriaClinica Modelo cargado con mascota, propietario, consultas y tratamientos.
+     */
     private function obtenerHistoriaCompleta($id): HistoriaClinica
     {
         return HistoriaClinica::with([
@@ -287,6 +350,13 @@ class HistoriaClinicaController extends Controller
         ])->findOrFail($id);
     }
 
+    /**
+     * Prepara los datos estructurados que alimentan la plantilla del PDF.
+     *
+     * @param HistoriaClinica $historia Historia clínica completa.
+     * @param string $codigo Código asignado a la historia clínica.
+     * @return array Datos listos para ser consumidos por la vista PDF.
+     */
     private function prepararDatosPdf(HistoriaClinica $historia, string $codigo): array
     {
         $mascota = $historia->mascota;
@@ -339,6 +409,12 @@ class HistoriaClinicaController extends Controller
         ];
     }
 
+    /**
+     * Formatea la historia clínica para mostrarla en listados rápidos.
+     *
+     * @param HistoriaClinica $historia Instancia a formatear.
+     * @return array Datos resumidos con mascota, propietario y fechas.
+     */
     private function formatearHistoria(HistoriaClinica $historia): array
     {
         $mascota = $historia->mascota;
@@ -355,6 +431,12 @@ class HistoriaClinicaController extends Controller
         ];
     }
 
+    /**
+     * Estructura la historia clínica para completar formularios de edición.
+     *
+     * @param HistoriaClinica $historia Historia a transformar.
+     * @return array Datos con normalización de especie, sexo y edad.
+     */
     private function formatearHistoriaParaFormulario(HistoriaClinica $historia): array
     {
         $mascota = $historia->mascota;
@@ -382,6 +464,12 @@ class HistoriaClinicaController extends Controller
         ];
     }
 
+    /**
+     * Formatea una consulta vinculada a la historia para uso en formularios y listados.
+     *
+     * @param mixed $consulta Consulta asociada a la historia clínica.
+     * @return array Datos clínicos y fechas en formatos legibles.
+     */
     private function formatearConsulta($consulta): array
     {
         return [
@@ -397,6 +485,12 @@ class HistoriaClinicaController extends Controller
         ];
     }
 
+    /**
+     * Normaliza la especie almacenada para mostrar correctamente los campos de formulario.
+     *
+     * @param string|null $especie Valor de especie en la base de datos.
+     * @return array Arreglo con la clave seleccionada y el valor personalizado si aplica.
+     */
     private function normalizarEspecieParaFormulario(?string $especie): array
     {
         $especie = $especie ? strtolower($especie) : null;
@@ -409,6 +503,12 @@ class HistoriaClinicaController extends Controller
         };
     }
 
+    /**
+     * Calcula la edad en años a partir de la fecha de nacimiento.
+     *
+     * @param string|null $fechaNacimiento Fecha en formato fecha o null.
+     * @return int|null Edad en años o null cuando no hay fecha.
+     */
     private function calcularEdadDesdeFecha($fechaNacimiento): ?int
     {
         if (!$fechaNacimiento) {

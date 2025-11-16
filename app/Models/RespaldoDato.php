@@ -11,6 +11,10 @@ class RespaldoDato extends Model
 
     protected $table = 'respaldo_datos';
 
+    /**
+     * Campos permitidos para asignación masiva que describen un respaldo generado.
+     * Incluyen la fecha, nombre y ruta del archivo y su estado.
+     */
     protected $fillable = [
         'fecha_respaldo',
         'nombre_archivo',
@@ -18,6 +22,9 @@ class RespaldoDato extends Model
         'estado',
     ];
 
+    /**
+     * Conversión automática de atributos para fechas de respaldo.
+     */
     protected $casts = [
         'fecha_respaldo' => 'datetime',
     ];
