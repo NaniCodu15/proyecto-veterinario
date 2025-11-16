@@ -8,6 +8,7 @@
             <img src="{{ asset('images/logoVet.png') }}" alt="Logo" class="sidebar-logo">
         </div>
 
+        {{-- Menú principal con accesos rápidos a cada módulo del dashboard --}}
         <ul class="sidebar-menu">
             <li><a href="#" class="nav-link active" data-section="inicio"><i class="fas fa-home"></i><span>Inicio</span></a></li>
             <li class="sidebar-item sidebar-item--has-submenu">
@@ -34,6 +35,7 @@
             </li>
         </ul>
 
+        {{-- Tarjeta con la identidad del usuario autenticado y el botón de cierre de sesión --}}
         @php
             $user = auth()->user();
             $userName = $user?->name ?? 'Usuario';
@@ -64,6 +66,7 @@
     <div id="main-content" class="content">
         <!-- SECCIÓN INICIO -->
         <div id="section-inicio" class="section active">
+            {{-- Hero introductorio con CTA hacia la gestión clínica --}}
             <div class="home-hero">
                 <div class="home-hero__content">
                     <span class="home-hero__badge">CLÍNICA CENTRAL</span>
@@ -85,6 +88,7 @@
                 </div>
             </div>
 
+            {{-- Tarjetas de métricas clave para ofrecer visibilidad inmediata del estado de la clínica --}}
             <div class="metrics-grid">
                 <article class="metric-card metric-card--patients">
                     <header class="metric-card__header">
@@ -168,6 +172,7 @@
                         </div>
                         <span class="panel__chip"><i class="fas fa-clock"></i> Hoy</span>
                     </div>
+                    {{-- Listado dinámico de citas próximas; cada item muestra horario, mascota y propietario --}}
                     <ul class="appointment-list" id="citasProximasLista">
                         @forelse ($upcomingAppointments as $appointment)
                             @php
@@ -205,8 +210,10 @@
             </div>
         </div>
 
+        {{-- Sección interactiva para registrar nuevas historias y consultas --}}
         @include('historias_clinicas')
 
+        {{-- Tabla/tablas con el histórico de historias ya creadas --}}
         @include('historias_registradas')
 
         <!-- MODAL NUEVA/EDITAR HISTORIA -->
@@ -214,6 +221,7 @@
             <div class="modal-content">
                 <span class="close">&times;</span>
                 <h2 id="modalTitulo">Nueva Historia Clínica</h2>
+                {{-- Formulario dividido por secciones para capturar datos de mascota y propietario --}}
                 <form id="formHistoria">
                     <div class="form-section">
                         <h3 class="form-section__title"><span>🐶</span>Datos de la mascota</h3>
@@ -338,6 +346,7 @@
                     </div>
 
                     <div class="historia-detalle__body">
+                        {{-- Tabs accesibles que permiten alternar entre registro y listado de consultas --}}
                         <div class="historia-detalle__tabs" role="tablist" aria-label="Secciones de la historia clínica">
                             <button type="button" class="historia-detalle__tab is-active" id="tabRegistroConsultas" data-tab-target="registro" role="tab" aria-controls="panelRegistroConsultas" aria-selected="true" tabindex="0">
                                 Registrar consulta
@@ -352,6 +361,7 @@
                                 <h3>Registrar nueva consulta</h3>
                                 <p>Documenta la evolución del paciente en cada visita.</p>
                             </div>
+                            {{-- Formulario de consulta con campos clínicos y botón de guardado --}}
                             <div id="consultaMensaje" class="consulta-alert" role="status" aria-live="polite" hidden></div>
                             <form id="formConsulta" class="consulta-form" novalidate>
                                 <input type="hidden" id="consultaHistoriaId" name="id_historia">
@@ -412,13 +422,16 @@
             </div>
         </div>
 
+        {{-- Vista especializada para crear citas desde el dashboard --}}
         @include('citas')
 
+        {{-- Sección con el detalle de todas las citas en estado activo --}}
         @include('citas_agendadas')
 
     </div>
 </div>
 
+{{-- Modal genérico para confirmar acciones destructivas --}}
 <div id="confirmModal" class="confirm-modal" role="alertdialog" aria-modal="true" aria-labelledby="confirmModalMessage" hidden>
     <div class="confirm-modal__dialog">
         <p id="confirmModalMessage" class="confirm-modal__message">¿Desea anular esta historia clínica?</p>
@@ -429,6 +442,7 @@
     </div>
 </div>
 
+{{-- Modal de solo lectura con el detalle completo de una cita --}}
 <div id="modalDetalleCita" class="modal modal--cita" aria-hidden="true">
     <div class="modal-content modal-content--cita">
         <span class="close" data-close="detalleCita">&times;</span>
@@ -447,6 +461,7 @@
     </div>
 </div>
 
+{{-- Modal para actualizar el estado de la cita y, si aplica, reprogramar la agenda --}}
 <div id="modalEstadoCita" class="modal modal--cita" aria-hidden="true">
     <div class="modal-content modal-content--cita">
         <span class="close" data-close="estadoCita">&times;</span>
@@ -507,6 +522,7 @@
         ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
     </script>
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.4.0/dist/js/tom-select.complete.min.js"></script>
+    {{-- Lógica del dashboard: controla tabs, formularios AJAX y modales --}}
     <script src="{{ asset('js/dashboard.js') }}"></script>
 @endpush
 

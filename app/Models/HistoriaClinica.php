@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Representa los expedientes clínicos de cada mascota y centraliza relaciones con consultas y vacunas.
+ */
 class HistoriaClinica extends Model
 {
     protected $table = 'historia_clinicas';
@@ -28,21 +31,25 @@ class HistoriaClinica extends Model
         'fecha_apertura' => 'date',
     ];
 
-    // Relación: la historia clínica pertenece a una mascota
-    // Esto significa que podemos acceder a la mascota de esta historia usando $historia->mascota
+    /**
+     * Cada historia se asocia a una sola mascota.
+     */
     public function mascota()
     {
         return $this->belongsTo(Mascota::class, 'id_mascota', 'id_mascota');
     }
 
-    // Relación: una historia clínica puede tener muchas consultas
-    // Esto significa que podemos obtener todas las consultas de esta historia usando $historia->consultas
+    /**
+     * Agrupa todas las consultas médicas registradas dentro del expediente.
+     */
     public function consultas()
     {
         return $this->hasMany(Consulta::class, 'id_historia', 'id_historia');
     }
 
-    // Relación: una historia clínica puede tener varias vacunas asociadas a través de la mascota
+    /**
+     * Relaciona las vacunas aplicadas a la mascota que pertenece a esta historia.
+     */
     public function vacunas()
     {
         return $this->hasMany(Vacuna::class, 'id_mascota', 'id_mascota');

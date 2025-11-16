@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Modelo de las consultas médicas registradas dentro de cada historia clínica.
+ */
 class Consulta extends Model
 {
     use HasFactory;
@@ -27,15 +30,17 @@ class Consulta extends Model
         'fecha_consulta' => 'datetime',
     ];
 
-    // Relación: una consulta pertenece a una historia clínica
-    // Esto significa que podemos acceder a la historia clínica de esta consulta usando $consulta->historiaClinica
+    /**
+     * Cada consulta pertenece a una única historia clínica (relación muchos-a-uno).
+     */
     public function historiaClinica()
     {
         return $this->belongsTo(HistoriaClinica::class, 'id_historia', 'id_historia');
     }
 
-    // Relación: una consulta puede tener muchos tratamientos
-    // Esto significa que podemos obtener todos los tratamientos asociados a esta consulta usando $consulta->tratamientos
+    /**
+     * Relación uno-a-muchos con los tratamientos prescritos durante la consulta.
+     */
     public function tratamientos()
     {
         return $this->hasMany(Tratamiento::class, 'id_consulta', 'id_consulta');

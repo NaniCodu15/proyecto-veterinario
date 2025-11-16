@@ -1,3 +1,64 @@
+/*
+ * Descripción de reglas para login.css:
+ * - /* 🔥 Fuente moderna */ @import
+  url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap'); /* Importa la fuente
+  "Poppins" desde Google Fonts para usarla en todo el sitio */ /* Estilos base para toda la página */ html,
+  body: separa el bloque de los elementos vecinos con márgenes claros; incorpora relleno para que el contenido
+  respire dentro del contenedor; establece alturas específicas que estabilizan la sección; oculta desbordes
+  para mantener la composición limpia; establece la familia tipográfica coherente con la identidad visual.
+ * - /* Contenedor principal */ .login-container: usa flexbox para organizar los elementos internos; distribuye
+  el espacio horizontal para equilibrar la composición; controla la alineación vertical de los hijos dentro
+  del contenedor flex/grid; establece alturas específicas que estabilizan la sección; fija límites de ancho
+  para que el componente conserve su proporción; establece un color de fondo que refuerza el contraste del
+  módulo.
+ * - /* Caja del formulario */ .login-form: establece un color de fondo que refuerza el contraste del módulo;
+  incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas para suavizar
+  la interfaz y evitar bordes duros; añade sombras para generar profundidad y sensación de tarjeta flotante;
+  fija límites de ancho para que el componente conserve su proporción; controla la alineación horizontal del
+  texto dentro del bloque; crea un contexto relativo para posicionar hijos y badges.
+ * - .login-error: establece un color de fondo que refuerza el contraste del módulo; dibuja bordes que delimitan
+  secciones y tablas para guiar la mirada; redondea las esquinas para suavizar la interfaz y evitar bordes
+  duros; define el color del texto para mantener el contraste necesario; ajusta el tamaño de fuente para
+  jerarquizar el texto mostrado; modifica el peso tipográfico para enfatizar información importante; incorpora
+  relleno para que el contenido respire dentro del contenedor; controla la alineación horizontal del texto
+  dentro del bloque.
+ * - .login-logo img.logo: fija límites de ancho para que el componente conserve su proporción; establece alturas
+  específicas que estabilizan la sección; separa el bloque de los elementos vecinos con márgenes claros.
+ * - /* ---- INPUTS CON ICONO Y LABEL FLOTANTE ---- */ .input-group: crea un contexto relativo para posicionar
+  hijos y badges; fija límites de ancho para que el componente conserve su proporción.
+ * - .input-group:first-of-type: ajusta detalles visuales para mantener coherencia con el resto del tablero.
+ * - /* ÍCONO a la izquierda dentro del input */ .input-group .icon: se posiciona absolutamente respecto a su
+  contenedor; aplica transformaciones que acompañan animaciones o estados hover; ajusta el tamaño de fuente
+  para jerarquizar el texto mostrado; define el color del texto para mantener el contraste necesario; agrega
+  transiciones suaves que comunican interactividad.
+ * - /* Estilos del input */ .input-group input: fija límites de ancho para que el componente conserve su
+  proporción; incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas
+  para suavizar la interfaz y evitar bordes duros; dibuja bordes que delimitan secciones y tablas para guiar
+  la mirada; establece un color de fondo que refuerza el contraste del módulo; ajusta el tamaño de fuente para
+  jerarquizar el texto mostrado; agrega transiciones suaves que comunican interactividad.
+ * - /* Label flotante */ .input-group label: se posiciona absolutamente respecto a su contenedor; aplica
+  transformaciones que acompañan animaciones o estados hover; ajusta el tamaño de fuente para jerarquizar el
+  texto mostrado; define el color del texto para mantener el contraste necesario; agrega transiciones suaves
+  que comunican interactividad.
+ * - /* Animación del label al enfocar o tener contenido */ .input-group input:focus + label, .input-group
+  input:not(:placeholder-shown) + label: ajusta el tamaño de fuente para jerarquizar el texto mostrado; define
+  el color del texto para mantener el contraste necesario; establece un color de fondo que refuerza el
+  contraste del módulo; incorpora relleno para que el contenido respire dentro del contenedor; redondea las
+  esquinas para suavizar la interfaz y evitar bordes duros.
+ * - /* Efecto de foco en input + sombra */ .input-group input:focus: establece un color de fondo que refuerza el
+  contraste del módulo; añade sombras para generar profundidad y sensación de tarjeta flotante.
+ * - /* Cambio de color del ícono al enfocar el input */ .input-group input:focus ~ .icon: define el color del
+  texto para mantener el contraste necesario.
+ * - /* Botón de login */ .login-form button: fija límites de ancho para que el componente conserve su
+  proporción; incorpora relleno para que el contenido respire dentro del contenedor; dibuja bordes que
+  delimitan secciones y tablas para guiar la mirada; redondea las esquinas para suavizar la interfaz y evitar
+  bordes duros; aplica un degradado para lograr un fondo suave y moderno; define el color del texto para
+  mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado; modifica el
+  peso tipográfico para enfatizar información importante; cambia el cursor para comunicar que el elemento es
+  interactivo; agrega transiciones suaves que comunican interactividad.
+ * - /* Efecto hover del botón */ .login-form button:hover: aplica un degradado para lograr un fondo suave y
+  moderno; aplica transformaciones que acompañan animaciones o estados hover.
+ */
 /* 🔥 Fuente moderna */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap'); 
 /* Importa la fuente "Poppins" desde Google Fonts para usarla en todo el sitio */

@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Modelo de propietarios/clientes que agrupa los datos de contacto y su vínculo con mascotas.
+ */
 class Propietario extends Model
 {
     use HasFactory;
@@ -22,8 +25,9 @@ class Propietario extends Model
         'fecha_registro',
     ];
 
-    // Relación: un propietario puede tener muchas mascotas
-    // Podemos obtener todas sus mascotas usando $propietario->mascotas
+    /**
+     * Un propietario puede registrar varias mascotas.
+     */
     public function mascotas()
     {
         return $this->hasMany(Mascota::class, 'propietario_id', 'id_propietario');

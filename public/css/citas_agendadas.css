@@ -1,7 +1,147 @@
+/*
+ * Descripción de reglas para citas_agendadas.css:
+ * - .citas-card--list: aplica un degradado para lograr un fondo suave y moderno.
+ * - .citas-toolbar: usa flexbox para organizar los elementos internos; distribuye el espacio horizontal para
+  equilibrar la composición; controla la alineación vertical de los hijos dentro del contenedor flex/grid;
+  define espacios homogéneos entre hijos para mejorar la legibilidad.
+ * - .citas-search: usa flexbox para organizar los elementos internos; controla la alineación vertical de los
+  hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad;
+  establece un color de fondo que refuerza el contraste del módulo; redondea las esquinas para suavizar la
+  interfaz y evitar bordes duros; dibuja bordes que delimitan secciones y tablas para guiar la mirada;
+  incorpora relleno para que el contenido respire dentro del contenedor; añade sombras para generar
+  profundidad y sensación de tarjeta flotante; define el color del texto para mantener el contraste necesario;
+  fija límites de ancho para que el componente conserve su proporción; agrega transiciones suaves que
+  comunican interactividad.
+ * - .citas-search:focus-within: añade sombras para generar profundidad y sensación de tarjeta flotante.
+ * - .citas-search input: dibuja bordes que delimitan secciones y tablas para guiar la mirada; establece un color
+  de fondo que refuerza el contraste del módulo; ajusta el tamaño de fuente para jerarquizar el texto
+  mostrado; define el color del texto para mantener el contraste necesario.
+ * - .citas-alert: redondea las esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para
+  que el contenido respire dentro del contenedor; modifica el peso tipográfico para enfatizar información
+  importante; añade sombras para generar profundidad y sensación de tarjeta flotante.
+ * - .citas-alert.is-visible: ajusta detalles visuales para mantener coherencia con el resto del tablero.
+ * - .citas-alert--info: establece un color de fondo que refuerza el contraste del módulo; define el color del
+  texto para mantener el contraste necesario.
+ * - .citas-alert--success: establece un color de fondo que refuerza el contraste del módulo; define el color del
+  texto para mantener el contraste necesario.
+ * - .citas-alert--error: establece un color de fondo que refuerza el contraste del módulo; define el color del
+  texto para mantener el contraste necesario.
+ * - .citas-table-wrapper: aplica un degradado para lograr un fondo suave y moderno; redondea las esquinas para
+  suavizar la interfaz y evitar bordes duros; dibuja bordes que delimitan secciones y tablas para guiar la
+  mirada; añade sombras para generar profundidad y sensación de tarjeta flotante; oculta desbordes para
+  mantener la composición limpia.
+ * - .citas-table-container: establece alturas específicas que estabilizan la sección.
+ * - .citas-table-container::-webkit-scrollbar: fija límites de ancho para que el componente conserve su
+  proporción.
+ * - .citas-table-container::-webkit-scrollbar-track: establece un color de fondo que refuerza el contraste del
+  módulo.
+ * - .citas-table-container::-webkit-scrollbar-thumb: establece un color de fondo que refuerza el contraste del
+  módulo; redondea las esquinas para suavizar la interfaz y evitar bordes duros.
+ * - .citas-table: fija límites de ancho para que el componente conserve su proporción; define el color del texto
+  para mantener el contraste necesario.
+ * - .citas-table thead th, .citas-table tbody td: define cómo se comportan los saltos de línea para mantener la
+  lectura.
+ * - .citas-table th:nth-child(1), .citas-table td:nth-child(1): fija límites de ancho para que el componente
+  conserve su proporción.
+ * - .citas-table th:nth-child(2), .citas-table td:nth-child(2), .citas-table th:nth-child(3), .citas-table
+  td:nth-child(3): fija límites de ancho para que el componente conserve su proporción.
+ * - .citas-table th:nth-child(4), .citas-table td:nth-child(4): fija límites de ancho para que el componente
+  conserve su proporción.
+ * - .citas-table th:nth-child(5), .citas-table td:nth-child(5): fija límites de ancho para que el componente
+  conserve su proporción.
+ * - .citas-table th:nth-child(7), .citas-table td:nth-child(7): fija límites de ancho para que el componente
+  conserve su proporción.
+ * - .citas-table th:nth-child(8), .citas-table td:nth-child(8): fija límites de ancho para que el componente
+  conserve su proporción.
+ * - .citas-table thead th: controla la alineación horizontal del texto dentro del bloque; incorpora relleno para
+  que el contenido respire dentro del contenedor; ajusta el tamaño de fuente para jerarquizar el texto
+  mostrado; ajusta el espaciado entre letras para darle estilo a los títulos; transforma el texto
+  (uppercase/lowercase) para reforzar etiquetas visuales; establece un color de fondo que refuerza el
+  contraste del módulo; define el color del texto para mantener el contraste necesario; maneja el apilamiento
+  para que modales y paneles se superpongan correctamente; añade sombras para generar profundidad y sensación
+  de tarjeta flotante.
+ * - .citas-table thead th:first-child: redondea las esquinas para suavizar la interfaz y evitar bordes duros.
+ * - .citas-table thead th:last-child: redondea las esquinas para suavizar la interfaz y evitar bordes duros.
+ * - .citas-table tbody tr: establece un color de fondo que refuerza el contraste del módulo; agrega transiciones
+  suaves que comunican interactividad.
+ * - .citas-table tbody tr:nth-child(even): establece un color de fondo que refuerza el contraste del módulo.
+ * - .citas-table tbody tr:hover: aplica transformaciones que acompañan animaciones o estados hover; establece un
+  color de fondo que refuerza el contraste del módulo; añade sombras para generar profundidad y sensación de
+  tarjeta flotante.
+ * - .citas-table td: incorpora relleno para que el contenido respire dentro del contenedor; ajusta el tamaño de
+  fuente para jerarquizar el texto mostrado; define el color del texto para mantener el contraste necesario.
+ * - .citas-table__motivo: fija límites de ancho para que el componente conserve su proporción.
+ * - .citas-table__acciones: define cómo se comportan los saltos de línea para mantener la lectura.
+ * - .citas-actions: usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos
+  para mejorar la legibilidad; controla la alineación vertical de los hijos dentro del contenedor flex/grid.
+ * - .citas-accion__whatsapp: usa flexbox para organizar los elementos internos; controla la alineación vertical
+  de los hijos dentro del contenedor flex/grid; distribuye el espacio horizontal para equilibrar la
+  composición; fija límites de ancho para que el componente conserve su proporción; establece alturas
+  específicas que estabilizan la sección; redondea las esquinas para suavizar la interfaz y evitar bordes
+  duros; establece un color de fondo que refuerza el contraste del módulo; define el color del texto para
+  mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado; agrega
+  transiciones suaves que comunican interactividad.
+ * - .citas-accion__whatsapp:hover: aplica transformaciones que acompañan animaciones o estados hover; añade
+  sombras para generar profundidad y sensación de tarjeta flotante; establece un color de fondo que refuerza
+  el contraste del módulo.
+ * - .citas-accion__whatsapp.is-disabled: establece un color de fondo que refuerza el contraste del módulo;
+  define el color del texto para mantener el contraste necesario; cambia el cursor para comunicar que el
+  elemento es interactivo; añade sombras para generar profundidad y sensación de tarjeta flotante.
+ * - .cita-status: usa flexbox para organizar los elementos internos; controla la alineación vertical de los
+  hijos dentro del contenedor flex/grid; distribuye el espacio horizontal para equilibrar la composición;
+  incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas para suavizar
+  la interfaz y evitar bordes duros; modifica el peso tipográfico para enfatizar información importante;
+  ajusta el tamaño de fuente para jerarquizar el texto mostrado; transforma el texto (uppercase/lowercase)
+  para reforzar etiquetas visuales; añade sombras para generar profundidad y sensación de tarjeta flotante.
+ * - .cita-status--pending: establece un color de fondo que refuerza el contraste del módulo; define el color del
+  texto para mantener el contraste necesario.
+ * - .cita-status--info: establece un color de fondo que refuerza el contraste del módulo; define el color del
+  texto para mantener el contraste necesario.
+ * - .cita-status--success: establece un color de fondo que refuerza el contraste del módulo; define el color del
+  texto para mantener el contraste necesario.
+ * - .cita-status--warning: establece un color de fondo que refuerza el contraste del módulo; define el color del
+  texto para mantener el contraste necesario.
+ * - .cita-status--danger: establece un color de fondo que refuerza el contraste del módulo; define el color del
+  texto para mantener el contraste necesario.
+ * - .modal-content--cita: fija límites de ancho para que el componente conserve su proporción.
+ * - .cita-detalle: usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos
+  para mejorar la legibilidad.
+ * - .cita-detalle__row: usa flexbox para organizar los elementos internos; define espacios homogéneos entre
+  hijos para mejorar la legibilidad; distribuye el espacio horizontal para equilibrar la composición; redondea
+  las esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido
+  respire dentro del contenedor; establece un color de fondo que refuerza el contraste del módulo; dibuja
+  bordes que delimitan secciones y tablas para guiar la mirada.
+ * - .cita-detalle__label: modifica el peso tipográfico para enfatizar información importante; define el color
+  del texto para mantener el contraste necesario; fija límites de ancho para que el componente conserve su
+  proporción.
+ * - .cita-detalle__value: define el color del texto para mantener el contraste necesario; modifica el peso
+  tipográfico para enfatizar información importante; controla la alineación horizontal del texto dentro del
+  bloque.
+ * - .cita-detalle__row--full: controla la alineación vertical de los hijos dentro del contenedor flex/grid.
+ * - .cita-detalle__row--full .cita-detalle__value: controla la alineación horizontal del texto dentro del
+  bloque; controla el interlineado para mejorar la lectura de los párrafos; define cómo se comportan los
+  saltos de línea para mantener la lectura.
+ * - .cita-estado__subtitle: define el color del texto para mantener el contraste necesario; ajusta el tamaño de
+  fuente para jerarquizar el texto mostrado.
+ * - .cita-estado-form: usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos
+  para mejorar la legibilidad.
+ * - .cita-estado-form .form-group: usa flexbox para organizar los elementos internos; define espacios homogéneos
+  entre hijos para mejorar la legibilidad.
+ * - .reprogramar-campos: utiliza CSS Grid para distribuir el contenido con precisión; define espacios homogéneos
+  entre hijos para mejorar la legibilidad.
+ * - .reprogramar-campos: ajusta detalles visuales para mantener coherencia con el resto del tablero.
+ * - .cita-estado-actions: usa flexbox para organizar los elementos internos; distribuye el espacio horizontal
+  para equilibrar la composición; define espacios homogéneos entre hijos para mejorar la legibilidad.
+ * - .citas-table__empty td: controla la alineación horizontal del texto dentro del bloque; define el color del
+  texto para mantener el contraste necesario; incorpora relleno para que el contenido respire dentro del
+  contenedor.
+ */
+/* aplica un degradado para lograr un fondo suave y moderno. */
 .citas-card--list {
     background: linear-gradient(145deg, rgba(228, 240, 255, 0.95), rgba(255, 229, 244, 0.85));
 }
 
+/* usa flexbox para organizar los elementos internos; distribuye el espacio horizontal para equilibrar la composición; controla la alineación vertical de los hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .citas-toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -11,6 +151,7 @@
     margin-bottom: 20px;
 }
 
+/* usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad; establece un color de fondo que refuerza el contraste del módulo; redondea las esquinas para suavizar la interfaz y evitar bordes duros; dibuja bordes que delimitan secciones y tablas para guiar la mirada; incorpora relleno para que el contenido respire dentro del contenedor; añade sombras para generar profundidad y sensación de tarjeta flotante; define el color del texto para mantener el contraste necesario; fija límites de ancho para que el componente conserve su proporción; agrega transiciones suaves que comunican interactividad. */
 .citas-search {
     display: flex;
     align-items: center;
@@ -30,6 +171,7 @@
     box-shadow: 0 0 0 4px rgba(95, 141, 229, 0.18);
 }
 
+/* dibuja bordes que delimitan secciones y tablas para guiar la mirada; establece un color de fondo que refuerza el contraste del módulo; ajusta el tamaño de fuente para jerarquizar el texto mostrado; define el color del texto para mantener el contraste necesario. */
 .citas-search input {
     border: none;
     background: transparent;
@@ -39,6 +181,7 @@
     flex: 1;
 }
 
+/* redondea las esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire dentro del contenedor; modifica el peso tipográfico para enfatizar información importante; añade sombras para generar profundidad y sensación de tarjeta flotante. */
 .citas-alert {
     display: none;
     border-radius: var(--radius-md);
@@ -48,25 +191,30 @@
     box-shadow: 0 18px 36px rgba(122, 168, 255, 0.16);
 }
 
+/* ajusta detalles visuales para mantener coherencia con el resto del tablero. */
 .citas-alert.is-visible {
     display: block;
 }
 
+/* establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario. */
 .citas-alert--info {
     background: rgba(122, 168, 255, 0.16);
     color: var(--primary-dark);
 }
 
+/* establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario. */
 .citas-alert--success {
     background: rgba(74, 199, 161, 0.18);
     color: #1b9d78;
 }
 
+/* establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario. */
 .citas-alert--error {
     background: rgba(255, 143, 143, 0.18);
     color: #d03f3f;
 }
 
+/* aplica un degradado para lograr un fondo suave y moderno; redondea las esquinas para suavizar la interfaz y evitar bordes duros; dibuja bordes que delimitan secciones y tablas para guiar la mirada; añade sombras para generar profundidad y sensación de tarjeta flotante; oculta desbordes para mantener la composición limpia. */
 .citas-table-wrapper {
     background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(228, 240, 255, 0.9));
     border-radius: var(--radius-xl);
@@ -75,6 +223,7 @@
     overflow: hidden;
 }
 
+/* establece alturas específicas que estabilizan la sección. */
 .citas-table-container {
     max-height: 460px;
     overflow-y: auto;
@@ -96,6 +245,7 @@
     border-radius: 999px;
 }
 
+/* fija límites de ancho para que el componente conserve su proporción; define el color del texto para mantener el contraste necesario. */
 .citas-table {
     width: 100%;
     table-layout: fixed;
@@ -104,6 +254,7 @@
     color: var(--text-dark);
 }
 
+/* define cómo se comportan los saltos de línea para mantener la lectura. */
 .citas-table thead th,
 .citas-table tbody td {
     word-wrap: break-word;
@@ -142,6 +293,7 @@
     width: 150px;
 }
 
+/* controla la alineación horizontal del texto dentro del bloque; incorpora relleno para que el contenido respire dentro del contenedor; ajusta el tamaño de fuente para jerarquizar el texto mostrado; ajusta el espaciado entre letras para darle estilo a los títulos; transforma el texto (uppercase/lowercase) para reforzar etiquetas visuales; establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario; maneja el apilamiento para que modales y paneles se superpongan correctamente; añade sombras para generar profundidad y sensación de tarjeta flotante. */
 .citas-table thead th {
     text-align: left;
     padding: 18px 22px;
@@ -164,6 +316,7 @@
     border-top-right-radius: var(--radius-lg);
 }
 
+/* establece un color de fondo que refuerza el contraste del módulo; agrega transiciones suaves que comunican interactividad. */
 .citas-table tbody tr {
     background: rgba(255, 255, 255, 0.9);
     transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
@@ -179,6 +332,7 @@
     box-shadow: 0 18px 30px rgba(122, 168, 255, 0.18);
 }
 
+/* incorpora relleno para que el contenido respire dentro del contenedor; ajusta el tamaño de fuente para jerarquizar el texto mostrado; define el color del texto para mantener el contraste necesario. */
 .citas-table td {
     padding: 18px 22px;
     border-bottom: 1px solid rgba(122, 168, 255, 0.14);
@@ -187,14 +341,17 @@
     color: var(--text-dark);
 }
 
+/* fija límites de ancho para que el componente conserve su proporción. */
 .citas-table__motivo {
     max-width: none;
 }
 
+/* define cómo se comportan los saltos de línea para mantener la lectura. */
 .citas-table__acciones {
     white-space: nowrap;
 }
 
+/* usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad; controla la alineación vertical de los hijos dentro del contenedor flex/grid. */
 .citas-actions {
     display: flex;
     flex-wrap: wrap;
@@ -202,6 +359,7 @@
     align-items: center;
 }
 
+/* usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos dentro del contenedor flex/grid; distribuye el espacio horizontal para equilibrar la composición; fija límites de ancho para que el componente conserve su proporción; establece alturas específicas que estabilizan la sección; redondea las esquinas para suavizar la interfaz y evitar bordes duros; establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado; agrega transiciones suaves que comunican interactividad. */
 .citas-accion__whatsapp {
     display: inline-flex;
     align-items: center;
@@ -221,6 +379,7 @@
     background: rgba(74, 199, 161, 0.22);
 }
 
+/* establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario; cambia el cursor para comunicar que el elemento es interactivo; añade sombras para generar profundidad y sensación de tarjeta flotante. */
 .citas-accion__whatsapp.is-disabled {
     background: rgba(101, 112, 147, 0.14);
     color: var(--text-muted);
@@ -228,6 +387,7 @@
     box-shadow: none;
 }
 
+/* usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos dentro del contenedor flex/grid; distribuye el espacio horizontal para equilibrar la composición; incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas para suavizar la interfaz y evitar bordes duros; modifica el peso tipográfico para enfatizar información importante; ajusta el tamaño de fuente para jerarquizar el texto mostrado; transforma el texto (uppercase/lowercase) para reforzar etiquetas visuales; añade sombras para generar profundidad y sensación de tarjeta flotante. */
 .cita-status {
     display: inline-flex;
     align-items: center;
@@ -240,35 +400,42 @@
     box-shadow: 0 10px 20px rgba(122, 168, 255, 0.16);
 }
 
+/* establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario. */
 .cita-status--pending {
     background: rgba(255, 190, 118, 0.2);
     color: #c37a2d;
 }
 
+/* establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario. */
 .cita-status--info {
     background: rgba(122, 168, 255, 0.2);
     color: var(--primary-dark);
 }
 
+/* establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario. */
 .cita-status--success {
     background: rgba(74, 199, 161, 0.2);
     color: #1b9d78;
 }
 
+/* establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario. */
 .cita-status--warning {
     background: rgba(255, 159, 207, 0.2);
     color: #c74f8f;
 }
 
+/* establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario. */
 .cita-status--danger {
     background: rgba(255, 143, 143, 0.22);
     color: #d03f3f;
 }
 
+/* fija límites de ancho para que el componente conserve su proporción. */
 .modal-content--cita {
     width: min(540px, 92%);
 }
 
+/* usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .cita-detalle {
     display: flex;
     flex-direction: column;
@@ -276,6 +443,7 @@
     margin-top: 18px;
 }
 
+/* usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad; distribuye el espacio horizontal para equilibrar la composición; redondea las esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire dentro del contenedor; establece un color de fondo que refuerza el contraste del módulo; dibuja bordes que delimitan secciones y tablas para guiar la mirada. */
 .cita-detalle__row {
     display: flex;
     gap: 16px;
@@ -286,12 +454,14 @@
     border: 1px solid rgba(122, 168, 255, 0.16);
 }
 
+/* modifica el peso tipográfico para enfatizar información importante; define el color del texto para mantener el contraste necesario; fija límites de ancho para que el componente conserve su proporción. */
 .cita-detalle__label {
     font-weight: 600;
     color: var(--text-muted);
     min-width: 140px;
 }
 
+/* define el color del texto para mantener el contraste necesario; modifica el peso tipográfico para enfatizar información importante; controla la alineación horizontal del texto dentro del bloque. */
 .cita-detalle__value {
     color: var(--text-dark);
     font-weight: 600;
@@ -299,23 +469,27 @@
     text-align: right;
 }
 
+/* controla la alineación vertical de los hijos dentro del contenedor flex/grid. */
 .cita-detalle__row--full {
     flex-direction: column;
     align-items: flex-start;
 }
 
+/* controla la alineación horizontal del texto dentro del bloque; controla el interlineado para mejorar la lectura de los párrafos; define cómo se comportan los saltos de línea para mantener la lectura. */
 .cita-detalle__row--full .cita-detalle__value {
     text-align: left;
     line-height: 1.5;
     white-space: pre-wrap;
 }
 
+/* define el color del texto para mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado. */
 .cita-estado__subtitle {
     margin-top: 0;
     color: var(--text-muted);
     font-size: 0.95rem;
 }
 
+/* usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .cita-estado-form {
     display: flex;
     flex-direction: column;
@@ -323,12 +497,14 @@
     margin-top: 18px;
 }
 
+/* usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .cita-estado-form .form-group {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
 
+/* utiliza CSS Grid para distribuir el contenido con precisión; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .reprogramar-campos {
     display: grid;
     gap: 16px;
@@ -341,12 +517,14 @@
     }
 }
 
+/* usa flexbox para organizar los elementos internos; distribuye el espacio horizontal para equilibrar la composición; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .cita-estado-actions {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
 }
 
+/* controla la alineación horizontal del texto dentro del bloque; define el color del texto para mantener el contraste necesario; incorpora relleno para que el contenido respire dentro del contenedor. / */
 .citas-table__empty td {
     text-align: center;
     color: var(--text-muted);

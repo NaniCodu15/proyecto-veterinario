@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    {{-- Metadatos base compartidos por todas las pantallas autenticadas y públicas --}}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Mi App</title>
 
-    {{-- Si estamos en el login, carga login.css --}}
+    {{-- Se alterna la hoja de estilos principal dependiendo si es la pantalla de login o el dashboard --}}
     @if (Request::is('login'))
         <link rel="stylesheet" href="{{ asset('css/login.css') }}">
     @else
@@ -19,6 +20,7 @@
     @stack('styles')
 </head>
 <body class="dashboard-layout">
+    {{-- Slot principal donde cada vista inyecta su contenido --}}
     @yield('content')
 
     @stack('scripts')

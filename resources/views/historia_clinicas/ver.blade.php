@@ -134,6 +134,7 @@
 
 @section('content')
     <main class="historia-view">
+        {{-- Encabezado con datos básicos del expediente y acceso a la descarga --}}
         <header class="historia-view__header">
             <div class="historia-view__titles">
                 <span class="historia-view__badge"><i class="fas fa-notes-medical"></i> Historia clínica</span>
@@ -144,6 +145,7 @@
             </a>
         </header>
 
+        {{-- Resumen con meta información para contextualizar la historia abierta --}}
         <section class="historia-view__meta">
             <div class="historia-view__meta-item">
                 <span class="historia-view__meta-label">Propietario</span>
@@ -163,6 +165,7 @@
             </div>
         </section>
 
+        {{-- Visor embebido del PDF generado para facilitar la revisión completa --}}
         <div class="historia-view__iframe-wrapper">
             <iframe class="historia-view__iframe" src="{{ $pdfUrl }}" title="Historia clínica {{ $codigo }}" loading="lazy"></iframe>
         </div>

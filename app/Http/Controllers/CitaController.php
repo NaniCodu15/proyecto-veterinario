@@ -8,17 +8,30 @@ use Illuminate\Validation\ValidationException;
 use App\Models\Cita;
 use Carbon\Carbon;
 
+/**
+ * Controlador REST encargado de gestionar las operaciones CRUD y auxiliares sobre las citas.
+ * Todas las respuestas JSON retornan estructuras listas para pintar en componentes dinámicos.
+ */
 class CitaController extends Controller
 {
+    /**
+     * Catálogo cerrado de estados permitidos para asegurar consistencia en las transiciones.
+     */
     private const ESTADOS_PERMITIDOS = ['Pendiente', 'Atendida', 'Cancelada', 'Reprogramada'];
 
+    /**
+     * Devuelve el listado completo de citas con filtros opcionales por nombre de mascota o propietario.
+     * Se utiliza principalmente para alimentar tablas dinámicas en el frontend.
+     */
     public function list(Request $request)
     {
         $search = trim((string) $request->input('q', ''));
 
+        // Se cargan las relaciones necesarias para evitar consultas adicionales en la serialización.
         $citasQuery = Cita::with(['historiaClinica.mascota.propietario']);
 
         if ($search !== '') {
+            // Agrupa la lógica de búsqueda para coincidir por mascota o por propietario completo.
             $citasQuery->where(function ($query) use ($search) {
                 $query
                     ->whereHas('historiaClinica.mascota', function ($mascotaQuery) use ($search) {
@@ -50,6 +63,9 @@ class CitaController extends Controller
         ]);
     }
 
+    /**
+     * Obtiene únicamente las citas pendientes dentro de los próximos tres días para recordatorios.
+     */
     public function upcoming(Request $request)
     {
         $today = Carbon::today();
@@ -69,20 +85,26 @@ class CitaController extends Controller
         ]);
     }
 
-    // Mostrar todas las citas
+    /**
+     * Vista tradicional con todas las citas registradas.
+     */
     public function index()
     {
         $citas = Cita::all();
         return view('citas.index', compact('citas'));
     }
 
-    // Formulario para crear nueva cita
+    /**
+     * Muestra el formulario HTML para registrar una nueva cita manualmente.
+     */
     public function create()
     {
         return view('citas.create');
     }
 
-    // Guardar nueva cita
+    /**
+     * Persiste una nueva cita aplicando las validaciones de disponibilidad de datos mínimos.
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -92,6 +114,7 @@ class CitaController extends Controller
             'id_historia' => ['required', 'exists:historia_clinicas,id_historia'],
         ]);
 
+        // Se homogeneiza la hora para cumplir con el formato almacenado en base de datos.
         $hora = $this->normalizarHora($validated['hora_cita'] ?? null) ?? '00:00:00';
 
         $cita = Cita::create([
@@ -113,19 +136,25 @@ class CitaController extends Controller
         return redirect()->route('citas.index')->with('success', 'Cita creada correctamente.');
     }
 
-    // Mostrar una cita específica
+    /**
+     * Renderiza una cita específica en la vista de detalle.
+     */
     public function show(Cita $cita)
     {
         return view('citas.show', compact('cita'));
     }
 
-    // Formulario para editar cita
+    /**
+     * Carga la cita en un formulario editable.
+     */
     public function edit(Cita $cita)
     {
         return view('citas.edit', compact('cita'));
     }
 
-    // Actualizar cita
+    /**
+     * Aplica cambios a una cita existente desde el formulario tradicional.
+     */
     public function update(Request $request, Cita $cita)
     {
         $request->validate([
@@ -143,7 +172,9 @@ class CitaController extends Controller
         return redirect()->route('citas.index')->with('success', 'Cita actualizada correctamente.');
     }
 
-    // Eliminar cita
+    /**
+     * Elimina una cita y responde según se trate de una petición web tradicional o AJAX.
+     */
     public function destroy(Request $request, Cita $cita)
     {
         $cita->delete();
@@ -157,6 +188,9 @@ class CitaController extends Controller
         return redirect()->route('citas.index')->with('success', 'Cita eliminada correctamente.');
     }
 
+    /**
+     * Permite modificar el estado de una cita y manejar reglas de negocio para cada transición.
+     */
     public function updateEstado(Request $request, Cita $cita)
     {
         $validated = $request->validate([
@@ -168,12 +202,14 @@ class CitaController extends Controller
         $estadoActual = $cita->estado ?? 'Pendiente';
         $nuevoEstado = $validated['estado'];
 
+        // Una vez atendida, una cita no puede volver a estados anteriores.
         if ($estadoActual === 'Atendida' && $nuevoEstado !== 'Atendida') {
             throw ValidationException::withMessages([
                 'estado' => ['Las citas atendidas no se pueden modificar.'],
             ]);
         }
 
+        // Evita operaciones innecesarias cuando no hay cambios.
         if ($estadoActual === 'Atendida' && $nuevoEstado === 'Atendida') {
             return response()->json([
                 'message' => 'La cita ya se encuentra marcada como atendida.',
@@ -185,6 +221,7 @@ class CitaController extends Controller
             $nuevaFecha = $validated['fecha_cita'] ?? null;
             $nuevaHora = $validated['hora_cita'] ?? null;
 
+            // Validaciones manuales para asegurar que se seleccione fecha y hora en la reprogramación.
             $errores = [];
             if (!$nuevaFecha) {
                 $errores['fecha_cita'] = ['Selecciona la nueva fecha de la cita.'];
@@ -211,6 +248,9 @@ class CitaController extends Controller
         ]);
     }
 
+    /**
+     * Formatea una instancia de cita y sus relaciones en un arreglo listo para el frontend.
+     */
     private function transformCita(Cita $cita): array
     {
         $cita->loadMissing(['historiaClinica.mascota.propietario']);
@@ -244,6 +284,9 @@ class CitaController extends Controller
         ];
     }
 
+    /**
+     * Normaliza cadenas de hora HH:MM convirtiéndolas a HH:MM:SS o devolviendo null si no hay dato.
+     */
     private function normalizarHora(?string $hora): ?string
     {
         if ($hora === null || $hora === '') {

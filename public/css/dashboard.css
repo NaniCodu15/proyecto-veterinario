@@ -1,3 +1,456 @@
+/*
+ * Descripción de reglas para dashboard.css:
+ * - :root: centraliza variables CSS de color, sombra y radios para reutilizarlas en todo el sitio.
+ * - *: normaliza el modelo de caja para evitar inconsistencias entre navegadores.
+ * - .dashboard-layout: separa el bloque de los elementos vecinos con márgenes claros; incorpora relleno para que
+  el contenido respire dentro del contenedor; establece alturas específicas que estabilizan la sección;
+  establece la familia tipográfica coherente con la identidad visual; define el color del texto para mantener
+  el contraste necesario; aplica un degradado para lograr un fondo suave y moderno; oculta desbordes para
+  mantener la composición limpia.
+ * - body.modal-open: oculta desbordes para mantener la composición limpia.
+ * - img: fija límites de ancho para que el componente conserve su proporción.
+ * - .dashboard-container: fija límites de ancho para que el componente conserve su proporción; establece alturas
+  específicas que estabilizan la sección; usa flexbox para organizar los elementos internos; define espacios
+  homogéneos entre hijos para mejorar la legibilidad; incorpora relleno para que el contenido respire dentro
+  del contenedor; controla la alineación vertical de los hijos dentro del contenedor flex/grid; distribuye el
+  espacio horizontal para equilibrar la composición; normaliza el modelo de caja para evitar inconsistencias
+  entre navegadores.
+ * - .sidebar: permanece fijo para que la sección esté siempre visible; fija límites de ancho para que el
+  componente conserve su proporción; aplica un degradado para lograr un fondo suave y moderno; redondea las
+  esquinas para suavizar la interfaz y evitar bordes duros; añade sombras para generar profundidad y sensación
+  de tarjeta flotante; dibuja bordes que delimitan secciones y tablas para guiar la mirada; incorpora relleno
+  para que el contenido respire dentro del contenedor; usa flexbox para organizar los elementos internos;
+  define espacios homogéneos entre hijos para mejorar la legibilidad; aplica desenfoque al fondo para resaltar
+  tarjetas translúcidas; oculta desbordes para mantener la composición limpia.
+ * - .sidebar-header: controla la alineación horizontal del texto dentro del bloque.
+ * - .sidebar-logo: fija límites de ancho para que el componente conserve su proporción; separa el bloque de los
+  elementos vecinos con márgenes claros.
+ * - .sidebar-menu: elimina viñetas para integrar las listas al diseño de tarjetas; incorpora relleno para que el
+  contenido respire dentro del contenedor; separa el bloque de los elementos vecinos con márgenes claros; usa
+  flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la
+  legibilidad.
+ * - .sidebar-menu li: separa el bloque de los elementos vecinos con márgenes claros.
+ * - .sidebar-menu a: usa flexbox para organizar los elementos internos; controla la alineación vertical de los
+  hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad;
+  incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas para suavizar
+  la interfaz y evitar bordes duros; ajusta decoraciones para que los enlaces se perciban como botones
+  limpios; define el color del texto para mantener el contraste necesario; modifica el peso tipográfico para
+  enfatizar información importante; ajusta el espaciado entre letras para darle estilo a los títulos; agrega
+  transiciones suaves que comunican interactividad.
+ * - .sidebar-menu a i: ajusta el tamaño de fuente para jerarquizar el texto mostrado.
+ * - .sidebar-menu a:hover, .sidebar-menu a.active: aplica un degradado para lograr un fondo suave y moderno;
+  define el color del texto para mantener el contraste necesario; aplica transformaciones que acompañan
+  animaciones o estados hover.
+ * - .sidebar-menu a.nav-link--parent-active: aplica un degradado para lograr un fondo suave y moderno; define el
+  color del texto para mantener el contraste necesario; aplica transformaciones que acompañan animaciones o
+  estados hover.
+ * - .sidebar-item--has-submenu: usa flexbox para organizar los elementos internos; define espacios homogéneos
+  entre hijos para mejorar la legibilidad.
+ * - .sidebar-submenu: elimina viñetas para integrar las listas al diseño de tarjetas; incorpora relleno para que
+  el contenido respire dentro del contenedor; separa el bloque de los elementos vecinos con márgenes claros;
+  usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la
+  legibilidad.
+ * - .sidebar-submenu .nav-link: ajusta el tamaño de fuente para jerarquizar el texto mostrado; incorpora relleno
+  para que el contenido respire dentro del contenedor; define el color del texto para mantener el contraste
+  necesario; define espacios homogéneos entre hijos para mejorar la legibilidad.
+ * - .sidebar-submenu .nav-link i: ajusta el tamaño de fuente para jerarquizar el texto mostrado.
+ * - .user-card: usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos
+  dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad;
+  incorpora relleno para que el contenido respire dentro del contenedor; aplica un degradado para lograr un
+  fondo suave y moderno; redondea las esquinas para suavizar la interfaz y evitar bordes duros; dibuja bordes
+  que delimitan secciones y tablas para guiar la mirada; añade sombras para generar profundidad y sensación de
+  tarjeta flotante.
+ * - .user-card__info: usa flexbox para organizar los elementos internos; controla la alineación vertical de los
+  hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad;
+  fija límites de ancho para que el componente conserve su proporción.
+ * - .user-card__avatar: fija límites de ancho para que el componente conserve su proporción; establece alturas
+  específicas que estabilizan la sección; redondea las esquinas para suavizar la interfaz y evitar bordes
+  duros; oculta desbordes para mantener la composición limpia; añade sombras para generar profundidad y
+  sensación de tarjeta flotante.
+ * - .user-card__avatar img: fija límites de ancho para que el componente conserve su proporción; establece
+  alturas específicas que estabilizan la sección.
+ * - .user-card__details: usa flexbox para organizar los elementos internos; define espacios homogéneos entre
+  hijos para mejorar la legibilidad; fija límites de ancho para que el componente conserve su proporción.
+ * - .user-card__name: modifica el peso tipográfico para enfatizar información importante; ajusta el tamaño de
+  fuente para jerarquizar el texto mostrado; define el color del texto para mantener el contraste necesario;
+  define cómo se comportan los saltos de línea para mantener la lectura.
+ * - .user-card__email: ajusta el tamaño de fuente para jerarquizar el texto mostrado; define el color del texto
+  para mantener el contraste necesario; define cómo se comportan los saltos de línea para mantener la lectura.
+ * - .user-card__logout: usa flexbox para organizar los elementos internos.
+ * - .user-card__logout button: establece un color de fondo que refuerza el contraste del módulo; dibuja bordes
+  que delimitan secciones y tablas para guiar la mirada; define el color del texto para mantener el contraste
+  necesario; fija límites de ancho para que el componente conserve su proporción; establece alturas
+  específicas que estabilizan la sección; redondea las esquinas para suavizar la interfaz y evitar bordes
+  duros; usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos
+  dentro del contenedor flex/grid; distribuye el espacio horizontal para equilibrar la composición; ajusta el
+  tamaño de fuente para jerarquizar el texto mostrado; cambia el cursor para comunicar que el elemento es
+  interactivo; agrega transiciones suaves que comunican interactividad; añade sombras para generar profundidad
+  y sensación de tarjeta flotante.
+ * - .user-card__logout button:hover: establece un color de fondo que refuerza el contraste del módulo; define el
+  color del texto para mantener el contraste necesario; aplica transformaciones que acompañan animaciones o
+  estados hover.
+ * - .content: establece un color de fondo que refuerza el contraste del módulo; redondea las esquinas para
+  suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire dentro del
+  contenedor; añade sombras para generar profundidad y sensación de tarjeta flotante; dibuja bordes que
+  delimitan secciones y tablas para guiar la mirada; aplica desenfoque al fondo para resaltar tarjetas
+  translúcidas; establece alturas específicas que estabilizan la sección.
+ * - .content-header: controla la alineación horizontal del texto dentro del bloque.
+ * - .content-header__title: separa el bloque de los elementos vecinos con márgenes claros; ajusta el tamaño de
+  fuente para jerarquizar el texto mostrado; modifica el peso tipográfico para enfatizar información
+  importante; ajusta el espaciado entre letras para darle estilo a los títulos; define el color del texto para
+  mantener el contraste necesario.
+ * - .section: ajusta detalles visuales para mantener coherencia con el resto del tablero.
+ * - .section.active: ajusta detalles visuales para mantener coherencia con el resto del tablero.
+ * - .home-hero: crea un contexto relativo para posicionar hijos y badges; utiliza CSS Grid para distribuir el
+  contenido con precisión; define espacios homogéneos entre hijos para mejorar la legibilidad; controla la
+  alineación vertical de los hijos dentro del contenedor flex/grid; incorpora relleno para que el contenido
+  respire dentro del contenedor; redondea las esquinas para suavizar la interfaz y evitar bordes duros; aplica
+  un degradado para lograr un fondo suave y moderno; añade sombras para generar profundidad y sensación de
+  tarjeta flotante; oculta desbordes para mantener la composición limpia.
+ * - .home-hero::after: se posiciona absolutamente respecto a su contenedor; aplica un degradado para lograr un
+  fondo suave y moderno.
+ * - .home-hero__content: crea un contexto relativo para posicionar hijos y badges; maneja el apilamiento para
+  que modales y paneles se superpongan correctamente; usa flexbox para organizar los elementos internos;
+  define espacios homogéneos entre hijos para mejorar la legibilidad.
+ * - .home-hero__badge: usa flexbox para organizar los elementos internos; controla la alineación vertical de los
+  hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad;
+  incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas para suavizar
+  la interfaz y evitar bordes duros; establece un color de fondo que refuerza el contraste del módulo; define
+  el color del texto para mantener el contraste necesario; modifica el peso tipográfico para enfatizar
+  información importante; ajusta el espaciado entre letras para darle estilo a los títulos; ajusta el tamaño
+  de fuente para jerarquizar el texto mostrado.
+ * - .home-hero__title: separa el bloque de los elementos vecinos con márgenes claros; ajusta el tamaño de fuente
+  para jerarquizar el texto mostrado; controla el interlineado para mejorar la lectura de los párrafos; define
+  el color del texto para mantener el contraste necesario.
+ * - .home-hero__subtitle: separa el bloque de los elementos vecinos con márgenes claros; define el color del
+  texto para mantener el contraste necesario; fija límites de ancho para que el componente conserve su
+  proporción; ajusta el tamaño de fuente para jerarquizar el texto mostrado.
+ * - .home-hero__actions: usa flexbox para organizar los elementos internos; define espacios homogéneos entre
+  hijos para mejorar la legibilidad.
+ * - .home-hero__visual: crea un contexto relativo para posicionar hijos y badges; maneja el apilamiento para que
+  modales y paneles se superpongan correctamente; usa flexbox para organizar los elementos internos; controla
+  la alineación vertical de los hijos dentro del contenedor flex/grid; distribuye el espacio horizontal para
+  equilibrar la composición.
+ * - .home-hero__bubble: se posiciona absolutamente respecto a su contenedor; redondea las esquinas para suavizar
+  la interfaz y evitar bordes duros.
+ * - .home-hero__bubble--one: fija límites de ancho para que el componente conserve su proporción; establece
+  alturas específicas que estabilizan la sección; establece un color de fondo que refuerza el contraste del
+  módulo.
+ * - .home-hero__bubble--two: fija límites de ancho para que el componente conserve su proporción; establece
+  alturas específicas que estabilizan la sección; establece un color de fondo que refuerza el contraste del
+  módulo.
+ * - .home-hero__image: crea un contexto relativo para posicionar hijos y badges; fija límites de ancho para que
+  el componente conserve su proporción.
+ * - .metrics-grid: utiliza CSS Grid para distribuir el contenido con precisión; define espacios homogéneos entre
+  hijos para mejorar la legibilidad.
+ * - .metric-card: crea un contexto relativo para posicionar hijos y badges; usa flexbox para organizar los
+  elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad; incorpora relleno
+  para que el contenido respire dentro del contenedor; redondea las esquinas para suavizar la interfaz y
+  evitar bordes duros; define el color del texto para mantener el contraste necesario; aplica un degradado
+  para lograr un fondo suave y moderno; dibuja bordes que delimitan secciones y tablas para guiar la mirada;
+  añade sombras para generar profundidad y sensación de tarjeta flotante; oculta desbordes para mantener la
+  composición limpia; agrega transiciones suaves que comunican interactividad.
+ * - .metric-card::after: se posiciona absolutamente respecto a su contenedor; aplica un degradado para lograr un
+  fondo suave y moderno.
+ * - .metric-card:hover: aplica transformaciones que acompañan animaciones o estados hover; añade sombras para
+  generar profundidad y sensación de tarjeta flotante.
+ * - .metric-card__header: usa flexbox para organizar los elementos internos; distribuye el espacio horizontal
+  para equilibrar la composición; controla la alineación vertical de los hijos dentro del contenedor
+  flex/grid; crea un contexto relativo para posicionar hijos y badges; maneja el apilamiento para que modales
+  y paneles se superpongan correctamente.
+ * - .metric-card__label: modifica el peso tipográfico para enfatizar información importante; define el color del
+  texto para mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado.
+ * - .metric-card__icon: fija límites de ancho para que el componente conserve su proporción; establece alturas
+  específicas que estabilizan la sección; redondea las esquinas para suavizar la interfaz y evitar bordes
+  duros; utiliza CSS Grid para distribuir el contenido con precisión; establece un color de fondo que refuerza
+  el contraste del módulo; define el color del texto para mantener el contraste necesario; ajusta el tamaño de
+  fuente para jerarquizar el texto mostrado.
+ * - .metric-card__body: crea un contexto relativo para posicionar hijos y badges; maneja el apilamiento para que
+  modales y paneles se superpongan correctamente.
+ * - .metric-card__value: separa el bloque de los elementos vecinos con márgenes claros; ajusta el tamaño de
+  fuente para jerarquizar el texto mostrado; controla el interlineado para mejorar la lectura de los párrafos.
+ * - .metric-card__description: separa el bloque de los elementos vecinos con márgenes claros; define el color
+  del texto para mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto
+  mostrado.
+ * - .metric-card__footer: usa flexbox para organizar los elementos internos; define espacios homogéneos entre
+  hijos para mejorar la legibilidad; crea un contexto relativo para posicionar hijos y badges; maneja el
+  apilamiento para que modales y paneles se superpongan correctamente.
+ * - .metric-card__dot: fija límites de ancho para que el componente conserve su proporción; establece alturas
+  específicas que estabilizan la sección; redondea las esquinas para suavizar la interfaz y evitar bordes
+  duros; establece un color de fondo que refuerza el contraste del módulo; añade sombras para generar
+  profundidad y sensación de tarjeta flotante.
+ * - .metric-card--patients: aplica un degradado para lograr un fondo suave y moderno.
+ * - .metric-card--owners: aplica un degradado para lograr un fondo suave y moderno.
+ * - .metric-card--records: aplica un degradado para lograr un fondo suave y moderno.
+ * - .metric-card--consults: aplica un degradado para lograr un fondo suave y moderno.
+ * - .overview-grid: utiliza CSS Grid para distribuir el contenido con precisión; define espacios homogéneos
+  entre hijos para mejorar la legibilidad; controla la alineación vertical de los hijos dentro del contenedor
+  flex/grid; fija límites de ancho para que el componente conserve su proporción.
+ * - .insight-grid: utiliza CSS Grid para distribuir el contenido con precisión; define espacios homogéneos entre
+  hijos para mejorar la legibilidad.
+ * - .panel: establece un color de fondo que refuerza el contraste del módulo; redondea las esquinas para
+  suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire dentro del
+  contenedor; dibuja bordes que delimitan secciones y tablas para guiar la mirada; añade sombras para generar
+  profundidad y sensación de tarjeta flotante; usa flexbox para organizar los elementos internos; define
+  espacios homogéneos entre hijos para mejorar la legibilidad.
+ * - .panel--appointments: aplica un degradado para lograr un fondo suave y moderno.
+ * - .panel--insights: aplica un degradado para lograr un fondo suave y moderno.
+ * - .panel__header: usa flexbox para organizar los elementos internos; controla la alineación vertical de los
+  hijos dentro del contenedor flex/grid; distribuye el espacio horizontal para equilibrar la composición;
+  define espacios homogéneos entre hijos para mejorar la legibilidad.
+ * - .panel__title: separa el bloque de los elementos vecinos con márgenes claros; ajusta el tamaño de fuente
+  para jerarquizar el texto mostrado; define el color del texto para mantener el contraste necesario.
+ * - .panel__subtitle: separa el bloque de los elementos vecinos con márgenes claros; define el color del texto
+  para mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado.
+ * - .panel__chip: usa flexbox para organizar los elementos internos; controla la alineación vertical de los
+  hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad;
+  incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas para suavizar
+  la interfaz y evitar bordes duros; ajusta el tamaño de fuente para jerarquizar el texto mostrado; modifica
+  el peso tipográfico para enfatizar información importante; transforma el texto (uppercase/lowercase) para
+  reforzar etiquetas visuales; ajusta el espaciado entre letras para darle estilo a los títulos; establece un
+  color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste
+  necesario.
+ * - .panel__chip i: ajusta el tamaño de fuente para jerarquizar el texto mostrado.
+ * - .appointment-list: elimina viñetas para integrar las listas al diseño de tarjetas; separa el bloque de los
+  elementos vecinos con márgenes claros; incorpora relleno para que el contenido respire dentro del
+  contenedor; usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para
+  mejorar la legibilidad.
+ * - .appointment-list__item: utiliza CSS Grid para distribuir el contenido con precisión; controla la alineación
+  vertical de los hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar
+  la legibilidad; incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas
+  para suavizar la interfaz y evitar bordes duros; establece un color de fondo que refuerza el contraste del
+  módulo; dibuja bordes que delimitan secciones y tablas para guiar la mirada; añade sombras para generar
+  profundidad y sensación de tarjeta flotante.
+ * - .appointment-list__item--empty: controla la alineación horizontal del texto dentro del bloque; define el
+  color del texto para mantener el contraste necesario.
+ * - .appointment-list__time: usa flexbox para organizar los elementos internos; controla la alineación vertical
+  de los hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la
+  legibilidad; modifica el peso tipográfico para enfatizar información importante; define el color del texto
+  para mantener el contraste necesario.
+ * - .appointment-list__hour: ajusta el tamaño de fuente para jerarquizar el texto mostrado; ajusta el espaciado
+  entre letras para darle estilo a los títulos.
+ * - .appointment-list__date: ajusta el tamaño de fuente para jerarquizar el texto mostrado; define el color del
+  texto para mantener el contraste necesario.
+ * - .appointment-list__details: usa flexbox para organizar los elementos internos; define espacios homogéneos
+  entre hijos para mejorar la legibilidad.
+ * - .appointment-list__pet: separa el bloque de los elementos vecinos con márgenes claros; modifica el peso
+  tipográfico para enfatizar información importante; ajusta el tamaño de fuente para jerarquizar el texto
+  mostrado; define el color del texto para mantener el contraste necesario.
+ * - .appointment-list__pet span: define el color del texto para mantener el contraste necesario; modifica el
+  peso tipográfico para enfatizar información importante.
+ * - .appointment-list__owner: ajusta el tamaño de fuente para jerarquizar el texto mostrado; define el color del
+  texto para mantener el contraste necesario.
+ * - .appointment-list__status: usa flexbox para organizar los elementos internos; controla la alineación
+  vertical de los hijos dentro del contenedor flex/grid; distribuye el espacio horizontal para equilibrar la
+  composición; fija límites de ancho para que el componente conserve su proporción; incorpora relleno para que
+  el contenido respire dentro del contenedor; redondea las esquinas para suavizar la interfaz y evitar bordes
+  duros; ajusta el tamaño de fuente para jerarquizar el texto mostrado; modifica el peso tipográfico para
+  enfatizar información importante; transforma el texto (uppercase/lowercase) para reforzar etiquetas
+  visuales; ajusta el espaciado entre letras para darle estilo a los títulos.
+ * - .appointment-list__status.is-pending: establece un color de fondo que refuerza el contraste del módulo;
+  define el color del texto para mantener el contraste necesario.
+ * - .appointment-list__status.is-done: establece un color de fondo que refuerza el contraste del módulo; define
+  el color del texto para mantener el contraste necesario.
+ * - .appointment-list__status.is-cancelled: establece un color de fondo que refuerza el contraste del módulo;
+  define el color del texto para mantener el contraste necesario.
+ * - .appointment-list__status.is-rescheduled: establece un color de fondo que refuerza el contraste del módulo;
+  define el color del texto para mantener el contraste necesario.
+ * - .insight-cards: utiliza CSS Grid para distribuir el contenido con precisión; define espacios homogéneos
+  entre hijos para mejorar la legibilidad.
+ * - .insight-card: usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos
+  para mejorar la legibilidad; controla la alineación vertical de los hijos dentro del contenedor flex/grid;
+  incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas para suavizar
+  la interfaz y evitar bordes duros; establece un color de fondo que refuerza el contraste del módulo; dibuja
+  bordes que delimitan secciones y tablas para guiar la mirada; añade sombras para generar profundidad y
+  sensación de tarjeta flotante.
+ * - .insight-card__icon: usa flexbox para organizar los elementos internos; controla la alineación vertical de
+  los hijos dentro del contenedor flex/grid; distribuye el espacio horizontal para equilibrar la composición;
+  fija límites de ancho para que el componente conserve su proporción; establece alturas específicas que
+  estabilizan la sección; redondea las esquinas para suavizar la interfaz y evitar bordes duros; establece un
+  color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste
+  necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado.
+ * - .insight-card h3: separa el bloque de los elementos vecinos con márgenes claros; ajusta el tamaño de fuente
+  para jerarquizar el texto mostrado; define el color del texto para mantener el contraste necesario.
+ * - .insight-card p: separa el bloque de los elementos vecinos con márgenes claros; define el color del texto
+  para mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado.
+ * - .care-progress: usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos
+  para mejorar la legibilidad.
+ * - .care-progress__item: usa flexbox para organizar los elementos internos; define espacios homogéneos entre
+  hijos para mejorar la legibilidad.
+ * - .care-progress__label: usa flexbox para organizar los elementos internos; distribuye el espacio horizontal
+  para equilibrar la composición; controla la alineación vertical de los hijos dentro del contenedor
+  flex/grid; modifica el peso tipográfico para enfatizar información importante; define el color del texto
+  para mantener el contraste necesario.
+ * - .care-progress__track: establece alturas específicas que estabilizan la sección; redondea las esquinas para
+  suavizar la interfaz y evitar bordes duros; establece un color de fondo que refuerza el contraste del
+  módulo; oculta desbordes para mantener la composición limpia.
+ * - .care-progress__bar: establece alturas específicas que estabilizan la sección; redondea las esquinas para
+  suavizar la interfaz y evitar bordes duros; aplica un degradado para lograr un fondo suave y moderno.
+ * - .care-notes: utiliza CSS Grid para distribuir el contenido con precisión; define espacios homogéneos entre
+  hijos para mejorar la legibilidad.
+ * - .care-note: incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas
+  para suavizar la interfaz y evitar bordes duros; establece un color de fondo que refuerza el contraste del
+  módulo; dibuja bordes que delimitan secciones y tablas para guiar la mirada; define el color del texto para
+  mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado; usa flexbox
+  para organizar los elementos internos; controla la alineación vertical de los hijos dentro del contenedor
+  flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad.
+ * - .care-note i: ajusta el tamaño de fuente para jerarquizar el texto mostrado.
+ * - .panel--wide: ajusta detalles visuales para mantener coherencia con el resto del tablero.
+ * - .titulo: separa el bloque de los elementos vecinos con márgenes claros; define el color del texto para
+  mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado; ajusta el
+  espaciado entre letras para darle estilo a los títulos.
+ * - .alert: usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos
+  dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad;
+  incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas para suavizar
+  la interfaz y evitar bordes duros; modifica el peso tipográfico para enfatizar información importante;
+  ajusta el tamaño de fuente para jerarquizar el texto mostrado; añade sombras para generar profundidad y
+  sensación de tarjeta flotante.
+ * - .alert[hidden]: ajusta detalles visuales para mantener coherencia con el resto del tablero.
+ * - .alert--success: establece un color de fondo que refuerza el contraste del módulo; define el color del texto
+  para mantener el contraste necesario.
+ * - .alert--error: establece un color de fondo que refuerza el contraste del módulo; define el color del texto
+  para mantener el contraste necesario; añade sombras para generar profundidad y sensación de tarjeta
+  flotante.
+ * - .btn: dibuja bordes que delimitan secciones y tablas para guiar la mirada; redondea las esquinas para
+  suavizar la interfaz y evitar bordes duros; modifica el peso tipográfico para enfatizar información
+  importante; cambia el cursor para comunicar que el elemento es interactivo; usa flexbox para organizar los
+  elementos internos; controla la alineación vertical de los hijos dentro del contenedor flex/grid; distribuye
+  el espacio horizontal para equilibrar la composición; define espacios homogéneos entre hijos para mejorar la
+  legibilidad; incorpora relleno para que el contenido respire dentro del contenedor; ajusta el tamaño de
+  fuente para jerarquizar el texto mostrado; agrega transiciones suaves que comunican interactividad.
+ * - .btn.is-disabled, .btn:disabled: cambia el cursor para comunicar que el elemento es interactivo; añade
+  sombras para generar profundidad y sensación de tarjeta flotante; aplica transformaciones que acompañan
+  animaciones o estados hover.
+ * - .btn.is-disabled:hover, .btn:disabled:hover: aplica transformaciones que acompañan animaciones o estados
+  hover.
+ * - .btn:hover: aplica transformaciones que acompañan animaciones o estados hover.
+ * - .btn-primary: aplica un degradado para lograr un fondo suave y moderno; define el color del texto para
+  mantener el contraste necesario; añade sombras para generar profundidad y sensación de tarjeta flotante.
+ * - .btn-primary:hover: aplica un degradado para lograr un fondo suave y moderno.
+ * - .btn-outline: establece un color de fondo que refuerza el contraste del módulo; define el color del texto
+  para mantener el contraste necesario; dibuja bordes que delimitan secciones y tablas para guiar la mirada;
+  añade sombras para generar profundidad y sensación de tarjeta flotante.
+ * - .btn-outline:hover: establece un color de fondo que refuerza el contraste del módulo.
+ * - .btn-ghost: establece un color de fondo que refuerza el contraste del módulo; define el color del texto para
+  mantener el contraste necesario; dibuja bordes que delimitan secciones y tablas para guiar la mirada; añade
+  sombras para generar profundidad y sensación de tarjeta flotante.
+ * - .btn-ghost:hover: establece un color de fondo que refuerza el contraste del módulo.
+ * - .btn-success: establece un color de fondo que refuerza el contraste del módulo; define el color del texto
+  para mantener el contraste necesario; añade sombras para generar profundidad y sensación de tarjeta
+  flotante.
+ * - .btn-warning: establece un color de fondo que refuerza el contraste del módulo; define el color del texto
+  para mantener el contraste necesario.
+ * - .btn-danger: establece un color de fondo que refuerza el contraste del módulo; define el color del texto
+  para mantener el contraste necesario.
+ * - .btn-sm: incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas para
+  suavizar la interfaz y evitar bordes duros; ajusta el tamaño de fuente para jerarquizar el texto mostrado.
+ * - .btn-guardar: fija límites de ancho para que el componente conserve su proporción.
+ * - .modal: permanece fijo para que la sección esté siempre visible; maneja el apilamiento para que modales y
+  paneles se superpongan correctamente; incorpora relleno para que el contenido respire dentro del contenedor;
+  establece un color de fondo que refuerza el contraste del módulo; aplica desenfoque al fondo para resaltar
+  tarjetas translúcidas.
+ * - .modal-content: establece un color de fondo que refuerza el contraste del módulo; separa el bloque de los
+  elementos vecinos con márgenes claros; incorpora relleno para que el contenido respire dentro del
+  contenedor; redondea las esquinas para suavizar la interfaz y evitar bordes duros; fija límites de ancho
+  para que el componente conserve su proporción; añade sombras para generar profundidad y sensación de tarjeta
+  flotante; crea un contexto relativo para posicionar hijos y badges.
+ * - .modal-content h2: separa el bloque de los elementos vecinos con márgenes claros; define el color del texto
+  para mantener el contraste necesario.
+ * - .close: se posiciona absolutamente respecto a su contenedor; ajusta el tamaño de fuente para jerarquizar el
+  texto mostrado; cambia el cursor para comunicar que el elemento es interactivo; define el color del texto
+  para mantener el contraste necesario; agrega transiciones suaves que comunican interactividad.
+ * - .close:hover: define el color del texto para mantener el contraste necesario.
+ * - .form-section: establece un color de fondo que refuerza el contraste del módulo; dibuja bordes que delimitan
+  secciones y tablas para guiar la mirada; redondea las esquinas para suavizar la interfaz y evitar bordes
+  duros; incorpora relleno para que el contenido respire dentro del contenedor; añade sombras para generar
+  profundidad y sensación de tarjeta flotante.
+ * - .form-section:first-of-type: ajusta detalles visuales para mantener coherencia con el resto del tablero.
+ * - .form-section__title: separa el bloque de los elementos vecinos con márgenes claros; ajusta el tamaño de
+  fuente para jerarquizar el texto mostrado; modifica el peso tipográfico para enfatizar información
+  importante; usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos
+  dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad; define
+  el color del texto para mantener el contraste necesario.
+ * - .form-section__title span: ajusta el tamaño de fuente para jerarquizar el texto mostrado.
+ * - .form-grid: utiliza CSS Grid para distribuir el contenido con precisión; define espacios homogéneos entre
+  hijos para mejorar la legibilidad.
+ * - .form-section .form-grid: ajusta detalles visuales para mantener coherencia con el resto del tablero.
+ * - .form-group: usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para
+  mejorar la legibilidad.
+ * - .form-group.full-width: ajusta detalles visuales para mantener coherencia con el resto del tablero.
+ * - .form-group label: modifica el peso tipográfico para enfatizar información importante; define el color del
+  texto para mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado.
+ * - .form-group input, .form-group select, .form-group textarea: fija límites de ancho para que el componente
+  conserve su proporción; dibuja bordes que delimitan secciones y tablas para guiar la mirada; redondea las
+  esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire
+  dentro del contenedor; establece un color de fondo que refuerza el contraste del módulo; ajusta el tamaño de
+  fuente para jerarquizar el texto mostrado; define el color del texto para mantener el contraste necesario;
+  agrega transiciones suaves que comunican interactividad.
+ * - .form-group input:focus, .form-group select:focus, .form-group textarea:focus: añade sombras para generar
+  profundidad y sensación de tarjeta flotante.
+ * - .form-group textarea: establece alturas específicas que estabilizan la sección.
+ * - .form-actions: usa flexbox para organizar los elementos internos; distribuye el espacio horizontal para
+  equilibrar la composición.
+ * - .confirm-modal: permanece fijo para que la sección esté siempre visible; maneja el apilamiento para que
+  modales y paneles se superpongan correctamente; controla la alineación vertical de los hijos dentro del
+  contenedor flex/grid; distribuye el espacio horizontal para equilibrar la composición; establece un color de
+  fondo que refuerza el contraste del módulo; aplica desenfoque al fondo para resaltar tarjetas translúcidas;
+  incorpora relleno para que el contenido respire dentro del contenedor.
+ * - .confirm-modal.is-visible: usa flexbox para organizar los elementos internos.
+ * - .confirm-modal__dialog: establece un color de fondo que refuerza el contraste del módulo; redondea las
+  esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire
+  dentro del contenedor; añade sombras para generar profundidad y sensación de tarjeta flotante; dibuja bordes
+  que delimitan secciones y tablas para guiar la mirada; fija límites de ancho para que el componente conserve
+  su proporción; controla la alineación horizontal del texto dentro del bloque.
+ * - .confirm-modal__message: separa el bloque de los elementos vecinos con márgenes claros; ajusta el tamaño de
+  fuente para jerarquizar el texto mostrado; define el color del texto para mantener el contraste necesario;
+  modifica el peso tipográfico para enfatizar información importante.
+ * - .confirm-modal__actions: usa flexbox para organizar los elementos internos; define espacios homogéneos entre
+  hijos para mejorar la legibilidad; distribuye el espacio horizontal para equilibrar la composición.
+ * - .btn-confirm-accept: aplica un degradado para lograr un fondo suave y moderno; define el color del texto
+  para mantener el contraste necesario; fija límites de ancho para que el componente conserve su proporción;
+  añade sombras para generar profundidad y sensación de tarjeta flotante.
+ * - .btn-confirm-accept:hover: aplica un degradado para lograr un fondo suave y moderno.
+ * - .btn-confirm-cancel: aplica un degradado para lograr un fondo suave y moderno; define el color del texto
+  para mantener el contraste necesario; fija límites de ancho para que el componente conserve su proporción;
+  añade sombras para generar profundidad y sensación de tarjeta flotante.
+ * - .btn-confirm-cancel:hover: aplica un degradado para lograr un fondo suave y moderno.
+ * - from: aplica transformaciones que acompañan animaciones o estados hover.
+ * - to: aplica transformaciones que acompañan animaciones o estados hover.
+ * - .dashboard-container: incorpora relleno para que el contenido respire dentro del contenedor; define espacios
+  homogéneos entre hijos para mejorar la legibilidad.
+ * - .sidebar: fija límites de ancho para que el componente conserve su proporción.
+ * - .content: incorpora relleno para que el contenido respire dentro del contenedor; establece alturas
+  específicas que estabilizan la sección.
+ * - .home-hero: incorpora relleno para que el contenido respire dentro del contenedor.
+ * - .overview-grid: ajusta detalles visuales para mantener coherencia con el resto del tablero.
+ * - .dashboard-layout: establece alturas específicas que estabilizan la sección; habilita scroll cuando el
+  contenido excede el espacio disponible.
+ * - .dashboard-container: incorpora relleno para que el contenido respire dentro del contenedor; define espacios
+  homogéneos entre hijos para mejorar la legibilidad; establece alturas específicas que estabilizan la
+  sección.
+ * - .sidebar: crea un contexto relativo para posicionar hijos y badges; fija límites de ancho para que el
+  componente conserve su proporción; establece alturas específicas que estabilizan la sección.
+ * - .content: fija límites de ancho para que el componente conserve su proporción; incorpora relleno para que el
+  contenido respire dentro del contenedor; establece alturas específicas que estabilizan la sección.
+ * - .home-hero: controla la alineación horizontal del texto dentro del bloque.
+ * - .home-hero__subtitle: separa el bloque de los elementos vecinos con márgenes claros.
+ * - .home-hero__actions: distribuye el espacio horizontal para equilibrar la composición.
+ * - .home-hero__visual: ajusta detalles visuales para mantener coherencia con el resto del tablero.
+ * - .metrics-grid: ajusta detalles visuales para mantener coherencia con el resto del tablero.
+ * - .overview-grid: ajusta detalles visuales para mantener coherencia con el resto del tablero.
+ * - .dashboard-container: incorpora relleno para que el contenido respire dentro del contenedor.
+ * - .sidebar: incorpora relleno para que el contenido respire dentro del contenedor.
+ * - .content: incorpora relleno para que el contenido respire dentro del contenedor.
+ * - .modal: incorpora relleno para que el contenido respire dentro del contenedor.
+ * - .modal-content: incorpora relleno para que el contenido respire dentro del contenedor.
+ * - .form-grid: ajusta detalles visuales para mantener coherencia con el resto del tablero.
+ * - .home-hero: incorpora relleno para que el contenido respire dentro del contenedor.
+ * - .home-hero__actions: controla la alineación vertical de los hijos dentro del contenedor flex/grid.
+ * - .metrics-grid: ajusta detalles visuales para mantener coherencia con el resto del tablero.
+ * - .appointment-list__item: controla la alineación vertical de los hijos dentro del contenedor flex/grid;
+  define espacios homogéneos entre hijos para mejorar la legibilidad.
+ * - .appointment-list__status: ajusta detalles visuales para mantener coherencia con el resto del tablero.
+ */
 :root {
     --primary: #7ba4ff;
     --primary-dark: #4e7dff;
@@ -22,10 +475,12 @@
     --radius-sm: 12px;
 }
 
+/* normaliza el modelo de caja para evitar inconsistencias entre navegadores. */
 * {
     box-sizing: border-box;
 }
 
+/* separa el bloque de los elementos vecinos con márgenes claros; incorpora relleno para que el contenido respire dentro del contenedor; establece alturas específicas que estabilizan la sección; establece la familia tipográfica coherente con la identidad visual; define el color del texto para mantener el contraste necesario; aplica un degradado para lograr un fondo suave y moderno; oculta desbordes para mantener la composición limpia. */
 .dashboard-layout {
     margin: 0;
     padding: 0;
@@ -38,15 +493,18 @@
     overflow: hidden;
 }
 
+/* oculta desbordes para mantener la composición limpia. */
 body.modal-open {
     overflow: hidden;
 }
 
+/* fija límites de ancho para que el componente conserve su proporción. */
 img {
     max-width: 100%;
     display: block;
 }
 
+/* fija límites de ancho para que el componente conserve su proporción; establece alturas específicas que estabilizan la sección; usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad; incorpora relleno para que el contenido respire dentro del contenedor; controla la alineación vertical de los hijos dentro del contenedor flex/grid; distribuye el espacio horizontal para equilibrar la composición; normaliza el modelo de caja para evitar inconsistencias entre navegadores. */
 .dashboard-container {
     width: 100%;
     height: 100vh;
@@ -58,6 +516,7 @@ img {
     box-sizing: border-box;
 }
 
+/* permanece fijo para que la sección esté siempre visible; fija límites de ancho para que el componente conserve su proporción; aplica un degradado para lograr un fondo suave y moderno; redondea las esquinas para suavizar la interfaz y evitar bordes duros; añade sombras para generar profundidad y sensación de tarjeta flotante; dibuja bordes que delimitan secciones y tablas para guiar la mirada; incorpora relleno para que el contenido respire dentro del contenedor; usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad; aplica desenfoque al fondo para resaltar tarjetas translúcidas; oculta desbordes para mantener la composición limpia. */
 .sidebar {
     position: fixed;
     top: 16px;
@@ -76,15 +535,18 @@ img {
     overflow: hidden;
 }
 
+/* controla la alineación horizontal del texto dentro del bloque. */
 .sidebar-header {
     text-align: center;
 }
 
+/* fija límites de ancho para que el componente conserve su proporción; separa el bloque de los elementos vecinos con márgenes claros. */
 .sidebar-logo {
     width: 150px;
     margin: 0 auto;
 }
 
+/* elimina viñetas para integrar las listas al diseño de tarjetas; incorpora relleno para que el contenido respire dentro del contenedor; separa el bloque de los elementos vecinos con márgenes claros; usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .sidebar-menu {
     list-style: none;
     padding: 0;
@@ -94,10 +556,12 @@ img {
     gap: 12px;
 }
 
+/* separa el bloque de los elementos vecinos con márgenes claros. */
 .sidebar-menu li {
     margin: 0;
 }
 
+/* usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad; incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas para suavizar la interfaz y evitar bordes duros; ajusta decoraciones para que los enlaces se perciban como botones limpios; define el color del texto para mantener el contraste necesario; modifica el peso tipográfico para enfatizar información importante; ajusta el espaciado entre letras para darle estilo a los títulos; agrega transiciones suaves que comunican interactividad. */
 .sidebar-menu a {
     display: flex;
     align-items: center;
@@ -111,6 +575,7 @@ img {
     transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease;
 }
 
+/* ajusta el tamaño de fuente para jerarquizar el texto mostrado. */
 .sidebar-menu a i {
     font-size: 18px;
 }
@@ -122,18 +587,21 @@ img {
     transform: translateX(6px);
 }
 
+/* aplica un degradado para lograr un fondo suave y moderno; define el color del texto para mantener el contraste necesario; aplica transformaciones que acompañan animaciones o estados hover. */
 .sidebar-menu a.nav-link--parent-active {
     background: linear-gradient(135deg, rgba(123, 164, 255, 0.18), rgba(255, 156, 216, 0.22));
     color: var(--primary-dark);
     transform: translateX(6px);
 }
 
+/* usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .sidebar-item--has-submenu {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
 
+/* elimina viñetas para integrar las listas al diseño de tarjetas; incorpora relleno para que el contenido respire dentro del contenedor; separa el bloque de los elementos vecinos con márgenes claros; usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .sidebar-submenu {
     list-style: none;
     padding: 0;
@@ -143,6 +611,7 @@ img {
     gap: 8px;
 }
 
+/* ajusta el tamaño de fuente para jerarquizar el texto mostrado; incorpora relleno para que el contenido respire dentro del contenedor; define el color del texto para mantener el contraste necesario; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .sidebar-submenu .nav-link {
     font-size: 0.92rem;
     padding: 10px 16px;
@@ -150,10 +619,12 @@ img {
     gap: 10px;
 }
 
+/* ajusta el tamaño de fuente para jerarquizar el texto mostrado. */
 .sidebar-submenu .nav-link i {
     font-size: 16px;
 }
 
+/* usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad; incorpora relleno para que el contenido respire dentro del contenedor; aplica un degradado para lograr un fondo suave y moderno; redondea las esquinas para suavizar la interfaz y evitar bordes duros; dibuja bordes que delimitan secciones y tablas para guiar la mirada; añade sombras para generar profundidad y sensación de tarjeta flotante. */
 .user-card {
     margin-top: auto;
     display: flex;
@@ -166,6 +637,7 @@ img {
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 
+/* usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad; fija límites de ancho para que el componente conserve su proporción. */
 .user-card__info {
     display: flex;
     align-items: center;
@@ -174,6 +646,7 @@ img {
     min-width: 0;
 }
 
+/* fija límites de ancho para que el componente conserve su proporción; establece alturas específicas que estabilizan la sección; redondea las esquinas para suavizar la interfaz y evitar bordes duros; oculta desbordes para mantener la composición limpia; añade sombras para generar profundidad y sensación de tarjeta flotante. */
 .user-card__avatar {
     width: 48px;
     height: 48px;
@@ -182,6 +655,7 @@ img {
     box-shadow: 0 8px 18px rgba(122, 168, 255, 0.25);
 }
 
+/* fija límites de ancho para que el componente conserve su proporción; establece alturas específicas que estabilizan la sección. */
 .user-card__avatar img {
     width: 100%;
     height: 100%;
@@ -189,6 +663,7 @@ img {
     display: block;
 }
 
+/* usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad; fija límites de ancho para que el componente conserve su proporción. */
 .user-card__details {
     display: flex;
     flex-direction: column;
@@ -196,6 +671,7 @@ img {
     min-width: 0;
 }
 
+/* modifica el peso tipográfico para enfatizar información importante; ajusta el tamaño de fuente para jerarquizar el texto mostrado; define el color del texto para mantener el contraste necesario; define cómo se comportan los saltos de línea para mantener la lectura. */
 .user-card__name {
     font-weight: 700;
     font-size: 0.95rem;
@@ -206,6 +682,7 @@ img {
     word-break: break-word;
 }
 
+/* ajusta el tamaño de fuente para jerarquizar el texto mostrado; define el color del texto para mantener el contraste necesario; define cómo se comportan los saltos de línea para mantener la lectura. */
 .user-card__email {
     font-size: 0.82rem;
     color: var(--text-muted);
@@ -215,10 +692,12 @@ img {
     word-break: break-word;
 }
 
+/* usa flexbox para organizar los elementos internos. */
 .user-card__logout {
     display: flex;
 }
 
+/* establece un color de fondo que refuerza el contraste del módulo; dibuja bordes que delimitan secciones y tablas para guiar la mirada; define el color del texto para mantener el contraste necesario; fija límites de ancho para que el componente conserve su proporción; establece alturas específicas que estabilizan la sección; redondea las esquinas para suavizar la interfaz y evitar bordes duros; usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos dentro del contenedor flex/grid; distribuye el espacio horizontal para equilibrar la composición; ajusta el tamaño de fuente para jerarquizar el texto mostrado; cambia el cursor para comunicar que el elemento es interactivo; agrega transiciones suaves que comunican interactividad; añade sombras para generar profundidad y sensación de tarjeta flotante. */
 .user-card__logout button {
     background: rgba(255, 255, 255, 0.65);
     border: none;
@@ -241,6 +720,7 @@ img {
     transform: translateX(3px);
 }
 
+/* establece un color de fondo que refuerza el contraste del módulo; redondea las esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire dentro del contenedor; añade sombras para generar profundidad y sensación de tarjeta flotante; dibuja bordes que delimitan secciones y tablas para guiar la mirada; aplica desenfoque al fondo para resaltar tarjetas translúcidas; establece alturas específicas que estabilizan la sección. */
 .content {
     flex: 1;
     background: rgba(255, 255, 255, 0.96);
@@ -254,11 +734,13 @@ img {
     overflow-y: auto;
 }
 
+/* controla la alineación horizontal del texto dentro del bloque. */
 .content-header {
     text-align: center;
     margin-bottom: 28px;
 }
 
+/* separa el bloque de los elementos vecinos con márgenes claros; ajusta el tamaño de fuente para jerarquizar el texto mostrado; modifica el peso tipográfico para enfatizar información importante; ajusta el espaciado entre letras para darle estilo a los títulos; define el color del texto para mantener el contraste necesario. */
 .content-header__title {
     margin: 0;
     font-size: clamp(1.8rem, 2.4vw, 2.6rem);
@@ -267,16 +749,19 @@ img {
     color: var(--primary-dark);
 }
 
+/* ajusta detalles visuales para mantener coherencia con el resto del tablero. */
 .section {
     display: none;
     animation: fadeIn 0.6s ease;
 }
 
+/* ajusta detalles visuales para mantener coherencia con el resto del tablero. */
 .section.active {
     display: block;
 }
 
 
+/* crea un contexto relativo para posicionar hijos y badges; utiliza CSS Grid para distribuir el contenido con precisión; define espacios homogéneos entre hijos para mejorar la legibilidad; controla la alineación vertical de los hijos dentro del contenedor flex/grid; incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas para suavizar la interfaz y evitar bordes duros; aplica un degradado para lograr un fondo suave y moderno; añade sombras para generar profundidad y sensación de tarjeta flotante; oculta desbordes para mantener la composición limpia. */
 .home-hero {
     position: relative;
     display: grid;
@@ -299,6 +784,7 @@ img {
     pointer-events: none;
 }
 
+/* crea un contexto relativo para posicionar hijos y badges; maneja el apilamiento para que modales y paneles se superpongan correctamente; usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .home-hero__content {
     position: relative;
     z-index: 1;
@@ -307,6 +793,7 @@ img {
     gap: 18px;
 }
 
+/* usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad; incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas para suavizar la interfaz y evitar bordes duros; establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario; modifica el peso tipográfico para enfatizar información importante; ajusta el espaciado entre letras para darle estilo a los títulos; ajusta el tamaño de fuente para jerarquizar el texto mostrado. */
 .home-hero__badge {
     display: inline-flex;
     align-items: center;
@@ -320,6 +807,7 @@ img {
     font-size: 0.78rem;
 }
 
+/* separa el bloque de los elementos vecinos con márgenes claros; ajusta el tamaño de fuente para jerarquizar el texto mostrado; controla el interlineado para mejorar la lectura de los párrafos; define el color del texto para mantener el contraste necesario. */
 .home-hero__title {
     margin: 0;
     font-size: clamp(2.4rem, 3vw, 3.2rem);
@@ -328,6 +816,7 @@ img {
     text-shadow: 0 18px 32px rgba(27, 37, 65, 0.35);
 }
 
+/* separa el bloque de los elementos vecinos con márgenes claros; define el color del texto para mantener el contraste necesario; fija límites de ancho para que el componente conserve su proporción; ajusta el tamaño de fuente para jerarquizar el texto mostrado. */
 .home-hero__subtitle {
     margin: 0;
     color: rgba(255, 255, 255, 0.85);
@@ -335,6 +824,7 @@ img {
     font-size: 1.02rem;
 }
 
+/* usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .home-hero__actions {
     display: flex;
     flex-wrap: wrap;
@@ -342,6 +832,7 @@ img {
     margin-top: 12px;
 }
 
+/* crea un contexto relativo para posicionar hijos y badges; maneja el apilamiento para que modales y paneles se superpongan correctamente; usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos dentro del contenedor flex/grid; distribuye el espacio horizontal para equilibrar la composición. */
 .home-hero__visual {
     position: relative;
     z-index: 1;
@@ -350,6 +841,7 @@ img {
     justify-content: center;
 }
 
+/* se posiciona absolutamente respecto a su contenedor; redondea las esquinas para suavizar la interfaz y evitar bordes duros. */
 .home-hero__bubble {
     position: absolute;
     border-radius: 50%;
@@ -357,6 +849,7 @@ img {
     opacity: 0.9;
 }
 
+/* fija límites de ancho para que el componente conserve su proporción; establece alturas específicas que estabilizan la sección; establece un color de fondo que refuerza el contraste del módulo. */
 .home-hero__bubble--one {
     width: 220px;
     height: 220px;
@@ -365,6 +858,7 @@ img {
     right: 10%;
 }
 
+/* fija límites de ancho para que el componente conserve su proporción; establece alturas específicas que estabilizan la sección; establece un color de fondo que refuerza el contraste del módulo. */
 .home-hero__bubble--two {
     width: 180px;
     height: 180px;
@@ -373,12 +867,14 @@ img {
     left: 0;
 }
 
+/* crea un contexto relativo para posicionar hijos y badges; fija límites de ancho para que el componente conserve su proporción. */
 .home-hero__image {
     position: relative;
     width: 200px;
     filter: drop-shadow(0 22px 44px rgba(31, 42, 68, 0.32));
 }
 
+/* utiliza CSS Grid para distribuir el contenido con precisión; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .metrics-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -386,6 +882,7 @@ img {
     margin-bottom: 36px;
 }
 
+/* crea un contexto relativo para posicionar hijos y badges; usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad; incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas para suavizar la interfaz y evitar bordes duros; define el color del texto para mantener el contraste necesario; aplica un degradado para lograr un fondo suave y moderno; dibuja bordes que delimitan secciones y tablas para guiar la mirada; añade sombras para generar profundidad y sensación de tarjeta flotante; oculta desbordes para mantener la composición limpia; agrega transiciones suaves que comunican interactividad. */
 .metric-card {
     position: relative;
     display: flex;
@@ -414,6 +911,7 @@ img {
     box-shadow: 0 28px 60px rgba(123, 164, 255, 0.24);
 }
 
+/* usa flexbox para organizar los elementos internos; distribuye el espacio horizontal para equilibrar la composición; controla la alineación vertical de los hijos dentro del contenedor flex/grid; crea un contexto relativo para posicionar hijos y badges; maneja el apilamiento para que modales y paneles se superpongan correctamente. */
 .metric-card__header {
     display: flex;
     justify-content: space-between;
@@ -422,12 +920,14 @@ img {
     z-index: 1;
 }
 
+/* modifica el peso tipográfico para enfatizar información importante; define el color del texto para mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado. */
 .metric-card__label {
     font-weight: 600;
     color: var(--text-dark);
     font-size: 0.98rem;
 }
 
+/* fija límites de ancho para que el componente conserve su proporción; establece alturas específicas que estabilizan la sección; redondea las esquinas para suavizar la interfaz y evitar bordes duros; utiliza CSS Grid para distribuir el contenido con precisión; establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado. */
 .metric-card__icon {
     width: 48px;
     height: 48px;
@@ -439,23 +939,27 @@ img {
     font-size: 1.2rem;
 }
 
+/* crea un contexto relativo para posicionar hijos y badges; maneja el apilamiento para que modales y paneles se superpongan correctamente. */
 .metric-card__body {
     position: relative;
     z-index: 1;
 }
 
+/* separa el bloque de los elementos vecinos con márgenes claros; ajusta el tamaño de fuente para jerarquizar el texto mostrado; controla el interlineado para mejorar la lectura de los párrafos. */
 .metric-card__value {
     margin: 0;
     font-size: 2.6rem;
     line-height: 1;
 }
 
+/* separa el bloque de los elementos vecinos con márgenes claros; define el color del texto para mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado. */
 .metric-card__description {
     margin: 6px 0 0;
     color: var(--text-muted);
     font-size: 0.95rem;
 }
 
+/* usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad; crea un contexto relativo para posicionar hijos y badges; maneja el apilamiento para que modales y paneles se superpongan correctamente. */
 .metric-card__footer {
     display: flex;
     gap: 6px;
@@ -463,6 +967,7 @@ img {
     z-index: 1;
 }
 
+/* fija límites de ancho para que el componente conserve su proporción; establece alturas específicas que estabilizan la sección; redondea las esquinas para suavizar la interfaz y evitar bordes duros; establece un color de fondo que refuerza el contraste del módulo; añade sombras para generar profundidad y sensación de tarjeta flotante. */
 .metric-card__dot {
     width: 12px;
     height: 12px;
@@ -471,22 +976,27 @@ img {
     box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.6);
 }
 
+/* aplica un degradado para lograr un fondo suave y moderno. */
 .metric-card--patients {
     background: linear-gradient(145deg, rgba(237, 243, 255, 0.92), rgba(191, 214, 255, 0.72));
 }
 
+/* aplica un degradado para lograr un fondo suave y moderno. */
 .metric-card--owners {
     background: linear-gradient(145deg, rgba(255, 232, 247, 0.92), rgba(255, 205, 234, 0.7));
 }
 
+/* aplica un degradado para lograr un fondo suave y moderno. */
 .metric-card--records {
     background: linear-gradient(145deg, rgba(241, 248, 255, 0.94), rgba(210, 226, 255, 0.7));
 }
 
+/* aplica un degradado para lograr un fondo suave y moderno. */
 .metric-card--consults {
     background: linear-gradient(145deg, rgba(236, 255, 248, 0.94), rgba(197, 242, 228, 0.68));
 }
 
+/* utiliza CSS Grid para distribuir el contenido con precisión; define espacios homogéneos entre hijos para mejorar la legibilidad; controla la alineación vertical de los hijos dentro del contenedor flex/grid; fija límites de ancho para que el componente conserve su proporción. */
 .overview-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
@@ -495,12 +1005,14 @@ img {
     width: 100%;
 }
 
+/* utiliza CSS Grid para distribuir el contenido con precisión; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .insight-grid {
     display: grid;
     grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
     gap: 24px;
 }
 
+/* establece un color de fondo que refuerza el contraste del módulo; redondea las esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire dentro del contenedor; dibuja bordes que delimitan secciones y tablas para guiar la mirada; añade sombras para generar profundidad y sensación de tarjeta flotante; usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .panel {
     background: rgba(255, 255, 255, 0.92);
     border-radius: var(--radius-lg);
@@ -512,14 +1024,17 @@ img {
     gap: 24px;
 }
 
+/* aplica un degradado para lograr un fondo suave y moderno. */
 .panel--appointments {
     background: linear-gradient(150deg, rgba(237, 243, 255, 0.95), rgba(255, 248, 255, 0.9));
 }
 
+/* aplica un degradado para lograr un fondo suave y moderno. */
 .panel--insights {
     background: linear-gradient(150deg, rgba(255, 232, 247, 0.95), rgba(241, 248, 255, 0.92));
 }
 
+/* usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos dentro del contenedor flex/grid; distribuye el espacio horizontal para equilibrar la composición; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .panel__header {
     display: flex;
     align-items: flex-start;
@@ -527,18 +1042,21 @@ img {
     gap: 16px;
 }
 
+/* separa el bloque de los elementos vecinos con márgenes claros; ajusta el tamaño de fuente para jerarquizar el texto mostrado; define el color del texto para mantener el contraste necesario. */
 .panel__title {
     margin: 0;
     font-size: 1.5rem;
     color: var(--primary-dark);
 }
 
+/* separa el bloque de los elementos vecinos con márgenes claros; define el color del texto para mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado. */
 .panel__subtitle {
     margin: 6px 0 0;
     color: var(--text-muted);
     font-size: 0.95rem;
 }
 
+/* usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad; incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas para suavizar la interfaz y evitar bordes duros; ajusta el tamaño de fuente para jerarquizar el texto mostrado; modifica el peso tipográfico para enfatizar información importante; transforma el texto (uppercase/lowercase) para reforzar etiquetas visuales; ajusta el espaciado entre letras para darle estilo a los títulos; establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario. */
 .panel__chip {
     align-self: flex-start;
     display: inline-flex;
@@ -554,10 +1072,12 @@ img {
     color: var(--primary-dark);
 }
 
+/* ajusta el tamaño de fuente para jerarquizar el texto mostrado. */
 .panel__chip i {
     font-size: 0.85rem;
 }
 
+/* elimina viñetas para integrar las listas al diseño de tarjetas; separa el bloque de los elementos vecinos con márgenes claros; incorpora relleno para que el contenido respire dentro del contenedor; usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .appointment-list {
     list-style: none;
     margin: 0;
@@ -567,6 +1087,7 @@ img {
     gap: 18px;
 }
 
+/* utiliza CSS Grid para distribuir el contenido con precisión; controla la alineación vertical de los hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad; incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas para suavizar la interfaz y evitar bordes duros; establece un color de fondo que refuerza el contraste del módulo; dibuja bordes que delimitan secciones y tablas para guiar la mirada; añade sombras para generar profundidad y sensación de tarjeta flotante. */
 .appointment-list__item {
     display: grid;
     grid-template-columns: 88px minmax(0, 1fr) auto;
@@ -579,12 +1100,14 @@ img {
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
+/* controla la alineación horizontal del texto dentro del bloque; define el color del texto para mantener el contraste necesario. */
 .appointment-list__item--empty {
     grid-template-columns: minmax(0, 1fr);
     text-align: left;
     color: var(--text-muted);
 }
 
+/* usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad; modifica el peso tipográfico para enfatizar información importante; define el color del texto para mantener el contraste necesario. */
 .appointment-list__time {
     display: flex;
     flex-direction: column;
@@ -594,22 +1117,26 @@ img {
     color: var(--primary-dark);
 }
 
+/* ajusta el tamaño de fuente para jerarquizar el texto mostrado; ajusta el espaciado entre letras para darle estilo a los títulos. */
 .appointment-list__hour {
     font-size: 1.3rem;
     letter-spacing: 0.04em;
 }
 
+/* ajusta el tamaño de fuente para jerarquizar el texto mostrado; define el color del texto para mantener el contraste necesario. */
 .appointment-list__date {
     font-size: 0.85rem;
     color: var(--text-muted);
 }
 
+/* usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .appointment-list__details {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
 
+/* separa el bloque de los elementos vecinos con márgenes claros; modifica el peso tipográfico para enfatizar información importante; ajusta el tamaño de fuente para jerarquizar el texto mostrado; define el color del texto para mantener el contraste necesario. */
 .appointment-list__pet {
     margin: 0;
     font-weight: 600;
@@ -617,16 +1144,19 @@ img {
     color: var(--text-dark);
 }
 
+/* define el color del texto para mantener el contraste necesario; modifica el peso tipográfico para enfatizar información importante. */
 .appointment-list__pet span {
     color: var(--accent-dark);
     font-weight: 500;
 }
 
+/* ajusta el tamaño de fuente para jerarquizar el texto mostrado; define el color del texto para mantener el contraste necesario. */
 .appointment-list__owner {
     font-size: 0.86rem;
     color: var(--text-muted);
 }
 
+/* usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos dentro del contenedor flex/grid; distribuye el espacio horizontal para equilibrar la composición; fija límites de ancho para que el componente conserve su proporción; incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas para suavizar la interfaz y evitar bordes duros; ajusta el tamaño de fuente para jerarquizar el texto mostrado; modifica el peso tipográfico para enfatizar información importante; transforma el texto (uppercase/lowercase) para reforzar etiquetas visuales; ajusta el espaciado entre letras para darle estilo a los títulos. */
 .appointment-list__status {
     display: inline-flex;
     align-items: center;
@@ -640,32 +1170,38 @@ img {
     letter-spacing: 0.02em;
 }
 
+/* establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario. */
 .appointment-list__status.is-pending {
     background: rgba(255, 190, 138, 0.25);
     color: #c27b3a;
 }
 
+/* establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario. */
 .appointment-list__status.is-done {
     background: rgba(70, 197, 165, 0.22);
     color: #2f8c72;
 }
 
+/* establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario. */
 .appointment-list__status.is-cancelled {
     background: rgba(255, 143, 157, 0.24);
     color: #c24758;
 }
 
+/* establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario. */
 .appointment-list__status.is-rescheduled {
     background: rgba(123, 164, 255, 0.24);
     color: var(--primary-dark);
 }
 
+/* utiliza CSS Grid para distribuir el contenido con precisión; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .insight-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 18px;
 }
 
+/* usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad; controla la alineación vertical de los hijos dentro del contenedor flex/grid; incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas para suavizar la interfaz y evitar bordes duros; establece un color de fondo que refuerza el contraste del módulo; dibuja bordes que delimitan secciones y tablas para guiar la mirada; añade sombras para generar profundidad y sensación de tarjeta flotante. */
 .insight-card {
     display: flex;
     gap: 14px;
@@ -677,6 +1213,7 @@ img {
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
+/* usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos dentro del contenedor flex/grid; distribuye el espacio horizontal para equilibrar la composición; fija límites de ancho para que el componente conserve su proporción; establece alturas específicas que estabilizan la sección; redondea las esquinas para suavizar la interfaz y evitar bordes duros; establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado. */
 .insight-card__icon {
     display: inline-flex;
     align-items: center;
@@ -689,30 +1226,35 @@ img {
     font-size: 1.1rem;
 }
 
+/* separa el bloque de los elementos vecinos con márgenes claros; ajusta el tamaño de fuente para jerarquizar el texto mostrado; define el color del texto para mantener el contraste necesario. */
 .insight-card h3 {
     margin: 0 0 4px;
     font-size: 1rem;
     color: var(--text-dark);
 }
 
+/* separa el bloque de los elementos vecinos con márgenes claros; define el color del texto para mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado. */
 .insight-card p {
     margin: 0;
     color: var(--text-muted);
     font-size: 0.9rem;
 }
 
+/* usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .care-progress {
     display: flex;
     flex-direction: column;
     gap: 18px;
 }
 
+/* usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .care-progress__item {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
+/* usa flexbox para organizar los elementos internos; distribuye el espacio horizontal para equilibrar la composición; controla la alineación vertical de los hijos dentro del contenedor flex/grid; modifica el peso tipográfico para enfatizar información importante; define el color del texto para mantener el contraste necesario. */
 .care-progress__label {
     display: flex;
     justify-content: space-between;
@@ -721,6 +1263,7 @@ img {
     color: var(--primary-dark);
 }
 
+/* establece alturas específicas que estabilizan la sección; redondea las esquinas para suavizar la interfaz y evitar bordes duros; establece un color de fondo que refuerza el contraste del módulo; oculta desbordes para mantener la composición limpia. */
 .care-progress__track {
     height: 10px;
     border-radius: 999px;
@@ -728,18 +1271,21 @@ img {
     overflow: hidden;
 }
 
+/* establece alturas específicas que estabilizan la sección; redondea las esquinas para suavizar la interfaz y evitar bordes duros; aplica un degradado para lograr un fondo suave y moderno. */
 .care-progress__bar {
     display: block;
     height: 100%;
     border-radius: inherit;
     background: linear-gradient(90deg, rgba(123, 164, 255, 0.65), rgba(255, 156, 216, 0.65));
 }
+/* utiliza CSS Grid para distribuir el contenido con precisión; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .care-notes {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 14px;
 }
 
+/* incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas para suavizar la interfaz y evitar bordes duros; establece un color de fondo que refuerza el contraste del módulo; dibuja bordes que delimitan secciones y tablas para guiar la mirada; define el color del texto para mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado; usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .care-note {
     padding: 12px 14px;
     border-radius: var(--radius-md);
@@ -752,14 +1298,17 @@ img {
     gap: 8px;
 }
 
+/* ajusta el tamaño de fuente para jerarquizar el texto mostrado. */
 .care-note i {
     font-size: 1rem;
 }
 
+/* ajusta detalles visuales para mantener coherencia con el resto del tablero. */
 .panel--wide {
     grid-column: 1 / -1;
 }
 
+/* separa el bloque de los elementos vecinos con márgenes claros; define el color del texto para mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado; ajusta el espaciado entre letras para darle estilo a los títulos. */
 .titulo {
     margin: 0;
     color: var(--primary-dark);
@@ -767,6 +1316,7 @@ img {
     letter-spacing: -0.02em;
 }
 
+/* usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad; incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas para suavizar la interfaz y evitar bordes duros; modifica el peso tipográfico para enfatizar información importante; ajusta el tamaño de fuente para jerarquizar el texto mostrado; añade sombras para generar profundidad y sensación de tarjeta flotante. */
 .alert {
     display: inline-flex;
     align-items: center;
@@ -778,21 +1328,25 @@ img {
     box-shadow: 0 14px 30px rgba(74, 199, 161, 0.18);
 }
 
+/* ajusta detalles visuales para mantener coherencia con el resto del tablero. */
 .alert[hidden] {
     display: none !important;
 }
 
+/* establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario. */
 .alert--success {
     background: rgba(74, 199, 161, 0.18);
     color: #1b9d78;
 }
 
+/* establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario; añade sombras para generar profundidad y sensación de tarjeta flotante. */
 .alert--error {
     background: rgba(255, 143, 143, 0.18);
     color: #d03f3f;
     box-shadow: 0 14px 30px rgba(255, 143, 143, 0.18);
 }
 
+/* dibuja bordes que delimitan secciones y tablas para guiar la mirada; redondea las esquinas para suavizar la interfaz y evitar bordes duros; modifica el peso tipográfico para enfatizar información importante; cambia el cursor para comunicar que el elemento es interactivo; usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos dentro del contenedor flex/grid; distribuye el espacio horizontal para equilibrar la composición; define espacios homogéneos entre hijos para mejorar la legibilidad; incorpora relleno para que el contenido respire dentro del contenedor; ajusta el tamaño de fuente para jerarquizar el texto mostrado; agrega transiciones suaves que comunican interactividad. */
 .btn {
     border: none;
     border-radius: var(--radius-md);
@@ -824,6 +1378,7 @@ img {
     transform: translateY(-2px);
 }
 
+/* aplica un degradado para lograr un fondo suave y moderno; define el color del texto para mantener el contraste necesario; añade sombras para generar profundidad y sensación de tarjeta flotante. */
 .btn-primary {
     background: linear-gradient(135deg, var(--primary-dark), var(--primary));
     color: #fff;
@@ -834,6 +1389,7 @@ img {
     background: linear-gradient(135deg, #4c75d6, var(--primary-dark));
 }
 
+/* establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario; dibuja bordes que delimitan secciones y tablas para guiar la mirada; añade sombras para generar profundidad y sensación de tarjeta flotante. */
 .btn-outline {
     background: transparent;
     color: var(--accent-dark);
@@ -845,6 +1401,7 @@ img {
     background: var(--accent-soft);
 }
 
+/* establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario; dibuja bordes que delimitan secciones y tablas para guiar la mirada; añade sombras para generar profundidad y sensación de tarjeta flotante. */
 .btn-ghost {
     background: rgba(255, 255, 255, 0.15);
     color: var(--surface);
@@ -856,32 +1413,38 @@ img {
     background: rgba(255, 255, 255, 0.3);
 }
 
+/* establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario; añade sombras para generar profundidad y sensación de tarjeta flotante. */
 .btn-success {
     background: var(--success);
     color: #fff;
     box-shadow: 0 20px 40px rgba(74, 199, 161, 0.25);
 }
 
+/* establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario. */
 .btn-warning {
     background: rgba(255, 190, 118, 0.22);
     color: #c37a2d;
 }
 
+/* establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario. */
 .btn-danger {
     background: rgba(255, 143, 143, 0.22);
     color: #d03f3f;
 }
 
+/* incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas para suavizar la interfaz y evitar bordes duros; ajusta el tamaño de fuente para jerarquizar el texto mostrado. */
 .btn-sm {
     padding: 8px 14px;
     border-radius: var(--radius-sm);
     font-size: 0.85rem;
 }
 
+/* fija límites de ancho para que el componente conserve su proporción. */
 .btn-guardar {
     min-width: 180px;
 }
 
+/* permanece fijo para que la sección esté siempre visible; maneja el apilamiento para que modales y paneles se superpongan correctamente; incorpora relleno para que el contenido respire dentro del contenedor; establece un color de fondo que refuerza el contraste del módulo; aplica desenfoque al fondo para resaltar tarjetas translúcidas. */
 .modal {
     display: none;
     position: fixed;
@@ -893,6 +1456,7 @@ img {
     overflow-y: auto;
 }
 
+/* establece un color de fondo que refuerza el contraste del módulo; separa el bloque de los elementos vecinos con márgenes claros; incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas para suavizar la interfaz y evitar bordes duros; fija límites de ancho para que el componente conserve su proporción; añade sombras para generar profundidad y sensación de tarjeta flotante; crea un contexto relativo para posicionar hijos y badges. */
 .modal-content {
     background: var(--surface);
     margin: auto;
@@ -903,11 +1467,13 @@ img {
     position: relative;
 }
 
+/* separa el bloque de los elementos vecinos con márgenes claros; define el color del texto para mantener el contraste necesario. */
 .modal-content h2 {
     margin: 0 0 12px;
     color: var(--text-dark);
 }
 
+/* se posiciona absolutamente respecto a su contenedor; ajusta el tamaño de fuente para jerarquizar el texto mostrado; cambia el cursor para comunicar que el elemento es interactivo; define el color del texto para mantener el contraste necesario; agrega transiciones suaves que comunican interactividad. */
 .close {
     position: absolute;
     top: 18px;
@@ -922,6 +1488,7 @@ img {
     color: var(--primary-dark);
 }
 
+/* establece un color de fondo que refuerza el contraste del módulo; dibuja bordes que delimitan secciones y tablas para guiar la mirada; redondea las esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire dentro del contenedor; añade sombras para generar profundidad y sensación de tarjeta flotante. */
 .form-section {
     background: rgba(235, 243, 255, 0.55);
     border: 1px solid rgba(122, 168, 255, 0.18);
@@ -935,6 +1502,7 @@ img {
     margin-top: 12px;
 }
 
+/* separa el bloque de los elementos vecinos con márgenes claros; ajusta el tamaño de fuente para jerarquizar el texto mostrado; modifica el peso tipográfico para enfatizar información importante; usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad; define el color del texto para mantener el contraste necesario. */
 .form-section__title {
     margin: 0 0 16px;
     font-size: 1.05rem;
@@ -945,10 +1513,12 @@ img {
     color: var(--primary-dark);
 }
 
+/* ajusta el tamaño de fuente para jerarquizar el texto mostrado. */
 .form-section__title span {
     font-size: 1.25rem;
 }
 
+/* utiliza CSS Grid para distribuir el contenido con precisión; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .form-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -956,28 +1526,34 @@ img {
     margin-top: 24px;
 }
 
+/* ajusta detalles visuales para mantener coherencia con el resto del tablero. */
 .form-section .form-grid {
     margin-top: 0;
 }
 
+/* usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .form-group {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
+/* ajusta detalles visuales para mantener coherencia con el resto del tablero. */
 .form-group.full-width {
     grid-column: 1 / -1;
 }
 
+/* modifica el peso tipográfico para enfatizar información importante; define el color del texto para mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado. */
 .form-group label {
     font-weight: 600;
     color: var(--text-dark);
     font-size: 0.9rem;
 }
 
+/* fija límites de ancho para que el componente conserve su proporción; dibuja bordes que delimitan secciones y tablas para guiar la mirada; redondea las esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire dentro del contenedor; establece un color de fondo que refuerza el contraste del módulo; ajusta el tamaño de fuente para jerarquizar el texto mostrado; define el color del texto para mantener el contraste necesario; agrega transiciones suaves que comunican interactividad. */
 .form-group input,
 .form-group select,
+/* establece alturas específicas que estabilizan la sección. */
 .form-group textarea {
     width: 100%;
     border: 1px solid rgba(127, 169, 255, 0.35);
@@ -1002,12 +1578,14 @@ img {
     min-height: 110px;
 }
 
+/* usa flexbox para organizar los elementos internos; distribuye el espacio horizontal para equilibrar la composición. */
 .form-actions {
     display: flex;
     justify-content: flex-end;
     margin-top: 28px;
 }
 
+/* permanece fijo para que la sección esté siempre visible; maneja el apilamiento para que modales y paneles se superpongan correctamente; controla la alineación vertical de los hijos dentro del contenedor flex/grid; distribuye el espacio horizontal para equilibrar la composición; establece un color de fondo que refuerza el contraste del módulo; aplica desenfoque al fondo para resaltar tarjetas translúcidas; incorpora relleno para que el contenido respire dentro del contenedor. */
 .confirm-modal {
     position: fixed;
     inset: 0;
@@ -1020,10 +1598,12 @@ img {
     padding: 24px;
 }
 
+/* usa flexbox para organizar los elementos internos. */
 .confirm-modal.is-visible {
     display: flex;
 }
 
+/* establece un color de fondo que refuerza el contraste del módulo; redondea las esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire dentro del contenedor; añade sombras para generar profundidad y sensación de tarjeta flotante; dibuja bordes que delimitan secciones y tablas para guiar la mirada; fija límites de ancho para que el componente conserve su proporción; controla la alineación horizontal del texto dentro del bloque. */
 .confirm-modal__dialog {
     background: rgba(255, 255, 255, 0.95);
     border-radius: var(--radius-xl);
@@ -1034,6 +1614,7 @@ img {
     text-align: center;
 }
 
+/* separa el bloque de los elementos vecinos con márgenes claros; ajusta el tamaño de fuente para jerarquizar el texto mostrado; define el color del texto para mantener el contraste necesario; modifica el peso tipográfico para enfatizar información importante. */
 .confirm-modal__message {
     margin: 0 0 24px;
     font-size: 1.05rem;
@@ -1041,12 +1622,14 @@ img {
     font-weight: 600;
 }
 
+/* usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad; distribuye el espacio horizontal para equilibrar la composición. */
 .confirm-modal__actions {
     display: flex;
     gap: 12px;
     justify-content: center;
 }
 
+/* aplica un degradado para lograr un fondo suave y moderno; define el color del texto para mantener el contraste necesario; fija límites de ancho para que el componente conserve su proporción; añade sombras para generar profundidad y sensación de tarjeta flotante. */
 .btn-confirm-accept {
     background: linear-gradient(135deg, #ffb6dc, #ff9fcf);
     color: #fff;
@@ -1058,6 +1641,7 @@ img {
     background: linear-gradient(135deg, #ff8dc2, #ff74b2);
 }
 
+/* aplica un degradado para lograr un fondo suave y moderno; define el color del texto para mantener el contraste necesario; fija límites de ancho para que el componente conserve su proporción; añade sombras para generar profundidad y sensación de tarjeta flotante. */
 .btn-confirm-cancel {
     background: linear-gradient(135deg, #8eb7ff, #7aa8ff);
     color: #fff;
@@ -1070,11 +1654,13 @@ img {
 }
 
 @keyframes fadeIn {
-    from {
+    /* aplica transformaciones que acompañan animaciones o estados hover. */
+from {
         opacity: 0;
         transform: translateY(12px);
     }
-    to {
+    /* aplica transformaciones que acompañan animaciones o estados hover. */
+to {
         opacity: 1;
         transform: translateY(0);
     }

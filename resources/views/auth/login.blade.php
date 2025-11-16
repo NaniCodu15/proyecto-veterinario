@@ -7,6 +7,7 @@
 
 @section('content')
 <div class="login-container">
+    {{-- Tarjeta central que contiene el formulario y los mensajes --}}
     <div class="login-form">
         {{-- Logo --}}
         <div class="login-logo">
@@ -22,12 +23,14 @@
         <form method="POST" action="{{ route('login') }}">
             @csrf
 
+            {{-- Campo de correo electrónico con iconografía de apoyo --}}
             <div class="input-group">
                 <i class="fa-solid fa-envelope icon"></i>
                 <input type="email" name="email" id="email" placeholder=" " required>
                 <label for="email">Email:</label>
             </div>
 
+            {{-- Campo de contraseña con estilo similar al email para mantener consistencia visual --}}
             <div class="input-group">
                 <i class="fa-solid fa-lock icon"></i>
                 <input type="password" name="password" id="password" placeholder=" " required>

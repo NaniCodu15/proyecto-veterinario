@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+/**
+ * Controlador placeholder para propietarios; aún no se definen métodos porque la gestión se
+ * realiza desde otros flujos (p.e. historias clínicas). Queda documentado para futuras tareas.
+ */
 class PropietarioController extends Controller
 {
     /**
