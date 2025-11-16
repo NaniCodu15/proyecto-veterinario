@@ -239,7 +239,7 @@ class HistoriaClinicaController extends Controller
      * Muestra la vista detallada de una historia clínica.
      *
      * @param int|string $id Identificador de la historia clínica.
-     * @return \Illuminate\View\View Vista `historia_clinicas.ver` con enlaces para PDF.
+     * @return \Illuminate\View\View Vista `layouts.ver` con enlaces para PDF.
      */
     public function ver($id)
     {
@@ -247,7 +247,7 @@ class HistoriaClinicaController extends Controller
 
         $codigo = $historia->numero_historia ?: sprintf('HC-%05d', $historia->id_historia);
 
-        return view('historia_clinicas.ver', [
+        return view('layouts.ver', [
             'historia' => $historia,
             'codigo' => $codigo,
             'pdfUrl' => route('historia_clinicas.pdf', ['historia' => $historia->id_historia]),
@@ -269,7 +269,7 @@ class HistoriaClinicaController extends Controller
 
         $datosPdf = $this->prepararDatosPdf($historia, $codigo);
 
-        $pdf = Pdf::loadView('historia_clinicas.pdf', $datosPdf)->setPaper('a4');
+        $pdf = Pdf::loadView('layouts.pdf', $datosPdf)->setPaper('a4');
 
         $nombreArchivo = 'historia_clinica_' . Str::of($codigo)->replace([' ', '/'], '_') . '.pdf';
 

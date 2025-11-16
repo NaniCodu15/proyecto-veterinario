@@ -93,29 +93,6 @@
         border: none;
     }
 
-    .historia-view__download {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 18px;
-        border-radius: 999px;
-        background: #111827;
-        color: #fff;
-        font-weight: 600;
-        text-decoration: none;
-        transition: background 0.2s ease-in-out, transform 0.2s ease-in-out;
-    }
-
-    .historia-view__download:hover,
-    .historia-view__download:focus-visible {
-        background: #1f2937;
-        transform: translateY(-1px);
-    }
-
-    .historia-view__download i {
-        font-size: 1rem;
-    }
-
     @media (max-width: 768px) {
         .historia-view {
             padding: 24px 16px;
@@ -139,9 +116,6 @@
                 <span class="historia-view__badge"><i class="fas fa-notes-medical"></i> Historia clínica</span>
                 <h1 class="historia-view__title">{{ optional($historia->mascota)->nombre ?? 'Paciente' }} · {{ $codigo }}</h1>
             </div>
-            <a class="historia-view__download" href="{{ $downloadUrl }}">
-                <i class="fas fa-download"></i> Descargar PDF
-            </a>
         </header>
 
         <section class="historia-view__meta">
