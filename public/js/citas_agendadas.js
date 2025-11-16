@@ -1,7 +1,10 @@
+// JS para el módulo Citas Agendadas: administra listado, detalle, cambios de estado y filtrado de citas.
 (() => {
+    // Obtiene configuración compartida del dashboard o del elemento oculto.
     const configElement = document.getElementById('dashboard-config');
     let moduleConfig = window.dashboardConfig;
 
+    // Inicializa objeto de configuración en caso de que no esté disponible.
     if (!moduleConfig || typeof moduleConfig !== 'object') {
         moduleConfig = {};
         if (configElement) {
@@ -14,12 +17,14 @@
         window.dashboardConfig = moduleConfig;
     }
 
+    // Rutas y token CSRF utilizados para listar y actualizar citas.
     const citasListUrl = moduleConfig.citasListUrl || '';
     const citasEstadoBaseUrl = moduleConfig.citasEstadoBaseUrl || '';
     const citasBaseUrl = moduleConfig.citasBaseUrl || '';
     const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
     const csrfToken = csrfTokenElement ? csrfTokenElement.getAttribute('content') : '';
 
+    // Referencias al DOM para listado, búsqueda y modales de detalle/estado.
     const tablaCitas = document.getElementById('tablaCitas');
     const buscarCitasInput = document.getElementById('buscarCitas');
     const citasListadoMensaje = document.getElementById('citasListadoMensaje');
@@ -31,6 +36,7 @@
     const reprogramarFechaInput = document.getElementById('citaReprogramadaFecha');
     const reprogramarHoraInput = document.getElementById('citaReprogramadaHora');
 
+    // Campos donde se muestra el detalle de la cita seleccionada en el modal.
     const detalleCamposCita = modalDetalleCita ? {
         id: modalDetalleCita.querySelector('[data-detalle="id"]'),
         numero_historia: modalDetalleCita.querySelector('[data-detalle="numero_historia"]'),
@@ -43,6 +49,7 @@
         motivo: modalDetalleCita.querySelector('[data-detalle="motivo"]'),
     } : {};
 
+    // Estados locales: almacenamiento temporal de citas, selección de detalle y búsqueda.
     let citasCache = [];
     let citaDetalleSeleccionada = null;
     let citaSeleccionadaParaEstado = null;
@@ -54,10 +61,12 @@
         window.citasBusquedaActual = valor;
     }
 
+    // Detecta si hay algún modal visible para controlar el scroll del body.
     function hayModalVisible() {
         return Array.from(document.querySelectorAll('.modal')).some(modalEl => modalEl.style.display === 'block');
     }
 
+    // Alterna la clase del body según la visibilidad de modales.
     function actualizarEstadoBodyModal() {
         if (hayModalVisible()) {
             document.body.classList.add('modal-open');
@@ -66,6 +75,7 @@
         }
     }
 
+    // Abre un modal genérico y ajusta atributos ARIA.
     function abrirModalGenerico(modalElement) {
         if (!modalElement) {
             return;
@@ -76,6 +86,7 @@
         actualizarEstadoBodyModal();
     }
 
+    // Cierra un modal genérico y restablece el estado del documento.
     function cerrarModalGenerico(modalElement) {
         if (!modalElement) {
             return;
@@ -86,6 +97,7 @@
         actualizarEstadoBodyModal();
     }
 
+    // Limpia y oculta campos adicionales cuando no se reprograma una cita.
     function resetCamposReprogramar() {
         if (reprogramarCampos) {
             reprogramarCampos.hidden = true;
@@ -102,6 +114,7 @@
         }
     }
 
+    // Muestra u oculta los campos de fecha y hora cuando el estado es reprogramada.
     function toggleCamposReprogramar(estado) {
         const esReprogramada = String(estado || '').toLowerCase() === 'reprogramada';
 
@@ -126,6 +139,7 @@
         }
     }
 
+    // Muestra mensajes en la parte superior del listado de citas y los oculta automáticamente.
     function mostrarMensajeListadoCitas(texto, tipo = 'info') {
         if (!citasListadoMensaje) {
             return;
@@ -151,6 +165,7 @@
 
     window.mostrarMensajeListadoCitas = mostrarMensajeListadoCitas;
 
+    // Oculta el mensaje general del listado y limpia estilos previos.
     function limpiarMensajeListadoCitas() {
         if (!citasListadoMensaje) {
             return;
@@ -161,6 +176,7 @@
         citasListadoMensaje.textContent = '';
     }
 
+    // Devuelve la clase visual asociada a cada estado de cita.
     function obtenerClaseEstadoCita(estado = '') {
         const normalizado = String(estado || '').trim().toLowerCase();
 
@@ -177,6 +193,7 @@
         }
     }
 
+    // Asigna prioridad numérica para ordenar las citas según su estado.
     function obtenerPrioridadEstadoCita(estado = '') {
         const normalizado = String(estado || '').trim().toLowerCase();
         switch (normalizado) {
@@ -208,6 +225,7 @@
         return Number.isNaN(date.getTime()) ? null : date;
     }
 
+    // Ordena la lista de citas considerando estado, fecha y hora.
     function ordenarCitasPorPrioridad(lista = []) {
         if (!Array.isArray(lista)) {
             return [];
@@ -242,6 +260,7 @@
         });
     }
 
+    // Pinta en el modal de detalle los datos de la cita seleccionada.
     function escribirDetalleCita(cita) {
         if (!detalleCamposCita || !cita) {
             return;
@@ -276,6 +295,7 @@
         }
     }
 
+    // Construye una fila de la tabla de citas con sus acciones asociadas.
     function crearFilaCita(cita = {}) {
         const fila = document.createElement('tr');
         fila.dataset.citaId = cita.id ?? '';
@@ -364,6 +384,7 @@
         return fila;
     }
 
+    // Renderiza la tabla principal de citas aplicando orden y estados visuales.
     function renderCitas(lista = []) {
         if (!tablaCitas) {
             return;
@@ -391,10 +412,12 @@
         tablaCitas.appendChild(fragment);
     }
 
+    // Busca en caché una cita por su identificador.
     function obtenerCitaPorId(id) {
         return citasCache.find(cita => String(cita?.id ?? '') === String(id));
     }
 
+    // Si el modal de detalle está abierto para esa cita, actualiza la información mostrada.
     function actualizarDetalleCitaSiCorresponde(cita) {
         if (!citaDetalleSeleccionada || !modalDetalleCita) {
             return;
@@ -409,6 +432,7 @@
         }
     }
 
+    // Abre el modal de detalle con la información de la cita seleccionada.
     function mostrarDetalleCita(cita) {
         if (!cita || !modalDetalleCita) {
             return;
@@ -419,6 +443,7 @@
         abrirModalGenerico(modalDetalleCita);
     }
 
+    // Prepara el modal que permite cambiar el estado de una cita, incluyendo campos de reprogramación.
     function prepararModalEstado(cita) {
         if (!cita || !modalEstadoCita) {
             return;
@@ -458,6 +483,7 @@
         abrirModalGenerico(modalEstadoCita);
     }
 
+    // Petición AJAX que obtiene las citas según un término de búsqueda opcional.
     async function cargarCitas(query = '') {
         if (!citasListUrl) {
             return;
@@ -497,6 +523,7 @@
 
     window.cargarCitas = cargarCitas;
 
+    // Envía al backend la actualización de estado (incluida reprogramación) de una cita.
     async function actualizarEstadoCita(id, cambios = {}) {
         if (!id || !citasEstadoBaseUrl) {
             throw new Error('No se pudo identificar la cita seleccionada.');

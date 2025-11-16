@@ -1,7 +1,10 @@
+// JS para el módulo Historias Registradas: listado, búsqueda, detalle y registro de consultas asociadas.
 (() => {
+    // Obtiene configuración compartida desde el dashboard o desde el elemento oculto en el DOM.
     const configElement = document.getElementById('dashboard-config');
     let moduleConfig = window.dashboardConfig;
 
+    // Inicializa el objeto de configuración para rutas y tokens necesarios.
     if (!moduleConfig || typeof moduleConfig !== 'object') {
         moduleConfig = {};
         if (configElement) {
@@ -14,12 +17,14 @@
         window.dashboardConfig = moduleConfig;
     }
 
+    // Rutas y tokens utilizados para obtener historias, consultas y registrar nuevas consultas.
     const historiaListUrl = moduleConfig.historiaListUrl || '';
     const historiaBaseUrl = moduleConfig.historiaBaseUrl || '';
     const consultaStoreUrl = moduleConfig.consultaStoreUrl || '';
     const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
     const csrfToken = csrfTokenElement ? csrfTokenElement.getAttribute('content') : '';
 
+    // Referencias a elementos de UI involucrados en el listado y detalle de historias clínicas.
     const tablaHistorias = document.getElementById('tablaHistorias');
     const buscarHistoriasInput = document.getElementById('buscarHistorias');
     const modalConsultas = document.getElementById('modalConsultas');
@@ -29,6 +34,7 @@
     const consultaHistoriaId = document.getElementById('consultaHistoriaId');
     const btnIrCrearHistoria = document.getElementById('btnIrCrearHistoria');
 
+    // Mapeo de campos del formulario de consultas para lectura y escritura.
     const consultaCampos = {
         fecha: document.getElementById('consultaFecha'),
         peso: document.getElementById('consultaPeso'),
@@ -42,6 +48,7 @@
     const consultaTabs = Array.from(document.querySelectorAll('[data-tab-target]'));
     const consultaPanels = Array.from(document.querySelectorAll('[data-tab-content]'));
 
+    // Elementos donde se despliega el detalle de la historia seleccionada.
     const detalleHistoriaCampos = {
         titulo: document.querySelector('[data-detalle-historia="titulo"]'),
         subtitulo: document.querySelector('[data-detalle-historia="subtitulo"]'),
@@ -55,23 +62,28 @@
         fecha_apertura: document.querySelector('[data-detalle-historia="fecha_apertura"]'),
     };
 
+    // Estados locales para manejo de listado, filtros y detalles.
     let historiasRegistradas = [];
     let terminoBusquedaHistorias = '';
     let historiaDetalleActual = null;
     let consultasDetalleActual = [];
 
+    // Reutiliza mensajes del módulo de historias clínicas si están disponibles.
     const mostrarMensajeHistoria = window.mostrarMensajeHistoria || (() => {});
 
+    // Notifica al módulo de citas cuando se requiere mostrar alertas compartidas.
     function emitirMensajeCita(texto, tipo = 'success') {
         if (typeof window.mostrarMensajeCita === 'function') {
             window.mostrarMensajeCita(texto, tipo);
         }
     }
 
+    // Comprueba si hay algún modal abierto para bloquear scroll de fondo.
     function hayModalVisible() {
         return Array.from(document.querySelectorAll('.modal')).some(modalEl => modalEl.style.display === 'block');
     }
 
+    // Alterna la clase del body según el estado de los modales.
     function actualizarEstadoBodyModal() {
         if (hayModalVisible()) {
             document.body.classList.add('modal-open');
@@ -80,6 +92,7 @@
         }
     }
 
+    // Muestra un modal genérico y actualiza atributos de accesibilidad.
     function abrirModalGenerico(modalElement) {
         if (!modalElement) {
             return;
@@ -90,6 +103,7 @@
         actualizarEstadoBodyModal();
     }
 
+    // Oculta un modal genérico y restablece el estado del body.
     function cerrarModalGenerico(modalElement) {
         if (!modalElement) {
             return;
@@ -100,6 +114,7 @@
         actualizarEstadoBodyModal();
     }
 
+    // Muestra alertas contextualizadas dentro del modal de consultas y las oculta automáticamente.
     function mostrarMensajeConsulta(texto, tipo = 'success') {
         if (!consultaMensaje) {
             return;
@@ -117,6 +132,7 @@
         }, 4000);
     }
 
+    // Cambia el tab activo en el modal de consultas según el nombre solicitado.
     function activarTabConsulta(nombre = 'registro') {
         if (!consultaTabs.length || !consultaPanels.length) {
             return;
@@ -147,6 +163,7 @@
         });
     }
 
+    // Eventos de pestañas: al hacer clic se activa el contenido relacionado.
     consultaTabs.forEach(tab => {
         tab.addEventListener('click', () => {
             const objetivo = tab.dataset.tabTarget;
@@ -156,8 +173,10 @@
         });
     });
 
+    // Activa por defecto la pestaña de registro de consultas cuando se carga el módulo.
     activarTabConsulta('registro');
 
+    // Restablece campos del formulario de consulta y asigna la historia actual.
     function limpiarFormularioConsulta() {
         if (!formConsulta) {
             return;
@@ -375,6 +394,7 @@
 
     window.obtenerHistoriaDetallada = obtenerHistoriaDetallada;
 
+    // Carga detalle completo de la historia seleccionada y abre el modal de consultas.
     async function mostrarDetalleHistoria(id) {
         try {
             const data = await obtenerHistoriaDetallada(id);
@@ -483,6 +503,7 @@
         return card;
     }
 
+    // Calcula el siguiente correlativo de historia clínica para mantener numeración consecutiva.
     function actualizarProximoNumero(lista = []) {
         let maximo = 0;
 
@@ -505,6 +526,7 @@
         }
     }
 
+    // Dibuja la grilla de historias aplicando filtro de búsqueda y actualiza números correlativos.
     function renderHistorias(lista = null) {
         if (Array.isArray(lista)) {
             historiasRegistradas = lista;
@@ -555,6 +577,7 @@
         tablaHistorias.appendChild(fragment);
     }
 
+    // Petición AJAX para obtener historias clínicas y renderizarlas.
     async function cargarHistorias() {
         if (!historiaListUrl) {
             return;
@@ -581,6 +604,7 @@
 
     window.cargarHistorias = cargarHistorias;
 
+    // Input de búsqueda: captura cada cambio para filtrar las tarjetas renderizadas.
     if (buscarHistoriasInput) {
         buscarHistoriasInput.addEventListener('input', event => {
             const valor = event.target && typeof event.target.value === 'string'
@@ -591,6 +615,7 @@
         });
     }
 
+    // Delegación de clics sobre la lista: abre detalles, edita o solicita anulación.
     if (tablaHistorias) {
         tablaHistorias.addEventListener('click', event => {
             const botonConsultas = event.target.closest('.btnConsultas');
@@ -623,6 +648,7 @@
         });
     }
 
+    // Enlace rápido que lleva a la sección de alta de historias en el dashboard.
     if (btnIrCrearHistoria) {
         btnIrCrearHistoria.addEventListener('click', event => {
             event.preventDefault();

@@ -1,7 +1,10 @@
+// JS para el módulo Historias Clínicas: maneja creación, edición, validación y respaldo de historias clínicas.
 (() => {
+    // Obtiene la configuración global desde el DOM o desde la variable compartida del dashboard.
     const configElement = document.getElementById('dashboard-config');
     let moduleConfig = window.dashboardConfig;
 
+    // Asegura que exista un objeto de configuración para obtener rutas de API.
     if (!moduleConfig || typeof moduleConfig !== 'object') {
         moduleConfig = {};
         if (configElement) {
@@ -14,6 +17,7 @@
         window.dashboardConfig = moduleConfig;
     }
 
+    // Rutas y tokens necesarios para registrar, consultar y respaldar historias clínicas.
     const historiaStoreUrl = moduleConfig.historiaStoreUrl || '';
     const historiaBaseUrl = moduleConfig.historiaBaseUrl || '';
     const backupGenerateUrl = moduleConfig.backupGenerateUrl || '';
@@ -21,10 +25,12 @@
     const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
     const csrfToken = csrfTokenElement ? csrfTokenElement.getAttribute('content') : '';
 
+    // Define un número correlativo por defecto si no fue establecido globalmente.
     if (typeof window.proximoNumeroHistoria === 'undefined') {
         window.proximoNumeroHistoria = 'HC-00001';
     }
 
+    // Referencias a elementos del DOM utilizados en el flujo de alta y edición de historias.
     const modal = document.getElementById('modalHistoria');
     const btnNueva = document.getElementById('btnNuevaHistoria');
     const spanClose = document.querySelector('#modalHistoria .close');
@@ -45,6 +51,7 @@
     const confirmAcceptButton = confirmModal?.querySelector('[data-confirm="accept"]');
     const confirmCancelButton = confirmModal?.querySelector('[data-confirm="cancel"]');
 
+    // Mapeo de campos de formulario para facilitar asignaciones y validaciones.
     const campos = {
         nombreMascota: document.getElementById('nombreMascota'),
         edad: document.getElementById('edad'),
@@ -60,10 +67,12 @@
     let historiaEditandoId = null;
     let historiaPorAnularId = null;
 
+    // Determina si existe algún modal visible para sincronizar el estado del body.
     function hayModalVisible() {
         return Array.from(document.querySelectorAll('.modal')).some(modalEl => modalEl.style.display === 'block');
     }
 
+    // Agrega o quita la clase en el body según el estado de los modales.
     function actualizarEstadoBodyModal() {
         if (hayModalVisible()) {
             document.body.classList.add('modal-open');
@@ -72,6 +81,7 @@
         }
     }
 
+    // Muestra el modal principal de historias clínicas.
     function abrirModal() {
         if (!modal) {
             return;
@@ -82,6 +92,7 @@
         actualizarEstadoBodyModal();
     }
 
+    // Oculta el modal principal y limpia el estado accesible.
     function cerrarModal() {
         if (!modal) {
             return;
@@ -92,6 +103,7 @@
         actualizarEstadoBodyModal();
     }
 
+    // Oculta el campo "Otro" de especie y limpia su valor.
     function ocultarEspecieOtro() {
         if (!especieOtroGroup || !especieOtroInput) {
             return;
@@ -102,6 +114,7 @@
         especieOtroInput.removeAttribute('required');
     }
 
+    // Muestra el campo "Otro" de especie y lo marca como requerido.
     function mostrarEspecieOtro() {
         if (!especieOtroGroup || !especieOtroInput) {
             return;
@@ -111,6 +124,7 @@
         especieOtroInput.setAttribute('required', 'required');
     }
 
+    // Limpia el formulario a su estado inicial para un nuevo registro.
     function prepararFormularioBase() {
         if (!form) {
             return;
@@ -125,6 +139,7 @@
         }
     }
 
+    // Refresca el número de historia mostrado mientras el modal está abierto y no hay edición.
     function actualizarNumeroHistoriaEnFormulario() {
         if (!historiaEditandoId && numeroHistoriaInput && modal && modal.style.display === 'block') {
             numeroHistoriaInput.value = window.proximoNumeroHistoria || 'HC-00001';
@@ -133,6 +148,7 @@
 
     window.actualizarNumeroHistoriaEnFormulario = actualizarNumeroHistoriaEnFormulario;
 
+    // Reinicia el formulario y estado de edición para crear una nueva historia.
     function reiniciarFormulario() {
         historiaEditandoId = null;
         prepararFormularioBase();
@@ -147,11 +163,13 @@
         }
     }
 
+    // Prepara la UI y abre el modal para un nuevo registro.
     function abrirModalParaCrear() {
         reiniciarFormulario();
         abrirModal();
     }
 
+    // Rellena el formulario con datos existentes para edición.
     function rellenarFormulario(historia) {
         if (!historia || !form) {
             return;
@@ -196,6 +214,7 @@
         abrirModal();
     }
 
+    // Muestra mensajes de éxito o error en el contexto de historias clínicas.
     function mostrarMensajeHistoria(texto, tipo = 'success') {
         if (!mensajesHistoria.length) {
             return;
@@ -218,6 +237,7 @@
 
     window.mostrarMensajeHistoria = mostrarMensajeHistoria;
 
+    // Muestra mensajes para las acciones de respaldo de historias.
     function mostrarMensajeBackup(texto, tipo = 'success') {
         if (!backupMensaje) {
             return;
@@ -237,6 +257,7 @@
         }
     }
 
+    // Deshabilita un botón y muestra un spinner mientras se procesa una acción.
     function setButtonLoading(button, isLoading, loadingText = 'Procesando...') {
         if (!button) {
             return;
@@ -255,6 +276,7 @@
         }
     }
 
+    // Formatea fechas para mostrarlas en la tabla de respaldos.
     function formatearFecha(fecha) {
         if (!fecha) {
             return '—';
@@ -266,6 +288,7 @@
             : fechaObjeto.toLocaleString('es-ES');
     }
 
+    // Pinta el listado de respaldos disponibles en la tabla correspondiente.
     function renderBackups(registros = []) {
         if (!backupWrapper || !backupTableBody) {
             return;
@@ -321,6 +344,7 @@
 
     let respaldosCargados = false;
 
+    // Obtiene los respaldos desde el servidor y actualiza el estado de la vista.
     async function cargarBackups(force = false) {
         if (!backupListUrl || !backupContenedor) {
             return;
@@ -362,6 +386,7 @@
         }
     }
 
+    // Envía una petición para generar un respaldo de la información.
     async function generarBackup() {
         if (!backupGenerateUrl) {
             return;
@@ -403,6 +428,7 @@
         }
     }
 
+    // Abre el modal de confirmación antes de anular una historia clínica.
     function abrirConfirmacionPara(id) {
         if (!id) {
             return;
@@ -425,6 +451,7 @@
 
     window.abrirConfirmacionPara = abrirConfirmacionPara;
 
+    // Cierra el modal de confirmación y limpia la referencia a la historia seleccionada.
     function cerrarConfirmacion() {
         if (!confirmModal) {
             historiaPorAnularId = null;
@@ -436,6 +463,7 @@
         historiaPorAnularId = null;
     }
 
+    // Recupera una historia desde el servidor para editarla y rellena el formulario.
     async function cargarHistoriaParaEditar(id) {
         try {
             const response = await fetch(`${historiaBaseUrl}/${id}`, {
@@ -456,6 +484,7 @@
 
     window.cargarHistoriaParaEditar = cargarHistoriaParaEditar;
 
+    // Envía la solicitud de eliminación (anulación) de una historia clínica.
     async function eliminarHistoria(id) {
         if (!historiaBaseUrl) {
             return;
@@ -484,18 +513,21 @@
         }
     }
 
+    // Botón para abrir el modal de creación de historia clínica.
     if (btnNueva) {
         btnNueva.addEventListener('click', () => {
             abrirModalParaCrear();
         });
     }
 
+    // Botón para solicitar la generación de un respaldo.
     if (btnGenerarBackup) {
         btnGenerarBackup.addEventListener('click', () => {
             generarBackup();
         });
     }
 
+    // Botón para listar los respaldos disponibles.
     if (btnVerBackups) {
         btnVerBackups.addEventListener('click', async () => {
             mostrarMensajeBackup('');
@@ -509,6 +541,7 @@
         });
     }
 
+    // Muestra u oculta el campo de especie "Otro" según la selección.
     if (especieSelect) {
         especieSelect.addEventListener('change', () => {
             if (especieSelect.value === 'otro') {
@@ -519,6 +552,7 @@
         });
     }
 
+    // Cierra el modal principal desde el icono de cierre o desde clics en el overlay.
     if (spanClose) {
         spanClose.addEventListener('click', () => {
             cerrarModal();
@@ -526,6 +560,7 @@
         });
     }
 
+    // Evento submit del formulario: valida, prepara payload y envía creación/actualización vía fetch.
     if (form) {
         form.addEventListener('submit', async event => {
             event.preventDefault();
@@ -612,12 +647,14 @@
         });
     }
 
+    // Cierra la confirmación de anulación cuando se hace clic en cancelar.
     if (confirmCancelButton) {
         confirmCancelButton.addEventListener('click', () => {
             cerrarConfirmacion();
         });
     }
 
+    // Acepta la anulación de la historia clínica al confirmar en el modal personalizado.
     if (confirmAcceptButton) {
         confirmAcceptButton.addEventListener('click', async () => {
             if (!historiaPorAnularId) {
@@ -631,6 +668,7 @@
         });
     }
 
+    // Cierra el modal de confirmación cuando se hace clic fuera del contenido.
     if (confirmModal) {
         confirmModal.addEventListener('click', event => {
             if (event.target === confirmModal) {
@@ -639,6 +677,7 @@
         });
     }
 
+    // Captura la tecla Escape para cerrar el modal de confirmación si está visible.
     document.addEventListener('keydown', event => {
         if (event.key !== 'Escape') {
             return;
