@@ -30,15 +30,13 @@ class DashboardController extends Controller
         ])->paginate(10); // Paginación de 10 por página
 
         $today = Carbon::today();
-        $startDate = $today->copy()->addDay();
         $endDate = $today->copy()->addDays(3);
 
         $upcomingAppointments = Cita::with(['historiaClinica.mascota.propietario'])
             ->where('estado', 'Pendiente')
-            ->whereBetween('fecha_cita', [$startDate, $endDate])
+            ->whereBetween('fecha_cita', [$today, $endDate])
             ->orderBy('fecha_cita')
             ->orderBy('hora_cita')
-            ->take(4)
             ->get()
             ->map(function ($cita) {
                 $historia = $cita->historiaClinica;

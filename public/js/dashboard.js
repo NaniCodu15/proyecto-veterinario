@@ -19,6 +19,8 @@
     const citasStoreUrl     = dashboardConfig.citasStoreUrl || '';
     const citasListUrl      = dashboardConfig.citasListUrl || '';
     const citasEstadoBaseUrl = dashboardConfig.citasEstadoBaseUrl || '';
+    const citasBaseUrl      = dashboardConfig.citasBaseUrl || '';
+    const citasUpcomingUrl  = dashboardConfig.citasUpcomingUrl || '';
     const backupGenerateUrl = dashboardConfig.backupGenerateUrl || '';
     const backupListUrl     = dashboardConfig.backupListUrl || '';
     const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
@@ -31,6 +33,7 @@
     let citasCache = [];
     let citaDetalleSeleccionada = null;
     let citaSeleccionadaParaEstado = null;
+    let citasProximasIntervalId = null;
 
     function hayModalVisible() {
         return Array.from(document.querySelectorAll('.modal')).some(modalEl => modalEl.style.display === 'block');
@@ -170,6 +173,7 @@
         manejarNavegacion(document.querySelector('.sidebar-menu a[data-section="inicio"]'));
         cargarHistorias();
         cargarCitas();
+        iniciarActualizacionCitasProximas();
     });
 
     links.forEach(link => {
@@ -250,6 +254,7 @@
     };
     const citaMensaje = document.getElementById('citaMensaje');
 
+    const listaCitasProximas = document.getElementById('citasProximasLista');
     const modalConsultas = document.getElementById('modalConsultas');
     const modalConsultasClose = modalConsultas?.querySelector('[data-close="consultas"]');
     const listaConsultas = document.getElementById('listaConsultas');
@@ -1035,6 +1040,71 @@
         }
     }
 
+    function obtenerPrioridadEstadoCita(estado = '') {
+        const normalizado = String(estado || '').trim().toLowerCase();
+        switch (normalizado) {
+            case 'pendiente':
+                return 0;
+            case 'reprogramada':
+                return 1;
+            case 'atendida':
+                return 2;
+            case 'cancelada':
+                return 3;
+            default:
+                return 4;
+        }
+    }
+
+    function parseFechaIso(fecha = '') {
+        if (!fecha) {
+            return null;
+        }
+
+        const partes = fecha.split('-').map(parte => parseInt(parte, 10));
+        if (partes.length !== 3 || partes.some(num => Number.isNaN(num))) {
+            return null;
+        }
+
+        const [anio, mes, dia] = partes;
+        const date = new Date(Date.UTC(anio, mes - 1, dia));
+        return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    function ordenarCitasPorPrioridad(lista = []) {
+        if (!Array.isArray(lista)) {
+            return [];
+        }
+
+        return [...lista].sort((a, b) => {
+            const prioridadA = obtenerPrioridadEstadoCita(a?.estado);
+            const prioridadB = obtenerPrioridadEstadoCita(b?.estado);
+
+            if (prioridadA !== prioridadB) {
+                return prioridadA - prioridadB;
+            }
+
+            const fechaA = parseFechaIso(a?.fecha);
+            const fechaB = parseFechaIso(b?.fecha);
+
+            if (fechaA && fechaB && fechaA.getTime() !== fechaB.getTime()) {
+                return fechaA - fechaB;
+            }
+
+            if (fechaA && !fechaB) {
+                return -1;
+            }
+
+            if (!fechaA && fechaB) {
+                return 1;
+            }
+
+            const horaA = (a?.hora || '').toString();
+            const horaB = (b?.hora || '').toString();
+            return horaA.localeCompare(horaB);
+        });
+    }
+
     function crearFilaCita(cita = {}) {
         const fila = document.createElement('tr');
         fila.dataset.citaId = cita.id ?? '';
@@ -1101,6 +1171,11 @@
         btnEstado.className = 'btn btn-warning btn-sm btnEstadoCita';
         btnEstado.innerHTML = '<i class="fas fa-exchange-alt"></i> Cambiar estado';
 
+        const btnAnular = document.createElement('button');
+        btnAnular.type = 'button';
+        btnAnular.className = 'btn btn-danger btn-sm btnAnularCita';
+        btnAnular.innerHTML = '<i class="fas fa-ban"></i> Anular';
+
         if (String(cita.estado || '').trim().toLowerCase() === 'atendida') {
             btnEstado.disabled = true;
             btnEstado.classList.add('is-disabled');
@@ -1111,6 +1186,7 @@
         accionesWrapper.appendChild(whatsappLink);
         accionesWrapper.appendChild(btnDetalles);
         accionesWrapper.appendChild(btnEstado);
+        accionesWrapper.appendChild(btnAnular);
         accionesCell.appendChild(accionesWrapper);
         fila.appendChild(accionesCell);
 
@@ -1142,7 +1218,9 @@
         }
 
         const fragment = document.createDocumentFragment();
-        citasCache.forEach(cita => {
+        const listaOrdenada = ordenarCitasPorPrioridad(citasCache);
+
+        listaOrdenada.forEach(cita => {
             fragment.appendChild(crearFilaCita(cita));
         });
 
@@ -1181,6 +1259,176 @@
 
             elemento.textContent = valor;
         });
+    }
+
+    function obtenerClaseEstadoCitaProxima(estado = '') {
+        const clases = {
+            pendiente: 'is-pending',
+            atendida: 'is-done',
+            cancelada: 'is-cancelled',
+            reprogramada: 'is-rescheduled',
+        };
+
+        return clases[String(estado || '').trim().toLowerCase()] ?? 'is-pending';
+    }
+
+    function formatearFechaCorta(fechaIso = '', fechaLegible = '', fechaCorta = '') {
+        if (fechaCorta) {
+            return fechaCorta;
+        }
+
+        if (fechaLegible) {
+            const partes = fechaLegible.split('/');
+            if (partes.length === 3) {
+                return `${partes[0]}/${partes[1]}`;
+            }
+        }
+
+        const fecha = parseFechaIso(fechaIso);
+        if (!fecha) {
+            return '--/--';
+        }
+
+        const dia = String(fecha.getUTCDate()).padStart(2, '0');
+        const mes = String(fecha.getUTCMonth() + 1).padStart(2, '0');
+        return `${dia}/${mes}`;
+    }
+
+    function formatearHoraCita(hora = '') {
+        if (!hora) {
+            return '--:--';
+        }
+
+        const partes = hora.split(':');
+        if (partes.length >= 2) {
+            return `${partes[0].padStart(2, '0')}:${partes[1].padStart(2, '0')}`;
+        }
+
+        return hora;
+    }
+
+    function renderCitasProximas(lista = []) {
+        if (!listaCitasProximas) {
+            return;
+        }
+
+        listaCitasProximas.innerHTML = '';
+
+        if (!Array.isArray(lista) || lista.length === 0) {
+            const item = document.createElement('li');
+            item.className = 'appointment-list__item appointment-list__item--empty';
+            item.innerHTML = `
+                <div>
+                    <p>No hay citas próximas registradas.</p>
+                    <span>Agenda una nueva cita para mantener una atención oportuna.</span>
+                </div>
+            `;
+            listaCitasProximas.appendChild(item);
+            return;
+        }
+
+        const fragment = document.createDocumentFragment();
+        const ordenadas = [...lista].sort((a, b) => {
+            const fechaA = parseFechaIso(a?.fecha);
+            const fechaB = parseFechaIso(b?.fecha);
+
+            if (fechaA && fechaB && fechaA.getTime() !== fechaB.getTime()) {
+                return fechaA - fechaB;
+            }
+
+            if (fechaA && !fechaB) {
+                return -1;
+            }
+
+            if (!fechaA && fechaB) {
+                return 1;
+            }
+
+            const horaA = (a?.hora || '').toString();
+            const horaB = (b?.hora || '').toString();
+            return horaA.localeCompare(horaB);
+        });
+
+        ordenadas.forEach(cita => {
+            const item = document.createElement('li');
+            item.className = 'appointment-list__item';
+
+            const timeWrapper = document.createElement('div');
+            timeWrapper.className = 'appointment-list__time';
+
+            const hora = document.createElement('span');
+            hora.className = 'appointment-list__hour';
+            hora.textContent = formatearHoraCita(cita?.hora);
+            timeWrapper.appendChild(hora);
+
+            const fecha = document.createElement('span');
+            fecha.className = 'appointment-list__date';
+            fecha.textContent = formatearFechaCorta(cita?.fecha, cita?.fecha_legible, cita?.fecha_corta);
+            timeWrapper.appendChild(fecha);
+
+            const details = document.createElement('div');
+            details.className = 'appointment-list__details';
+
+            const pet = document.createElement('p');
+            pet.className = 'appointment-list__pet';
+            const mascota = cita?.mascota ?? 'Sin mascota';
+            const motivo = cita?.motivo ? ` · ${cita.motivo}` : '';
+            pet.textContent = `${mascota}${motivo}`;
+            details.appendChild(pet);
+
+            const owner = document.createElement('span');
+            owner.className = 'appointment-list__owner';
+            owner.textContent = `Propietario: ${cita?.propietario ?? 'Sin propietario'}`;
+            details.appendChild(owner);
+
+            const status = document.createElement('span');
+            status.className = `appointment-list__status ${obtenerClaseEstadoCitaProxima(cita?.estado)}`;
+            status.textContent = cita?.estado ?? 'Pendiente';
+
+            item.appendChild(timeWrapper);
+            item.appendChild(details);
+            item.appendChild(status);
+            fragment.appendChild(item);
+        });
+
+        listaCitasProximas.appendChild(fragment);
+    }
+
+    async function cargarCitasProximas() {
+        if (!citasUpcomingUrl || !listaCitasProximas) {
+            return;
+        }
+
+        try {
+            const response = await fetch(citasUpcomingUrl, {
+                headers: { Accept: 'application/json' },
+            });
+
+            if (!response.ok) {
+                throw new Error('No se pudieron obtener las citas próximas.');
+            }
+
+            const data = await response.json();
+            const lista = Array.isArray(data?.data) ? data.data : [];
+            renderCitasProximas(lista);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    function iniciarActualizacionCitasProximas() {
+        if (!listaCitasProximas || !citasUpcomingUrl) {
+            return;
+        }
+
+        if (citasProximasIntervalId) {
+            window.clearInterval(citasProximasIntervalId);
+        }
+
+        cargarCitasProximas();
+        citasProximasIntervalId = window.setInterval(() => {
+            cargarCitasProximas();
+        }, 60000);
     }
 
     function mostrarDetalleCita(cita) {
@@ -1313,6 +1561,28 @@
         }
 
         return data?.cita ?? null;
+    }
+
+    async function eliminarCita(id) {
+        if (!id || !citasBaseUrl) {
+            throw new Error('No se pudo identificar la cita seleccionada.');
+        }
+
+        const response = await fetch(`${citasBaseUrl}/${id}`, {
+            method: 'DELETE',
+            headers: {
+                Accept: 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+            },
+        });
+
+        const data = await response.json().catch(() => null);
+
+        if (!response.ok) {
+            throw new Error(data?.message || 'No se pudo anular la cita.');
+        }
+
+        return data?.message || 'Cita anulada correctamente.';
     }
 
     function formatearHistoriaParaOpcion(historia) {
@@ -1807,10 +2077,11 @@
                 return;
             }
 
+            const botonAnular = event.target.closest('.btnAnularCita');
             const botonDetalles = event.target.closest('.btnVerCita');
             const botonEstado = event.target.closest('.btnEstadoCita');
 
-            if (!botonDetalles && !botonEstado) {
+            if (!botonDetalles && !botonEstado && !botonAnular) {
                 return;
             }
 
@@ -1821,6 +2092,33 @@
             }
 
             const cita = obtenerCitaPorId(id);
+
+            if (botonAnular) {
+                if (botonAnular.disabled) {
+                    return;
+                }
+
+                botonAnular.disabled = true;
+                botonAnular.classList.add('is-loading');
+
+                eliminarCita(id)
+                    .then(() => {
+                        citasCache = citasCache.filter(citaItem => String(citaItem?.id ?? '') !== String(id));
+                        renderCitas(citasCache);
+                        mostrarMensajeListadoCitas('Cita anulada correctamente.', 'success');
+                        cargarCitasProximas();
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        mostrarMensajeListadoCitas(error.message || 'No se pudo anular la cita.', 'error');
+                        botonAnular.disabled = false;
+                    })
+                    .finally(() => {
+                        botonAnular.classList.remove('is-loading');
+                    });
+
+                return;
+            }
 
             if (botonDetalles && cita) {
                 mostrarDetalleCita(cita);
@@ -1924,6 +2222,7 @@
                 }
 
                 mostrarMensajeListadoCitas('Estado actualizado correctamente.', 'success');
+                cargarCitasProximas();
             } catch (error) {
                 console.error(error);
                 mostrarMensajeListadoCitas(error.message || 'No se pudo actualizar el estado de la cita.', 'error');
@@ -2189,6 +2488,7 @@
                 historiaSeleccionadaParaCita = null;
                 await cargarCitas(citasBusquedaActual);
                 mostrarMensajeListadoCitas('Se registró una nueva cita en la agenda.', 'success');
+                cargarCitasProximas();
             } catch (error) {
                 console.error(error);
                 mostrarMensajeCita(error.message || 'No se pudo registrar la cita.', 'error');

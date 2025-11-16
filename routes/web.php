@@ -27,6 +27,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class,'index'])->name('dashboard');
 
     Route::get('citas/list', [CitaController::class, 'list'])->name('citas.list');
+    Route::get('citas/upcoming', [CitaController::class, 'upcoming'])->name('citas.upcoming');
     Route::patch('citas/{cita}/estado', [CitaController::class, 'updateEstado'])->name('citas.estado');
 
     Route::resource('consultas', ConsultaController::class);
