@@ -18,9 +18,6 @@
     </div>
 </div>
 
-@push('scripts')
-    <script src="{{ asset('js/historias_registradas.js') }}"></script>
-@endpush
                     <button type="button" class="historias-registradas__create-btn" id="btnIrCrearHistoria">
                         <span class="historias-registradas__create-icon" aria-hidden="true"><i class="fas fa-plus"></i></span>
                         <span class="historias-registradas__create-label">Crear nueva historia</span>
@@ -36,7 +33,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+</div>
 
         <!-- MODAL DETALLE DE HISTORIA Y CONSULTAS -->
         <div id="modalConsultas" class="modal modal--historia" aria-hidden="true">
@@ -148,3 +145,6 @@
                 </div>
             </div>
         </div>
+@push('scripts')
+    <script src="{{ asset('js/historias_registradas.js') }}"></script>
+@endpush
