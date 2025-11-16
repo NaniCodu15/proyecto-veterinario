@@ -36,8 +36,9 @@ class CitaController extends Controller
         }
 
         $citas = $citasQuery
-            ->orderBy('fecha_cita', 'desc')
-            ->orderBy('hora_cita')
+            ->orderByRaw("CASE WHEN estado = 'Pendiente' THEN 0 WHEN estado IN ('Atendida', 'Cancelada') THEN 2 ELSE 1 END")
+            ->orderByDesc('fecha_cita')
+            ->orderByDesc('hora_cita')
             ->get()
             ->map(fn ($cita) => $this->transformCita($cita))
             ->values();
