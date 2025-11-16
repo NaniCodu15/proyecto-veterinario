@@ -484,7 +484,10 @@
 
 @push('styles')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.4.0/dist/css/tom-select.default.min.css">
-    <link rel="stylesheet" href="{{ asset('css/dashboard-inline.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/historias_clinicas.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/historias_registradas.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/citas.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/citas_agendadas.css') }}">
 @endpush
 
 @push('scripts')
