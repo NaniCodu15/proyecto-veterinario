@@ -15,7 +15,17 @@
 
         {{-- Mensaje de error --}}
         @if($errors->any())
-            <div class="error">{{ $errors->first() }}</div>
+            <div class="error">
+                <div class="login-error" role="alert">
+                    <span class="login-error__icon" aria-hidden="true">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                    </span>
+                    <div class="login-error__content">
+                        <p class="login-error__title">Las credenciales no son correctas</p>
+                        <p class="login-error__message">{{ $errors->first() }}</p>
+                    </div>
+                </div>
+            </div>
         @endif
 
         {{-- Formulario --}}
