@@ -29,7 +29,11 @@
                     <div class="historias-registradas__empty">
                         <i class="fas fa-folder-open"></i>
                         <p>No hay historias clínicas registradas todavía.</p>
-                    </div>
                 </div>
             </div>
         </div>
+    </div>
+
+@push('scripts')
+    <script src="{{ asset('js/historias_registradas.js') }}"></script>
+@endpush

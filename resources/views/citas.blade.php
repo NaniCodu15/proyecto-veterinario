@@ -67,3 +67,7 @@
                 </section>
             </div>
         </div>
+
+@push('scripts')
+    <script src="{{ asset('js/citas.js') }}"></script>
+@endpush

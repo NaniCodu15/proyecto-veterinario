@@ -42,3 +42,7 @@
                 </div>
             </section>
         </div>
+
+@push('scripts')
+    <script src="{{ asset('js/citas_agendadas.js') }}"></script>
+@endpush
