@@ -39,8 +39,12 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
-            </section>
+    </div>
+</section>
+
+@push('scripts')
+    <script src="{{ asset('js/citas_agendadas.js') }}"></script>
+@endpush
         </div>
 
         <div id="modalDetalleCita" class="modal modal--cita" aria-hidden="true">

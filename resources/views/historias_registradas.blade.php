@@ -15,8 +15,12 @@
                                 aria-label="Buscar historias clínicas"
                                 autocomplete="off"
                             >
-                        </div>
-                    </div>
+    </div>
+</div>
+
+@push('scripts')
+    <script src="{{ asset('js/historias_registradas.js') }}"></script>
+@endpush
                     <button type="button" class="historias-registradas__create-btn" id="btnIrCrearHistoria">
                         <span class="historias-registradas__create-icon" aria-hidden="true"><i class="fas fa-plus"></i></span>
                         <span class="historias-registradas__create-label">Crear nueva historia</span>

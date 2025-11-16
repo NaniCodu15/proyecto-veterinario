@@ -1,6 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
+
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.4.0/dist/js/tom-select.complete.min.js"></script>
+@endpush
 <div class="dashboard-container">
     <!-- SIDEBAR FIJO -->
     <div class="sidebar" id="sidebar">
@@ -255,7 +259,6 @@
 @endpush
 
 @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.4.0/dist/js/tom-select.complete.min.js"></script>
     <script src="{{ asset('js/dashboard.js') }}"></script>
 @endpush
 
