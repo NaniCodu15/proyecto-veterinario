@@ -168,7 +168,7 @@
                         </div>
                         <span class="panel__chip"><i class="fas fa-clock"></i> Hoy</span>
                     </div>
-                    <ul class="appointment-list">
+                    <ul class="appointment-list" id="citasProximasLista">
                         @forelse ($upcomingAppointments as $appointment)
                             @php
                                 $status = $appointment['estado'] ?? 'Pendiente';
@@ -500,6 +500,8 @@
             'citasStoreUrl' => route('citas.store'),
             'citasListUrl' => route('citas.list'),
             'citasEstadoBaseUrl' => url('citas'),
+            'citasBaseUrl' => url('citas'),
+            'citasUpcomingUrl' => route('citas.upcoming'),
             'backupGenerateUrl' => route('backups.generate'),
             'backupListUrl' => route('backups.index'),
         ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}

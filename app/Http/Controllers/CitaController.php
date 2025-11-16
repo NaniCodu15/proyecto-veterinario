@@ -35,8 +35,30 @@ class CitaController extends Controller
             });
         }
 
+        $ordenEstado = "CASE\n                WHEN estado = 'Pendiente' THEN 0\n                WHEN estado = 'Reprogramada' THEN 1\n                WHEN estado = 'Atendida' THEN 2\n                WHEN estado = 'Cancelada' THEN 3\n                ELSE 4\n            END";
+
         $citas = $citasQuery
-            ->orderBy('fecha_cita', 'desc')
+            ->orderByRaw($ordenEstado)
+            ->orderBy('fecha_cita')
+            ->orderBy('hora_cita')
+            ->get()
+            ->map(fn ($cita) => $this->transformCita($cita))
+            ->values();
+
+        return response()->json([
+            'data' => $citas,
+        ]);
+    }
+
+    public function upcoming(Request $request)
+    {
+        $today = Carbon::today();
+        $limitDate = $today->copy()->addDays(3);
+
+        $citas = Cita::with(['historiaClinica.mascota.propietario'])
+            ->where('estado', 'Pendiente')
+            ->whereBetween('fecha_cita', [$today, $limitDate])
+            ->orderBy('fecha_cita')
             ->orderBy('hora_cita')
             ->get()
             ->map(fn ($cita) => $this->transformCita($cita))
@@ -122,9 +144,16 @@ class CitaController extends Controller
     }
 
     // Eliminar cita
-    public function destroy(Cita $cita)
+    public function destroy(Request $request, Cita $cita)
     {
         $cita->delete();
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Cita anulada correctamente.',
+            ]);
+        }
+
         return redirect()->route('citas.index')->with('success', 'Cita eliminada correctamente.');
     }
 
@@ -208,6 +237,7 @@ class CitaController extends Controller
             'propietario_whatsapp' => $telefonoWhatsapp !== '' ? $telefonoWhatsapp : null,
             'fecha' => $fecha?->toDateString(),
             'fecha_legible' => $fecha?->format('d/m/Y'),
+            'fecha_corta' => $fecha?->format('d/m'),
             'hora' => $hora,
             'motivo' => $cita->motivo,
             'estado' => $cita->estado ?? 'Pendiente',
