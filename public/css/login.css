@@ -133,3 +133,49 @@ html, body {
     background: linear-gradient(135deg, #5682f4, #4451ea); /* Degradado azul al pasar el mouse */
     transform: translateY(-2px); /* Se eleva ligeramente al pasar el mouse */
 }
+
+/* ---- MENSAJE DE ERROR DEL LOGIN ---- */
+.login-form .error {
+    margin: 10px 0 20px; /* Espaciado alrededor del mensaje */
+}
+
+.login-error {
+    display: flex; /* Coloca ícono y texto en la misma fila */
+    align-items: center; /* Centra verticalmente el contenido */
+    gap: 12px; /* Espacio entre el ícono y el texto */
+    padding: 14px 16px; /* Espacio interior */
+    background: #ffeef0; /* Fondo rojito suave */
+    border-radius: 14px; /* Bordes redondeados para suavidad */
+    border-left: 5px solid #ff5c72; /* Borde lateral rojo */
+    color: #b6293b; /* Color del texto */
+    box-shadow: 0 8px 20px rgba(255, 92, 114, 0.12); /* Sombra pastel */
+    animation: login-error-pop 0.5s ease forwards; /* Animación al aparecer */
+}
+
+.login-error__icon {
+    font-size: 26px; /* Tamaño del ícono */
+    color: #ff5c72; /* Color del ícono */
+}
+
+.login-error__title {
+    margin: 0; /* Quita márgenes por defecto */
+    font-weight: 600; /* Negrita para el título */
+    font-size: 15px; /* Tamaño de fuente moderno */
+}
+
+.login-error__message {
+    margin: 2px 0 0; /* Espacio mínimo con el título */
+    font-size: 13px; /* Texto descriptivo más pequeño */
+    color: #c43f50; /* Matiz un poco más oscuro */
+}
+
+@keyframes login-error-pop {
+    0% {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
