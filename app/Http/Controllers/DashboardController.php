@@ -29,12 +29,13 @@ class DashboardController extends Controller
             'historiaClinica.vacunas'
         ])->paginate(10); // Paginación de 10 por página
 
+        $today = Carbon::today();
+        $startDate = $today->copy()->addDay();
+        $endDate = $today->copy()->addDays(3);
+
         $upcomingAppointments = Cita::with(['historiaClinica.mascota.propietario'])
-            ->where(function ($query) {
-                $query->whereIn('estado', ['Pendiente', 'Reprogramada'])
-                    ->orWhereNull('estado');
-            })
-            ->whereDate('fecha_cita', '>=', Carbon::today())
+            ->where('estado', 'Pendiente')
+            ->whereBetween('fecha_cita', [$startDate, $endDate])
             ->orderBy('fecha_cita')
             ->orderBy('hora_cita')
             ->take(4)
