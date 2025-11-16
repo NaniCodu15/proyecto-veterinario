@@ -255,6 +255,17 @@
         }
     }
 
+    function formatearFecha(fecha) {
+        if (!fecha) {
+            return '—';
+        }
+
+        const fechaObjeto = new Date(fecha);
+        return Number.isNaN(fechaObjeto.getTime())
+            ? fecha
+            : fechaObjeto.toLocaleString('es-ES');
+    }
+
     function renderBackups(registros = []) {
         if (!backupWrapper || !backupTableBody) {
             return;
@@ -287,10 +298,15 @@
                 return celda;
             };
 
-            fila.appendChild(crearCelda(registro?.id));
-            fila.appendChild(crearCelda(registro?.fecha));
-            fila.appendChild(crearCelda(registro?.archivo));
-            fila.appendChild(crearCelda(registro?.ruta));
+            const idRespaldo = registro?.id_respaldo ?? registro?.id;
+            const fechaRespaldo = formatearFecha(registro?.fecha_respaldo ?? registro?.fecha);
+            const nombreArchivo = registro?.nombre_archivo ?? registro?.archivo;
+            const rutaArchivo = registro?.ruta_archivo ?? registro?.ruta;
+
+            fila.appendChild(crearCelda(idRespaldo));
+            fila.appendChild(crearCelda(fechaRespaldo));
+            fila.appendChild(crearCelda(nombreArchivo));
+            fila.appendChild(crearCelda(rutaArchivo));
 
             const estadoCelda = crearCelda();
             estadoCelda.textContent = registro?.estado ?? 'Pendiente';
