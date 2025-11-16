@@ -1,5 +1,25 @@
 @extends('layouts.app')
 
+@push('scripts')
+    <script id="dashboard-config" type="application/json">
+        {!! json_encode([
+            'historiaListUrl' => route('historia_clinicas.list'),
+            'historiaStoreUrl' => route('historia_clinicas.store'),
+            'historiaBaseUrl' => url('historia_clinicas'),
+            'consultaStoreUrl' => route('consultas.store'),
+            'citasStoreUrl' => route('citas.store'),
+            'citasListUrl' => route('citas.list'),
+            'citasEstadoBaseUrl' => url('citas'),
+            'citasBaseUrl' => url('citas'),
+            'citasUpcomingUrl' => route('citas.upcoming'),
+            'backupGenerateUrl' => route('backups.generate'),
+            'backupListUrl' => route('backups.index'),
+        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.4.0/dist/js/tom-select.complete.min.js"></script>
+    <script src="{{ asset('js/dashboard.js') }}"></script>
+@endpush
+
 @section('content')
 <div class="dashboard-container">
     <!-- SIDEBAR FIJO -->
@@ -488,26 +508,6 @@
     <link rel="stylesheet" href="{{ asset('css/historias_registradas.css') }}">
     <link rel="stylesheet" href="{{ asset('css/citas.css') }}">
     <link rel="stylesheet" href="{{ asset('css/citas_agendadas.css') }}">
-@endpush
-
-@push('scripts')
-    <script id="dashboard-config" type="application/json">
-        {!! json_encode([
-            'historiaListUrl' => route('historia_clinicas.list'),
-            'historiaStoreUrl' => route('historia_clinicas.store'),
-            'historiaBaseUrl' => url('historia_clinicas'),
-            'consultaStoreUrl' => route('consultas.store'),
-            'citasStoreUrl' => route('citas.store'),
-            'citasListUrl' => route('citas.list'),
-            'citasEstadoBaseUrl' => url('citas'),
-            'citasBaseUrl' => url('citas'),
-            'citasUpcomingUrl' => route('citas.upcoming'),
-            'backupGenerateUrl' => route('backups.generate'),
-            'backupListUrl' => route('backups.index'),
-        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.4.0/dist/js/tom-select.complete.min.js"></script>
-    <script src="{{ asset('js/dashboard.js') }}"></script>
 @endpush
 
 @endsection
