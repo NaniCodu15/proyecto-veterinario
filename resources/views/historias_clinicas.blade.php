@@ -1,5 +1,6 @@
         <!-- SECCIÓN HISTORIAS CLÍNICAS -->
         <div id="section-historias" class="section">
+            {{-- Hero con CTA para crear historias clínicas y mensajes motivacionales --}}
             <div class="historias-create">
                 <div class="historias-create__content">
                     <span class="historias-create__badge"><i class="fas fa-star"></i> Registro clínico</span>
@@ -25,6 +26,7 @@
                 </div>
             </div>
 
+            {{-- Panel para disparar respaldos y revisar el historial de copias --}}
             <div class="backup-panel" id="panelBackups">
                 <div class="backup-panel__content">
                     <span class="backup-panel__badge"><i class="fas fa-shield-heart"></i> Seguridad de datos</span>
@@ -48,6 +50,7 @@
 
                 <div class="alert backup-panel__alert" role="status" data-backup-mensaje hidden></div>
 
+                {{-- Tabla dinámica que lista los respaldos generados --}}
                 <div id="backupRegistros" class="backup-log" hidden>
                     <div class="tabla-wrapper backup-log__wrapper" data-backup-wrapper hidden>
                         <table class="backup-log__table">

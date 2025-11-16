@@ -212,6 +212,7 @@
 </head>
 <body>
     <div class="pdf-wrapper">
+        <!-- Encabezado del documento con branding y código de historia -->
         <header class="pdf-header">
             <div class="pdf-header__brand">
                 @if ($logoPath && file_exists($logoPath))
@@ -228,6 +229,7 @@
             </div>
         </header>
 
+        <!-- Bloque con la ficha técnica de la mascota -->
         <section class="pdf-section">
             <h2 class="pdf-section__title">Datos de la mascota</h2>
             <div class="info-grid">
@@ -258,6 +260,7 @@
             </div>
         </section>
 
+        <!-- Información del propietario para contactos y seguimiento -->
         <section class="pdf-section">
             <h2 class="pdf-section__title">Datos del propietario</h2>
             <div class="info-grid">
@@ -280,6 +283,7 @@
             </div>
         </section>
 
+        <!-- Listado cronológico de consultas, diagnósticos y tratamientos -->
         <section class="pdf-section">
             <h2 class="pdf-section__title">Consultas, diagnósticos y tratamientos</h2>
             @if($consultas->isEmpty())

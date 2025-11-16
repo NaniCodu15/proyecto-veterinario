@@ -13,9 +13,15 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
+/**
+ * Controlador dedicado a la administración de historias clínicas, incluyendo creación,
+ * edición, visualización detallada, exportación a PDF y helpers de formateo de datos.
+ */
 class HistoriaClinicaController extends Controller
 {
-    // ✅ Listar historias para AJAX
+    /**
+     * Devuelve todas las historias formateadas para consumo vía AJAX en listados dinámicos.
+     */
     public function list()
     {
         $historias = HistoriaClinica::with(['mascota.propietario'])
@@ -28,6 +34,9 @@ class HistoriaClinicaController extends Controller
         return response()->json(['data' => $historias]);
     }
 
+    /**
+     * Registra una nueva historia clínica creando o reutilizando propietarios y mascotas.
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -46,6 +55,7 @@ class HistoriaClinicaController extends Controller
             'especieOtro.required_if' => 'Debe especificar la especie de la mascota.',
         ]);
 
+        // Toda la creación ocurre en una transacción para mantener consistencia entre tablas.
         $historia = DB::transaction(function () use ($validated) {
             $especieSeleccionada = $validated['especie'] === 'otro'
                 ? $validated['especieOtro']
@@ -56,6 +66,7 @@ class HistoriaClinicaController extends Controller
 
             [$nombresPropietario, $apellidosPropietario] = $this->separarNombreCompleto($validated['nombrePropietario']);
 
+            // updateOrCreate permite reutilizar propietarios existentes identificados por DNI.
             $propietario = Propietario::updateOrCreate(
                 ['dni' => $validated['dni']],
                 [
@@ -66,6 +77,7 @@ class HistoriaClinicaController extends Controller
                 ]
             );
 
+            // Se busca una mascota con mismo nombre y propietario para evitar duplicados innecesarios.
             $mascota = Mascota::firstOrCreate(
                 [
                     'nombre' => $validated['nombreMascota'],
@@ -113,7 +125,9 @@ class HistoriaClinicaController extends Controller
         ], 201);
     }
 
-    // ✅ Obtener 1 registro (para editar)
+    /**
+     * Recupera una historia con toda la información necesaria para precargar el formulario de edición.
+     */
     public function show($id)
     {
         $historia = HistoriaClinica::with([
@@ -131,7 +145,9 @@ class HistoriaClinicaController extends Controller
         ]);
     }
 
-    // ✅ Actualizar historia clínica (AJAX)
+    /**
+     * Actualiza una historia clínica existente a partir de un formulario AJAX.
+     */
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
@@ -152,6 +168,7 @@ class HistoriaClinicaController extends Controller
 
         $historia = HistoriaClinica::with(['mascota.propietario'])->findOrFail($id);
 
+        // El proceso se protege con transacción para evitar estados intermedios.
         $historia = DB::transaction(function () use ($validated, $historia) {
             $especieSeleccionada = $validated['especie'] === 'otro'
                 ? $validated['especieOtro']
@@ -202,12 +219,18 @@ class HistoriaClinicaController extends Controller
         ]);
     }
 
+    /**
+     * Elimina una historia clínica y devuelve confirmación para el frontend.
+     */
     public function destroy($id)
     {
         HistoriaClinica::findOrFail($id)->delete();
         return response()->json(['success' => true]);
     }
 
+    /**
+     * Renderiza la vista HTML con el detalle completo de una historia.
+     */
     public function ver($id)
     {
         $historia = $this->obtenerHistoriaCompleta($id);
@@ -222,6 +245,9 @@ class HistoriaClinicaController extends Controller
         ]);
     }
 
+    /**
+     * Genera o descarga el PDF de una historia clínica usando DomPDF.
+     */
     public function pdf(Request $request, $id)
     {
         $historia = $this->obtenerHistoriaCompleta($id);
@@ -240,6 +266,9 @@ class HistoriaClinicaController extends Controller
         return $pdf->stream($nombreArchivo);
     }
 
+    /**
+     * Divide un nombre completo recibido en un arreglo [nombres, apellidos].
+     */
     private function separarNombreCompleto(string $nombreCompleto): array
     {
         $partes = preg_split('/\s+/', trim($nombreCompleto));
@@ -258,6 +287,9 @@ class HistoriaClinicaController extends Controller
         return [$nombres, $apellidos];
     }
 
+    /**
+     * Calcula una fecha estimada de nacimiento restando años a la fecha actual.
+     */
     private function calcularFechaNacimiento($edad): ?string
     {
         if ($edad === null || $edad === '') {
@@ -267,6 +299,9 @@ class HistoriaClinicaController extends Controller
         return Carbon::now()->subYears((int) $edad)->toDateString();
     }
 
+    /**
+     * Genera un número correlativo con el prefijo HC- asegurando exclusividad vía bloqueo.
+     */
     private function generarNumeroHistoria(): string
     {
         $ultimoId = HistoriaClinica::orderByDesc('id_historia')
@@ -276,6 +311,9 @@ class HistoriaClinicaController extends Controller
         return sprintf('HC-%05d', $ultimoId + 1);
     }
 
+    /**
+     * Obtiene una historia con todas sus relaciones necesarias para impresión y vistas completas.
+     */
     private function obtenerHistoriaCompleta($id): HistoriaClinica
     {
         return HistoriaClinica::with([
@@ -287,6 +325,9 @@ class HistoriaClinicaController extends Controller
         ])->findOrFail($id);
     }
 
+    /**
+     * Prepara los datos que se inyectarán en la plantilla Blade del PDF.
+     */
     private function prepararDatosPdf(HistoriaClinica $historia, string $codigo): array
     {
         $mascota = $historia->mascota;
@@ -339,6 +380,9 @@ class HistoriaClinicaController extends Controller
         ];
     }
 
+    /**
+     * Serializa una historia para listados generales, mostrando mascota y propietario.
+     */
     private function formatearHistoria(HistoriaClinica $historia): array
     {
         $mascota = $historia->mascota;
@@ -355,6 +399,9 @@ class HistoriaClinicaController extends Controller
         ];
     }
 
+    /**
+     * Estructura la data necesaria para completar los campos del formulario de edición.
+     */
     private function formatearHistoriaParaFormulario(HistoriaClinica $historia): array
     {
         $mascota = $historia->mascota;
@@ -382,6 +429,9 @@ class HistoriaClinicaController extends Controller
         ];
     }
 
+    /**
+     * Estandariza la respuesta JSON de una consulta de historia clínica.
+     */
     private function formatearConsulta($consulta): array
     {
         return [
@@ -397,6 +447,9 @@ class HistoriaClinicaController extends Controller
         ];
     }
 
+    /**
+     * Determina qué valores se deben mostrar en el formulario según la especie almacenada.
+     */
     private function normalizarEspecieParaFormulario(?string $especie): array
     {
         $especie = $especie ? strtolower($especie) : null;
@@ -409,6 +462,9 @@ class HistoriaClinicaController extends Controller
         };
     }
 
+    /**
+     * Calcula la edad estimada de una mascota a partir de su fecha de nacimiento.
+     */
     private function calcularEdadDesdeFecha($fechaNacimiento): ?int
     {
         if (!$fechaNacimiento) {

@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+/**
+ * Controlador aún sin implementación. La vacunación se gestiona mediante otros módulos,
+ * pero se conserva este archivo para extender funcionalidades sin alterar rutas existentes.
+ */
 class VacunaController extends Controller
 {
     /**

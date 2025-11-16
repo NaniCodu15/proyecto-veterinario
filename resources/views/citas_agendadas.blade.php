@@ -1,4 +1,5 @@
         <div id="section-citas-agendadas" class="section">
+            {{-- Panel con buscador y tabla para gestionar la agenda activa --}}
             <section class="citas-card citas-card--list" id="listadoCitasCard">
                 <div class="citas-card__header">
                     <div>
@@ -10,6 +11,7 @@
 
                 <div id="citasListadoMensaje" class="citas-alert" role="status" aria-live="polite" hidden></div>
 
+                {{-- Barra con búsqueda rápida por mascota o propietario --}}
                 <div class="citas-toolbar">
                     <label for="buscarCitas" class="citas-search">
                         <i class="fas fa-search"></i>
@@ -17,6 +19,7 @@
                     </label>
                 </div>
 
+                {{-- Tabla principal que muestra el backlog de citas y expone acciones contextualizadas --}}
                 <div class="citas-table-wrapper">
                     <div class="citas-table-container">
                         <table class="citas-table">

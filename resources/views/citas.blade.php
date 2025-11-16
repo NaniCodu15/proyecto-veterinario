@@ -1,5 +1,6 @@
         <!-- SECCIÓN CITAS -->
         <div id="section-citas" class="section">
+            {{-- Tarjeta única dedicada al registro de nuevas citas --}}
             <div class="citas-grid citas-grid--single">
                 <section class="citas-card" id="registrarCitaCard">
                     <div class="citas-card__header">
@@ -12,6 +13,7 @@
 
                     <div id="citaMensaje" class="cita-alert" role="alert" hidden></div>
 
+                    {{-- Formulario principal: combina selector de historia con campos informativos y la programación --}}
                     <form id="formRegistrarCita" class="cita-form" novalidate>
                         <div class="cita-form__group">
                             <label for="historiaSelectCitas">Historia clínica</label>
@@ -20,6 +22,7 @@
                             </select>
                         </div>
 
+                        {{-- Datos precargados del propietario y la mascota para confirmar el contexto --}}
                         <div class="cita-form__grid" aria-live="polite">
                             <div class="cita-form__group">
                                 <label for="citaPropietarioNombre">Nombre del propietario</label>

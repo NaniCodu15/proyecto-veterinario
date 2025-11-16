@@ -1,3 +1,93 @@
+/*
+ * Descripción de reglas para citas.css:
+ * - .citas-header: usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos
+  para mejorar la legibilidad.
+ * - .citas-header p: define el color del texto para mantener el contraste necesario; fija límites de ancho para
+  que el componente conserve su proporción; ajusta el tamaño de fuente para jerarquizar el texto mostrado.
+ * - .citas-grid: utiliza CSS Grid para distribuir el contenido con precisión; define espacios homogéneos entre
+  hijos para mejorar la legibilidad; fija límites de ancho para que el componente conserve su proporción.
+ * - .citas-grid--single: fija límites de ancho para que el componente conserve su proporción.
+ * - .citas-grid: controla la alineación vertical de los hijos dentro del contenedor flex/grid.
+ * - .citas-grid--single: ajusta detalles visuales para mantener coherencia con el resto del tablero.
+ * - .citas-card: aplica un degradado para lograr un fondo suave y moderno; redondea las esquinas para suavizar
+  la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire dentro del contenedor;
+  añade sombras para generar profundidad y sensación de tarjeta flotante; dibuja bordes que delimitan
+  secciones y tablas para guiar la mirada; fija límites de ancho para que el componente conserve su
+  proporción.
+ * - .citas-card__header: usa flexbox para organizar los elementos internos; controla la alineación vertical de
+  los hijos dentro del contenedor flex/grid; distribuye el espacio horizontal para equilibrar la composición;
+  define espacios homogéneos entre hijos para mejorar la legibilidad.
+ * - .citas-card__header h2: separa el bloque de los elementos vecinos con márgenes claros; ajusta el tamaño de
+  fuente para jerarquizar el texto mostrado; define el color del texto para mantener el contraste necesario.
+ * - .citas-card__header p: separa el bloque de los elementos vecinos con márgenes claros; define el color del
+  texto para mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado.
+ * - .citas-card__icon: ajusta el tamaño de fuente para jerarquizar el texto mostrado; define el color del texto
+  para mantener el contraste necesario; establece un color de fondo que refuerza el contraste del módulo;
+  incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas para suavizar
+  la interfaz y evitar bordes duros; añade sombras para generar profundidad y sensación de tarjeta flotante.
+ * - .cita-form: usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para
+  mejorar la legibilidad; fija límites de ancho para que el componente conserve su proporción.
+ * - .cita-form__group: usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos
+  para mejorar la legibilidad.
+ * - .cita-form__group label: modifica el peso tipográfico para enfatizar información importante; define el color
+  del texto para mantener el contraste necesario.
+ * - .cita-form__group input, .cita-form__group select, .cita-form__group textarea: redondea las esquinas para
+  suavizar la interfaz y evitar bordes duros; dibuja bordes que delimitan secciones y tablas para guiar la
+  mirada; incorpora relleno para que el contenido respire dentro del contenedor; ajusta el tamaño de fuente
+  para jerarquizar el texto mostrado; establece un color de fondo que refuerza el contraste del módulo; define
+  el color del texto para mantener el contraste necesario; añade sombras para generar profundidad y sensación
+  de tarjeta flotante; agrega transiciones suaves que comunican interactividad.
+ * - .cita-form__group input:focus, .cita-form__group select:focus, .cita-form__group textarea:focus: añade
+  sombras para generar profundidad y sensación de tarjeta flotante.
+ * - .cita-form__group textarea: establece alturas específicas que estabilizan la sección.
+ * - .cita-form__grid: utiliza CSS Grid para distribuir el contenido con precisión; define espacios homogéneos
+  entre hijos para mejorar la legibilidad.
+ * - .cita-form__group.full-width: ajusta detalles visuales para mantener coherencia con el resto del tablero.
+ * - .cita-form__actions: usa flexbox para organizar los elementos internos; distribuye el espacio horizontal
+  para equilibrar la composición.
+ * - .cita-alert: redondea las esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para
+  que el contenido respire dentro del contenedor; modifica el peso tipográfico para enfatizar información
+  importante.
+ * - .cita-alert.is-visible: ajusta detalles visuales para mantener coherencia con el resto del tablero.
+ * - .cita-alert--success: establece un color de fondo que refuerza el contraste del módulo; define el color del
+  texto para mantener el contraste necesario; añade sombras para generar profundidad y sensación de tarjeta
+  flotante.
+ * - .cita-alert--error: establece un color de fondo que refuerza el contraste del módulo; define el color del
+  texto para mantener el contraste necesario; añade sombras para generar profundidad y sensación de tarjeta
+  flotante.
+ * - .cita-form__group .ts-wrapper: fija límites de ancho para que el componente conserve su proporción.
+ * - .cita-form__group .ts-wrapper.single .ts-control: redondea las esquinas para suavizar la interfaz y evitar
+  bordes duros; dibuja bordes que delimitan secciones y tablas para guiar la mirada; incorpora relleno para
+  que el contenido respire dentro del contenedor; ajusta el tamaño de fuente para jerarquizar el texto
+  mostrado; establece un color de fondo que refuerza el contraste del módulo; define el color del texto para
+  mantener el contraste necesario; añade sombras para generar profundidad y sensación de tarjeta flotante;
+  agrega transiciones suaves que comunican interactividad; establece alturas específicas que estabilizan la
+  sección.
+ * - .cita-form__group .ts-wrapper.single.focus .ts-control, .cita-form__group .ts-wrapper.single .ts-
+  control:hover: añade sombras para generar profundidad y sensación de tarjeta flotante.
+ * - .cita-form__group .ts-dropdown: redondea las esquinas para suavizar la interfaz y evitar bordes duros;
+  dibuja bordes que delimitan secciones y tablas para guiar la mirada; añade sombras para generar profundidad
+  y sensación de tarjeta flotante.
+ * - .ts-option__content: usa flexbox para organizar los elementos internos; define espacios homogéneos entre
+  hijos para mejorar la legibilidad; incorpora relleno para que el contenido respire dentro del contenedor.
+ * - .ts-option__numero, .ts-item__numero: modifica el peso tipográfico para enfatizar información importante;
+  define el color del texto para mantener el contraste necesario; ajusta el espaciado entre letras para darle
+  estilo a los títulos.
+ * - .ts-option__mascota, .ts-item__mascota: ajusta el tamaño de fuente para jerarquizar el texto mostrado;
+  define el color del texto para mantener el contraste necesario.
+ * - .ts-option__propietario, .ts-item__propietario: ajusta el tamaño de fuente para jerarquizar el texto
+  mostrado; define el color del texto para mantener el contraste necesario.
+ * - .ts-item__content: usa flexbox para organizar los elementos internos; controla la alineación vertical de los
+  hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad;
+  incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas para suavizar
+  la interfaz y evitar bordes duros; aplica un degradado para lograr un fondo suave y moderno; define el color
+  del texto para mantener el contraste necesario; modifica el peso tipográfico para enfatizar información
+  importante; fija límites de ancho para que el componente conserve su proporción.
+ * - .ts-dropdown__message: incorpora relleno para que el contenido respire dentro del contenedor; ajusta el
+  tamaño de fuente para jerarquizar el texto mostrado; define el color del texto para mantener el contraste
+  necesario.
+ */
+/* usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .citas-header {
     display: flex;
     flex-direction: column;
@@ -5,12 +95,14 @@
     margin-bottom: 24px;
 }
 
+/* define el color del texto para mantener el contraste necesario; fija límites de ancho para que el componente conserve su proporción; ajusta el tamaño de fuente para jerarquizar el texto mostrado. */
 .citas-header p {
     color: var(--text-muted);
     max-width: 540px;
     font-size: 0.98rem;
 }
 
+/* utiliza CSS Grid para distribuir el contenido con precisión; define espacios homogéneos entre hijos para mejorar la legibilidad; fija límites de ancho para que el componente conserve su proporción. */
 .citas-grid {
     display: grid;
     gap: 24px;
@@ -18,6 +110,7 @@
     width: 100%;
 }
 
+/* fija límites de ancho para que el componente conserve su proporción. */
 .citas-grid--single {
     max-width: none;
     width: 100%;
@@ -34,6 +127,7 @@
     }
 }
 
+/* aplica un degradado para lograr un fondo suave y moderno; redondea las esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire dentro del contenedor; añade sombras para generar profundidad y sensación de tarjeta flotante; dibuja bordes que delimitan secciones y tablas para guiar la mirada; fija límites de ancho para que el componente conserve su proporción. */
 .citas-card {
     background: linear-gradient(145deg, rgba(255, 229, 244, 0.85), rgba(228, 240, 255, 0.85));
     border-radius: var(--radius-xl);
@@ -43,6 +137,7 @@
     width: 100%;
 }
 
+/* usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos dentro del contenedor flex/grid; distribuye el espacio horizontal para equilibrar la composición; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .citas-card__header {
     display: flex;
     align-items: flex-start;
@@ -51,18 +146,21 @@
     margin-bottom: 24px;
 }
 
+/* separa el bloque de los elementos vecinos con márgenes claros; ajusta el tamaño de fuente para jerarquizar el texto mostrado; define el color del texto para mantener el contraste necesario. */
 .citas-card__header h2 {
     margin: 0;
     font-size: 1.4rem;
     color: var(--text-dark);
 }
 
+/* separa el bloque de los elementos vecinos con márgenes claros; define el color del texto para mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado. */
 .citas-card__header p {
     margin: 4px 0 0;
     color: var(--text-muted);
     font-size: 0.95rem;
 }
 
+/* ajusta el tamaño de fuente para jerarquizar el texto mostrado; define el color del texto para mantener el contraste necesario; establece un color de fondo que refuerza el contraste del módulo; incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas para suavizar la interfaz y evitar bordes duros; añade sombras para generar profundidad y sensación de tarjeta flotante. */
 .citas-card__icon {
     font-size: 1.6rem;
     color: var(--accent-dark);
@@ -72,6 +170,7 @@
     box-shadow: 0 18px 36px rgba(255, 159, 207, 0.22);
 }
 
+/* usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad; fija límites de ancho para que el componente conserve su proporción. */
 .cita-form {
     display: flex;
     flex-direction: column;
@@ -79,19 +178,23 @@
     width: 100%;
 }
 
+/* usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .cita-form__group {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
+/* modifica el peso tipográfico para enfatizar información importante; define el color del texto para mantener el contraste necesario. */
 .cita-form__group label {
     font-weight: 600;
     color: var(--text-dark);
 }
 
+/* redondea las esquinas para suavizar la interfaz y evitar bordes duros; dibuja bordes que delimitan secciones y tablas para guiar la mirada; incorpora relleno para que el contenido respire dentro del contenedor; ajusta el tamaño de fuente para jerarquizar el texto mostrado; establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario; añade sombras para generar profundidad y sensación de tarjeta flotante; agrega transiciones suaves que comunican interactividad. */
 .cita-form__group input,
 .cita-form__group select,
+/* establece alturas específicas que estabilizan la sección. */
 .cita-form__group textarea {
     border-radius: var(--radius-md);
     border: 1px solid rgba(122, 168, 255, 0.3);
@@ -116,22 +219,26 @@
     resize: vertical;
 }
 
+/* utiliza CSS Grid para distribuir el contenido con precisión; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .cita-form__grid {
     display: grid;
     gap: 16px;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
+/* ajusta detalles visuales para mantener coherencia con el resto del tablero. */
 .cita-form__group.full-width {
     grid-column: 1 / -1;
 }
 
+/* usa flexbox para organizar los elementos internos; distribuye el espacio horizontal para equilibrar la composición. */
 .cita-form__actions {
     display: flex;
     justify-content: flex-end;
     margin-top: 8px;
 }
 
+/* redondea las esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire dentro del contenedor; modifica el peso tipográfico para enfatizar información importante. */
 .cita-alert {
     border-radius: var(--radius-md);
     padding: 14px 18px;
@@ -139,27 +246,32 @@
     display: none;
 }
 
+/* ajusta detalles visuales para mantener coherencia con el resto del tablero. */
 .cita-alert.is-visible {
     display: block;
 }
 
+/* establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario; añade sombras para generar profundidad y sensación de tarjeta flotante. */
 .cita-alert--success {
     background: rgba(74, 199, 161, 0.18);
     color: #1b9d78;
     box-shadow: 0 16px 32px rgba(74, 199, 161, 0.18);
 }
 
+/* establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario; añade sombras para generar profundidad y sensación de tarjeta flotante. */
 .cita-alert--error {
     background: rgba(255, 143, 143, 0.18);
     color: #d03f3f;
     box-shadow: 0 16px 32px rgba(255, 143, 143, 0.18);
 }
 
+/* fija límites de ancho para que el componente conserve su proporción. */
 .cita-form__group .ts-wrapper {
             width: 100%;
         }
 
-        .cita-form__group .ts-wrapper.single .ts-control {
+        /* redondea las esquinas para suavizar la interfaz y evitar bordes duros; dibuja bordes que delimitan secciones y tablas para guiar la mirada; incorpora relleno para que el contenido respire dentro del contenedor; ajusta el tamaño de fuente para jerarquizar el texto mostrado; establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario; añade sombras para generar profundidad y sensación de tarjeta flotante; agrega transiciones suaves que comunican interactividad; establece alturas específicas que estabilizan la sección. */
+.cita-form__group .ts-wrapper.single .ts-control {
             border-radius: var(--radius-md);
             border: 1px solid rgba(122, 168, 255, 0.3);
             padding: 12px 14px;
@@ -178,39 +290,45 @@
             box-shadow: 0 0 0 4px rgba(156, 194, 255, 0.25);
         }
 
-        .cita-form__group .ts-dropdown {
+        /* redondea las esquinas para suavizar la interfaz y evitar bordes duros; dibuja bordes que delimitan secciones y tablas para guiar la mirada; añade sombras para generar profundidad y sensación de tarjeta flotante. */
+.cita-form__group .ts-dropdown {
             border-radius: var(--radius-md);
             border: 1px solid rgba(122, 168, 255, 0.25);
             box-shadow: 0 18px 48px rgba(126, 142, 177, 0.18);
         }
 
-        .ts-option__content {
+        /* usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad; incorpora relleno para que el contenido respire dentro del contenedor. */
+.ts-option__content {
             display: flex;
             flex-direction: column;
             gap: 6px;
             padding: 4px 2px;
         }
 
-        .ts-option__numero,
+        /* modifica el peso tipográfico para enfatizar información importante; define el color del texto para mantener el contraste necesario; ajusta el espaciado entre letras para darle estilo a los títulos. */
+.ts-option__numero,
         .ts-item__numero {
             font-weight: 600;
             color: #3f5b96;
             letter-spacing: 0.02em;
         }
 
-        .ts-option__mascota,
+        /* ajusta el tamaño de fuente para jerarquizar el texto mostrado; define el color del texto para mantener el contraste necesario. */
+.ts-option__mascota,
         .ts-item__mascota {
             font-size: 0.9rem;
             color: #4d5f87;
         }
 
-        .ts-option__propietario,
+        /* ajusta el tamaño de fuente para jerarquizar el texto mostrado; define el color del texto para mantener el contraste necesario. */
+.ts-option__propietario,
         .ts-item__propietario {
             font-size: 0.8rem;
             color: #6c7a91;
         }
 
-        .ts-item__content {
+        /* usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad; incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas para suavizar la interfaz y evitar bordes duros; aplica un degradado para lograr un fondo suave y moderno; define el color del texto para mantener el contraste necesario; modifica el peso tipográfico para enfatizar información importante; fija límites de ancho para que el componente conserve su proporción. */
+.ts-item__content {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
@@ -223,7 +341,8 @@
             min-width: 0;
         }
 
-        .ts-dropdown__message {
+        /* incorpora relleno para que el contenido respire dentro del contenedor; ajusta el tamaño de fuente para jerarquizar el texto mostrado; define el color del texto para mantener el contraste necesario. / */
+.ts-dropdown__message {
             padding: 12px;
             font-size: 0.85rem;
             color: #6c7a91;

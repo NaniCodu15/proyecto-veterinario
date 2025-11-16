@@ -35,10 +35,20 @@
     let citaSeleccionadaParaEstado = null;
     let citasProximasIntervalId = null;
 
+    /**
+     * hayModalVisible()
+     * Recorre todas las instancias con clase `.modal` y devuelve `true` si alguna mantiene `display: block`, lo que
+     * permite saber cuándo debe bloquearse el scroll de fondo.
+     */
     function hayModalVisible() {
         return Array.from(document.querySelectorAll('.modal')).some(modalEl => modalEl.style.display === 'block');
     }
 
+    /**
+     * actualizarEstadoBodyModal()
+     * Agrega la clase `modal-open` al `<body>` cuando existe al menos un modal visible para evitar desplazamientos
+     * indeseados y la elimina cuando no hay diálogos abiertos.
+     */
     function actualizarEstadoBodyModal() {
         if (hayModalVisible()) {
             document.body.classList.add('modal-open');
@@ -47,6 +57,11 @@
         }
     }
 
+    /**
+     * abrirModalGenerico()
+     * Cambia las propiedades `display` y `aria-hidden` del modal recibido para que quede visible y accesible, además
+     * de sincronizar el estado general del documento.
+     */
     function abrirModalGenerico(modalElement) {
         if (!modalElement) {
             return;
@@ -57,6 +72,11 @@
         actualizarEstadoBodyModal();
     }
 
+    /**
+     * cerrarModalGenerico()
+     * Reestablece `display: none` sobre el modal y marca `aria-hidden` en `true` para retirarlo del flujo de
+     * navegación y liberar el scroll si es necesario.
+     */
     function cerrarModalGenerico(modalElement) {
         if (!modalElement) {
             return;
@@ -67,6 +87,11 @@
         actualizarEstadoBodyModal();
     }
 
+    /**
+     * debounce()
+     * Envuelve funciones que dependen de eventos de entrada y retrasa su ejecución hasta que el usuario deja de
+     * interactuar durante `delay` milisegundos.
+     */
     function debounce(fn, delay = 300) {
         let timeoutId;
 
@@ -78,6 +103,11 @@
         };
     }
 
+    /**
+     * resetCamposReprogramar()
+     * Oculta el bloque de campos utilizados para reagendar y elimina cualquier valor previo para evitar enviar
+     * fechas/horas erróneas cuando el estado de la cita cambia.
+     */
     function resetCamposReprogramar() {
         if (reprogramarCampos) {
             reprogramarCampos.hidden = true;
@@ -94,6 +124,11 @@
         }
     }
 
+    /**
+     * toggleCamposReprogramar()
+     * Define si los campos de reprogramación deben mostrarse y marcarse como obligatorios cuando el estado deseado
+     * es "reprogramada"; en cualquier otro escenario los limpia y los deja opcionales.
+     */
     function toggleCamposReprogramar(estado) {
         const esReprogramada = String(estado || '').toLowerCase() === 'reprogramada';
 
@@ -118,6 +153,11 @@
         }
     }
 
+    /**
+     * showSection()
+     * Revisa los paneles principales y utiliza el `id` de cada sección para dejar visible únicamente el contenido
+     * relacionado con la clave solicitada.
+     */
     function showSection(key) {
         sections.forEach(sec => {
             const activa = sec.id === `section-${key}`;
@@ -126,10 +166,20 @@
         });
     }
 
+    /**
+     * clearActiveLinks()
+     * Resetea los estilos de selección de todos los enlaces de la barra lateral, incluidos los indicadores de
+     * submenú, antes de marcar una nueva ruta activa.
+     */
     function clearActiveLinks() {
         links.forEach(link => link.classList.remove('active', 'nav-link--parent-active'));
     }
 
+    /**
+     * setActiveLink()
+     * Aplica el estado visual de selección al enlace pulsado y propaga el resaltado al padre cuando corresponde,
+     * manteniendo el contexto del submenú abierto.
+     */
     function setActiveLink(link) {
         if (!link) {
             return;
@@ -147,6 +197,13 @@
         }
     }
 
+    /**
+     * manejarNavegacion(): gestiona la visualización o el contexto de los modales; consulta nodos del DOM para
+     * actualizar la interfaz; registra listeners adicionales dentro del componente; opera sobre historias clínicas
+     * (creación, listado o detalle); maneja consultas médicas de cada mascota; gestiona las citas agendadas del
+     * calendario; trabaja con la generación o visualización de respaldos; muestra mensajes de estado para guiar al
+     * usuario.
+     */
     function manejarNavegacion(link) {
         if (!link) {
             return;
@@ -169,6 +226,7 @@
         }
     }
 
+    // Evento DOMContentLoaded sobre document: inicia la configuración una vez que el DOM está listo.
     document.addEventListener('DOMContentLoaded', () => {
         manejarNavegacion(document.querySelector('.sidebar-menu a[data-section="inicio"]'));
         cargarHistorias();
@@ -177,6 +235,7 @@
     });
 
     links.forEach(link => {
+        // Evento click sobre link: responde a clics del usuario para disparar la acción asociada.
         link.addEventListener('click', event => {
             event.preventDefault();
             manejarNavegacion(link);
@@ -274,6 +333,12 @@
     const consultaTabs = Array.from(document.querySelectorAll('[data-tab-target]'));
     const consultaPanels = Array.from(document.querySelectorAll('[data-tab-content]'));
 
+    /**
+     * activarTabConsulta(): agrega o remueve clases CSS para reflejar estados visuales; consulta nodos del DOM para
+     * actualizar la interfaz; registra listeners adicionales dentro del componente; opera sobre historias clínicas
+     * (creación, listado o detalle); maneja consultas médicas de cada mascota; gestiona las citas agendadas del
+     * calendario.
+     */
     function activarTabConsulta(nombre = 'registro') {
         if (!consultaTabs.length || !consultaPanels.length) {
             return;
@@ -305,6 +370,7 @@
     }
 
     consultaTabs.forEach(tab => {
+        // Evento click sobre tab: responde a clics del usuario para disparar la acción asociada.
         tab.addEventListener('click', () => {
             const objetivo = tab.dataset.tabTarget;
             if (objetivo) {
@@ -337,6 +403,10 @@
     let consultasDetalleActual = [];
     let respaldosCargados = false;
 
+    /**
+     * ocultarEspecieOtro(): controla reglas de obligatoriedad sobre los campos; lee o escribe valores de
+     * formularios.
+     */
     function ocultarEspecieOtro() {
         if (!especieOtroGroup || !especieOtroInput) {
             return;
@@ -347,6 +417,9 @@
         especieOtroInput.removeAttribute('required');
     }
 
+    /**
+     * mostrarEspecieOtro(): controla reglas de obligatoriedad sobre los campos.
+     */
     function mostrarEspecieOtro() {
         if (!especieOtroGroup || !especieOtroInput) {
             return;
@@ -356,6 +429,10 @@
         especieOtroInput.setAttribute('required', 'required');
     }
 
+    /**
+     * prepararFormularioBase(): lee o escribe valores de formularios; opera sobre historias clínicas (creación,
+     * listado o detalle).
+     */
     function prepararFormularioBase() {
         if (!form) {
             return;
@@ -370,6 +447,9 @@
         }
     }
 
+    /**
+     * abrirModal(): gestiona la visualización o el contexto de los modales.
+     */
     function abrirModal() {
         if (!modal) {
             return;
@@ -380,6 +460,9 @@
         actualizarEstadoBodyModal();
     }
 
+    /**
+     * cerrarModal(): gestiona la visualización o el contexto de los modales.
+     */
     function cerrarModal() {
         if (!modal) {
             return;
@@ -390,6 +473,11 @@
         actualizarEstadoBodyModal();
     }
 
+    /**
+     * abrirConfirmacionPara(): gestiona la visualización o el contexto de los modales; agrega o remueve clases CSS
+     * para reflejar estados visuales; temporiza acciones para crear demoras controladas; opera sobre historias
+     * clínicas (creación, listado o detalle).
+     */
     function abrirConfirmacionPara(id) {
         if (!id) {
             return;
@@ -410,6 +498,10 @@
         }, 10);
     }
 
+    /**
+     * cerrarConfirmacion(): gestiona la visualización o el contexto de los modales; agrega o remueve clases CSS para
+     * reflejar estados visuales; opera sobre historias clínicas (creación, listado o detalle).
+     */
     function cerrarConfirmacion() {
         if (!confirmModal) {
             historiaPorAnularId = null;
@@ -421,6 +513,10 @@
         historiaPorAnularId = null;
     }
 
+    /**
+     * reiniciarFormulario(): escribe texto directamente en los elementos; opera sobre historias clínicas (creación,
+     * listado o detalle).
+     */
     function reiniciarFormulario() {
         historiaEditandoId = null;
         prepararFormularioBase();
@@ -434,11 +530,19 @@
         }
     }
 
+    /**
+     * abrirModalParaCrear(): gestiona la visualización o el contexto de los modales.
+     */
     function abrirModalParaCrear() {
         reiniciarFormulario();
         abrirModal();
     }
 
+    /**
+     * rellenarFormulario(): gestiona la visualización o el contexto de los modales; escribe texto directamente en
+     * los elementos; lee o escribe valores de formularios; opera sobre historias clínicas (creación, listado o
+     * detalle).
+     */
     function rellenarFormulario(historia) {
         if (!historia || !form) {
             return;
@@ -482,6 +586,11 @@
         abrirModal();
     }
 
+    /**
+     * mostrarMensajeHistoria(): agrega o remueve clases CSS para reflejar estados visuales; escribe texto
+     * directamente en los elementos; temporiza acciones para crear demoras controladas; opera sobre historias
+     * clínicas (creación, listado o detalle); muestra mensajes de estado para guiar al usuario.
+     */
     function mostrarMensajeHistoria(texto, tipo = 'success') {
         if (!mensajesHistoria.length) {
             return;
@@ -502,6 +611,11 @@
         }, 4000);
     }
 
+    /**
+     * mostrarMensajeCita(): agrega o remueve clases CSS para reflejar estados visuales; escribe texto directamente
+     * en los elementos; temporiza acciones para crear demoras controladas; gestiona las citas agendadas del
+     * calendario; muestra mensajes de estado para guiar al usuario.
+     */
     function mostrarMensajeCita(texto, tipo = 'success') {
         if (!citaMensaje) {
             return;
@@ -525,6 +639,11 @@
         }, 4000);
     }
 
+    /**
+     * mostrarMensajeConsulta(): agrega o remueve clases CSS para reflejar estados visuales; escribe texto
+     * directamente en los elementos; temporiza acciones para crear demoras controladas; maneja consultas médicas de
+     * cada mascota; muestra mensajes de estado para guiar al usuario.
+     */
     function mostrarMensajeConsulta(texto, tipo = 'success') {
         if (!consultaMensaje) {
             return;
@@ -547,6 +666,11 @@
         }, 4000);
     }
 
+    /**
+     * mostrarMensajeBackup(): agrega o remueve clases CSS para reflejar estados visuales; escribe texto directamente
+     * en los elementos; temporiza acciones para crear demoras controladas; trabaja con la generación o visualización
+     * de respaldos; muestra mensajes de estado para guiar al usuario.
+     */
     function mostrarMensajeBackup(texto, tipo = 'success') {
         if (!backupMensaje) {
             return;
@@ -573,6 +697,10 @@
         }, 4000);
     }
 
+    /**
+     * setButtonLoading(): agrega o remueve clases CSS para reflejar estados visuales; inyecta HTML dinámico en la
+     * interfaz.
+     */
     function setButtonLoading(button, isLoading, loadingText = 'Procesando...') {
         if (!button) {
             return;
@@ -601,6 +729,9 @@
         }
     }
 
+    /**
+     * formatearFechaRespaldo(): función utilitaria que respalda la experiencia general del dashboard.
+     */
     function formatearFechaRespaldo(valor) {
         if (!valor) {
             return '--';
@@ -621,6 +752,9 @@
         });
     }
 
+    /**
+     * obtenerClaseEstadoRespaldo(): trabaja con la generación o visualización de respaldos.
+     */
     function obtenerClaseEstadoRespaldo(estado) {
         const valor = String(estado ?? '').toLowerCase();
 
@@ -635,6 +769,11 @@
         return 'backup-log__status';
     }
 
+    /**
+     * renderBackups()
+     * Construye dinámicamente las filas de la tabla de respaldos a partir de la lista recibida, incluyendo formato
+     * de fecha y resaltado del estado para que el usuario identifique si la tarea fue correcta o fallida.
+     */
     function renderBackups(registros = []) {
         if (!backupWrapper || !backupTableBody) {
             return;
@@ -683,6 +822,12 @@
         backupTableBody.appendChild(fragment);
     }
 
+    /**
+     * cargarBackups()
+     * Invoca `backupListUrl` mediante `fetch`, interpreta la respuesta JSON paginada y renderiza los registros
+     * recibidos sólo una vez a menos que se fuerce la recarga. Cualquier error se comunica con mensajes visibles en
+     * el tablero.
+     */
     async function cargarBackups(force = false) {
         if (!backupListUrl || !backupContenedor) {
             return;
@@ -724,6 +869,11 @@
         }
     }
 
+    /**
+     * generarBackup()
+     * Ejecuta la ruta de generación de respaldos enviando el token CSRF, deshabilita el botón mientras se realiza
+     * el proceso y vuelve a listar los respaldos cuando el backend confirma la creación del archivo.
+     */
     async function generarBackup() {
         if (!backupGenerateUrl) {
             return;
@@ -765,6 +915,10 @@
         }
     }
 
+    /**
+     * limpiarFormularioConsulta(): lee o escribe valores de formularios; opera sobre historias clínicas (creación,
+     * listado o detalle); maneja consultas médicas de cada mascota.
+     */
     function limpiarFormularioConsulta() {
         if (!formConsulta) {
             return;
@@ -779,6 +933,9 @@
         activarTabConsulta('registro');
     }
 
+    /**
+     * crearEtiquetaConsulta(): inyecta HTML dinámico en la interfaz; maneja consultas médicas de cada mascota.
+     */
     function crearEtiquetaConsulta(icono, texto) {
         const span = document.createElement('span');
         span.className = 'consulta-item__meta-tag';
@@ -786,6 +943,9 @@
         return span;
     }
 
+    /**
+     * crearNodoConsulta(): escribe texto directamente en los elementos; maneja consultas médicas de cada mascota.
+     */
     function crearNodoConsulta(consulta = {}) {
         const item = document.createElement('li');
         item.className = 'consulta-item';
@@ -858,6 +1018,9 @@
         return item;
     }
 
+    /**
+     * obtenerMarcaTiempoConsulta(): maneja consultas médicas de cada mascota.
+     */
     function obtenerMarcaTiempoConsulta(consulta = {}) {
         const posiblesFechas = [
             consulta.fecha_consulta,
@@ -881,6 +1044,9 @@
         return 0;
     }
 
+    /**
+     * renderConsultas(): inyecta HTML dinámico en la interfaz; maneja consultas médicas de cada mascota.
+     */
     function renderConsultas(lista = []) {
         if (!listaConsultas) {
             return;
@@ -897,6 +1063,11 @@
         listaConsultas.appendChild(fragment);
     }
 
+    /**
+     * actualizarDetalleHistoria(): escribe texto directamente en los elementos; lee o escribe valores de
+     * formularios; opera sobre historias clínicas (creación, listado o detalle); maneja consultas médicas de cada
+     * mascota.
+     */
     function actualizarDetalleHistoria(historia = {}) {
         historiaDetalleActual = historia;
 
@@ -959,6 +1130,11 @@
         }
     }
 
+    /**
+     * mostrarDetalleHistoria(): gestiona la visualización o el contexto de los modales; lee o escribe valores de
+     * formularios; opera sobre historias clínicas (creación, listado o detalle); maneja consultas médicas de cada
+     * mascota; muestra mensajes de estado para guiar al usuario.
+     */
     async function mostrarDetalleHistoria(id) {
         try {
             const data = await obtenerHistoriaDetallada(id);
@@ -982,6 +1158,11 @@
         }
     }
 
+    /**
+     * mostrarMensajeListadoCitas(): agrega o remueve clases CSS para reflejar estados visuales; escribe texto
+     * directamente en los elementos; temporiza acciones para crear demoras controladas; gestiona las citas agendadas
+     * del calendario; muestra mensajes de estado para guiar al usuario.
+     */
     function mostrarMensajeListadoCitas(texto, tipo = 'info') {
         if (!citasListadoMensaje) {
             return;
@@ -1005,6 +1186,11 @@
         }, 5000);
     }
 
+    /**
+     * limpiarMensajeListadoCitas(): agrega o remueve clases CSS para reflejar estados visuales; escribe texto
+     * directamente en los elementos; gestiona las citas agendadas del calendario; muestra mensajes de estado para
+     * guiar al usuario.
+     */
     function limpiarMensajeListadoCitas() {
         if (!citasListadoMensaje) {
             return;
@@ -1015,6 +1201,10 @@
         citasListadoMensaje.textContent = '';
     }
 
+    /**
+     * limpiarDatosHistoriaEnCita(): lee o escribe valores de formularios; gestiona las citas agendadas del
+     * calendario.
+     */
     function limpiarDatosHistoriaEnCita() {
         ['propietarioNombre', 'propietarioDni', 'propietarioTelefono', 'mascotaNombre'].forEach(clave => {
             const campo = citaCampos[clave];
@@ -1024,6 +1214,9 @@
         });
     }
 
+    /**
+     * obtenerClaseEstadoCita(): gestiona las citas agendadas del calendario.
+     */
     function obtenerClaseEstadoCita(estado = '') {
         const normalizado = String(estado || '').trim().toLowerCase();
 
@@ -1040,6 +1233,9 @@
         }
     }
 
+    /**
+     * obtenerPrioridadEstadoCita(): función utilitaria que respalda la experiencia general del dashboard.
+     */
     function obtenerPrioridadEstadoCita(estado = '') {
         const normalizado = String(estado || '').trim().toLowerCase();
         switch (normalizado) {
@@ -1056,6 +1252,9 @@
         }
     }
 
+    /**
+     * parseFechaIso(): función utilitaria que respalda la experiencia general del dashboard.
+     */
     function parseFechaIso(fecha = '') {
         if (!fecha) {
             return null;
@@ -1071,6 +1270,9 @@
         return Number.isNaN(date.getTime()) ? null : date;
     }
 
+    /**
+     * ordenarCitasPorPrioridad(): gestiona las citas agendadas del calendario.
+     */
     function ordenarCitasPorPrioridad(lista = []) {
         if (!Array.isArray(lista)) {
             return [];
@@ -1105,10 +1307,18 @@
         });
     }
 
+    /**
+     * crearFilaCita(): gestiona las citas agendadas del calendario.
+     */
     function crearFilaCita(cita = {}) {
         const fila = document.createElement('tr');
         fila.dataset.citaId = cita.id ?? '';
 
+        /**
+         * crearCeldaTexto(): agrega o remueve clases CSS para reflejar estados visuales; inyecta HTML dinámico en la
+         * interfaz; escribe texto directamente en los elementos; gestiona las citas agendadas del calendario; muestra
+         * mensajes de estado para guiar al usuario.
+         */
         const crearCeldaTexto = (valor, clase = '') => {
             const celda = document.createElement('td');
             if (clase) {
@@ -1193,6 +1403,10 @@
         return fila;
     }
 
+    /**
+     * renderCitas(): agrega o remueve clases CSS para reflejar estados visuales; inyecta HTML dinámico en la
+     * interfaz; escribe texto directamente en los elementos; gestiona las citas agendadas del calendario.
+     */
     function renderCitas(lista = []) {
         if (!tablaCitas) {
             return;
@@ -1227,6 +1441,9 @@
         tablaCitas.appendChild(fragment);
     }
 
+    /**
+     * obtenerCitaPorId(): gestiona las citas agendadas del calendario.
+     */
     function obtenerCitaPorId(id) {
         if (!id) {
             return null;
@@ -1235,6 +1452,10 @@
         return citasCache.find(cita => String(cita?.id ?? '') === String(id)) ?? null;
     }
 
+    /**
+     * escribirDetalleCita(): escribe texto directamente en los elementos; gestiona las citas agendadas del
+     * calendario.
+     */
     function escribirDetalleCita(cita) {
         if (!cita) {
             return;
@@ -1261,6 +1482,9 @@
         });
     }
 
+    /**
+     * obtenerClaseEstadoCitaProxima(): función utilitaria que respalda la experiencia general del dashboard.
+     */
     function obtenerClaseEstadoCitaProxima(estado = '') {
         const clases = {
             pendiente: 'is-pending',
@@ -1272,6 +1496,9 @@
         return clases[String(estado || '').trim().toLowerCase()] ?? 'is-pending';
     }
 
+    /**
+     * formatearFechaCorta(): función utilitaria que respalda la experiencia general del dashboard.
+     */
     function formatearFechaCorta(fechaIso = '', fechaLegible = '', fechaCorta = '') {
         if (fechaCorta) {
             return fechaCorta;
@@ -1294,6 +1521,9 @@
         return `${dia}/${mes}`;
     }
 
+    /**
+     * formatearHoraCita(): función utilitaria que respalda la experiencia general del dashboard.
+     */
     function formatearHoraCita(hora = '') {
         if (!hora) {
             return '--:--';
@@ -1307,6 +1537,10 @@
         return hora;
     }
 
+    /**
+     * renderCitasProximas(): inyecta HTML dinámico en la interfaz; escribe texto directamente en los elementos;
+     * gestiona las citas agendadas del calendario.
+     */
     function renderCitasProximas(lista = []) {
         if (!listaCitasProximas) {
             return;
@@ -1394,6 +1628,11 @@
         listaCitasProximas.appendChild(fragment);
     }
 
+    /**
+     * cargarCitasProximas()
+     * Consulta periódicamente la API de próximas citas (`citasUpcomingUrl`), transforma la respuesta en tarjetas
+     * legibles y actualiza la lista que se muestra en la columna lateral del dashboard.
+     */
     async function cargarCitasProximas() {
         if (!citasUpcomingUrl || !listaCitasProximas) {
             return;
@@ -1416,6 +1655,10 @@
         }
     }
 
+    /**
+     * iniciarActualizacionCitasProximas(): programa actualizaciones periódicas para mantener los datos frescos;
+     * gestiona las citas agendadas del calendario.
+     */
     function iniciarActualizacionCitasProximas() {
         if (!listaCitasProximas || !citasUpcomingUrl) {
             return;
@@ -1431,6 +1674,10 @@
         }, 60000);
     }
 
+    /**
+     * mostrarDetalleCita(): gestiona la visualización o el contexto de los modales; gestiona las citas agendadas del
+     * calendario.
+     */
     function mostrarDetalleCita(cita) {
         if (!cita || !modalDetalleCita) {
             return;
@@ -1441,6 +1688,10 @@
         abrirModalGenerico(modalDetalleCita);
     }
 
+    /**
+     * actualizarDetalleCitaSiCorresponde(): gestiona la visualización o el contexto de los modales; gestiona las
+     * citas agendadas del calendario.
+     */
     function actualizarDetalleCitaSiCorresponde(cita) {
         if (!citaDetalleSeleccionada || !modalDetalleCita) {
             return;
@@ -1455,6 +1706,10 @@
         }
     }
 
+    /**
+     * prepararModalEstado(): gestiona la visualización o el contexto de los modales; lee o escribe valores de
+     * formularios; gestiona las citas agendadas del calendario; muestra mensajes de estado para guiar al usuario.
+     */
     function prepararModalEstado(cita) {
         if (!cita || !modalEstadoCita) {
             return;
@@ -1494,6 +1749,11 @@
         abrirModalGenerico(modalEstadoCita);
     }
 
+    /**
+     * cargarCitas()
+     * Construye la URL de búsqueda con el parámetro `q`, consulta la API de citas y actualiza la tabla principal,
+     * mostrando mensajes informativos cuando no existen coincidencias o cuando ocurre un fallo.
+     */
     async function cargarCitas(query = '') {
         if (!citasListUrl) {
             return;
@@ -1531,6 +1791,12 @@
         }
     }
 
+    /**
+     * actualizarEstadoCita()
+     * Envía una petición `PATCH` con cuerpo JSON hacia `citasEstadoBaseUrl` para actualizar el estado de una cita,
+     * gestionando los mensajes de validación devueltos por Laravel (422) y propagando los errores al flujo de la
+     * interfaz.
+     */
     async function actualizarEstadoCita(id, cambios = {}) {
         if (!id || !citasEstadoBaseUrl) {
             throw new Error('No se pudo identificar la cita seleccionada.');
@@ -1563,6 +1829,10 @@
         return data?.cita ?? null;
     }
 
+    /**
+     * eliminarCita(): realiza peticiones AJAX con fetch para sincronizar datos; gestiona las citas agendadas del
+     * calendario.
+     */
     async function eliminarCita(id) {
         if (!id || !citasBaseUrl) {
             throw new Error('No se pudo identificar la cita seleccionada.');
@@ -1585,6 +1855,10 @@
         return data?.message || 'Cita anulada correctamente.';
     }
 
+    /**
+     * formatearHistoriaParaOpcion(): lee o escribe valores de formularios; opera sobre historias clínicas (creación,
+     * listado o detalle).
+     */
     function formatearHistoriaParaOpcion(historia) {
         if (!historia || !historia.id) {
             return null;
@@ -1605,6 +1879,10 @@
         };
     }
 
+    /**
+     * sincronizarTomSelectHistorias(): lee o escribe valores de formularios; opera sobre historias clínicas
+     * (creación, listado o detalle); gestiona las citas agendadas del calendario.
+     */
     function sincronizarTomSelectHistorias() {
         if (!tomSelectHistoria) {
             return;
@@ -1644,6 +1922,11 @@
         tomSelectHistoria.refreshOptions(false);
     }
 
+    /**
+     * poblarHistoriasParaCitas(): realiza peticiones AJAX con fetch para sincronizar datos; inyecta HTML dinámico en
+     * la interfaz; escribe texto directamente en los elementos; lee o escribe valores de formularios; opera sobre
+     * historias clínicas (creación, listado o detalle); gestiona las citas agendadas del calendario.
+     */
     function poblarHistoriasParaCitas(lista = []) {
         if (!historiaSelectCita) {
             return;
@@ -1773,6 +2056,10 @@
         sincronizarTomSelectHistorias();
     };
 
+    /**
+     * obtenerHistoriaDetallada(): realiza peticiones AJAX con fetch para sincronizar datos; opera sobre historias
+     * clínicas (creación, listado o detalle).
+     */
     async function obtenerHistoriaDetallada(id) {
         if (!historiaBaseUrl || !id) {
             throw new Error('Seleccione una historia clínica válida.');
@@ -1794,6 +2081,10 @@
         return data;
     }
 
+    /**
+     * rellenarDatosHistoriaEnCita(): lee o escribe valores de formularios; opera sobre historias clínicas (creación,
+     * listado o detalle); gestiona las citas agendadas del calendario.
+     */
     function rellenarDatosHistoriaEnCita(historia) {
         if (!historia) {
             limpiarDatosHistoriaEnCita();
@@ -1817,6 +2108,11 @@
         }
     }
 
+    /**
+     * crearTarjetaHistoria(): agrega o remueve clases CSS para reflejar estados visuales; inyecta HTML dinámico en
+     * la interfaz; escribe texto directamente en los elementos; lee o escribe valores de formularios; opera sobre
+     * historias clínicas (creación, listado o detalle); maneja consultas médicas de cada mascota.
+     */
     function crearTarjetaHistoria(historia) {
         const card = document.createElement('article');
         card.className = 'historia-card';
@@ -1902,6 +2198,10 @@
         return card;
     }
 
+    /**
+     * actualizarProximoNumero(): gestiona la visualización o el contexto de los modales; lee o escribe valores de
+     * formularios; opera sobre historias clínicas (creación, listado o detalle).
+     */
     function actualizarProximoNumero(lista = []) {
         let maximo = 0;
 
@@ -1924,6 +2224,10 @@
         }
     }
 
+    /**
+     * renderHistorias(): inyecta HTML dinámico en la interfaz; opera sobre historias clínicas (creación, listado o
+     * detalle); gestiona las citas agendadas del calendario; muestra mensajes de estado para guiar al usuario.
+     */
     function renderHistorias(lista = null) {
         if (Array.isArray(lista)) {
             historiasRegistradas = lista;
@@ -1977,6 +2281,11 @@
         tablaHistorias.appendChild(fragment);
     }
 
+    /**
+     * cargarHistorias(): realiza peticiones AJAX con fetch para sincronizar datos; opera sobre historias clínicas
+     * (creación, listado o detalle); gestiona las citas agendadas del calendario; muestra mensajes de estado para
+     * guiar al usuario.
+     */
     async function cargarHistorias() {
         if (!historiaListUrl) {
             return;
@@ -2001,24 +2310,34 @@
         }
     }
 
+    /**
+     * navegarAHistorias(): gestiona la visualización o el contexto de los modales; agrega o remueve clases CSS para
+     * reflejar estados visuales; consulta nodos del DOM para actualizar la interfaz; registra listeners adicionales
+     * dentro del componente; lee o escribe valores de formularios; opera sobre historias clínicas (creación, listado
+     * o detalle); maneja consultas médicas de cada mascota; gestiona las citas agendadas del calendario; trabaja con
+     * la generación o visualización de respaldos; muestra mensajes de estado para guiar al usuario.
+     */
     function navegarAHistorias() {
         const linkHistorias = document.querySelector('.sidebar-menu a[data-section="historias"]');
         manejarNavegacion(linkHistorias);
     }
 
     if (btnNueva) {
+        // Evento click sobre btnNueva: responde a clics del usuario para disparar la acción asociada.
         btnNueva.addEventListener('click', () => {
             abrirModalParaCrear();
         });
     }
 
     if (btnGenerarBackup) {
+        // Evento click sobre btnGenerarBackup: responde a clics del usuario para disparar la acción asociada.
         btnGenerarBackup.addEventListener('click', () => {
             generarBackup();
         });
     }
 
     if (btnVerBackups) {
+        // Evento click sobre btnVerBackups: responde a clics del usuario para disparar la acción asociada.
         btnVerBackups.addEventListener('click', async () => {
             mostrarMensajeBackup('');
             setButtonLoading(btnVerBackups, true, 'Cargando...');
@@ -2032,6 +2351,7 @@
     }
 
     if (btnIrHistorias) {
+        // Evento click sobre btnIrHistorias: responde a clics del usuario para disparar la acción asociada.
         btnIrHistorias.addEventListener('click', event => {
             event.preventDefault();
 
@@ -2040,6 +2360,7 @@
     }
 
     if (btnIrCrearHistoria) {
+        // Evento click sobre btnIrCrearHistoria: responde a clics del usuario para disparar la acción asociada.
         btnIrCrearHistoria.addEventListener('click', event => {
             event.preventDefault();
 
@@ -2048,6 +2369,7 @@
     }
 
     if (buscarHistoriasInput) {
+        // Evento input sobre buscarHistoriasInput: reacciona a la escritura en tiempo real para mantener filtros o mensajes.
         buscarHistoriasInput.addEventListener('input', event => {
             const valor = event.target && typeof event.target.value === 'string'
                 ? event.target.value
@@ -2062,6 +2384,7 @@
     }, 350);
 
     if (buscarCitasInput) {
+        // Evento input sobre buscarCitasInput: reacciona a la escritura en tiempo real para mantener filtros o mensajes.
         buscarCitasInput.addEventListener('input', event => {
             citasBusquedaActual = event.target.value.trim();
             buscarCitasDebounce(citasBusquedaActual);
@@ -2069,6 +2392,7 @@
     }
 
     if (tablaCitas) {
+        // Evento click sobre tablaCitas: responde a clics del usuario para disparar la acción asociada.
         tablaCitas.addEventListener('click', event => {
             const whatsappLink = event.target.closest('.citas-accion__whatsapp');
             if (whatsappLink && whatsappLink.classList.contains('is-disabled')) {
@@ -2136,6 +2460,7 @@
     }
 
     document.querySelectorAll('[data-close="detalleCita"]').forEach(elemento => {
+        // Evento click sobre elemento: responde a clics del usuario para disparar la acción asociada.
         elemento.addEventListener('click', () => {
             cerrarModalGenerico(modalDetalleCita);
             citaDetalleSeleccionada = null;
@@ -2143,6 +2468,7 @@
     });
 
     document.querySelectorAll('[data-close="estadoCita"]').forEach(elemento => {
+        // Evento click sobre elemento: responde a clics del usuario para disparar la acción asociada.
         elemento.addEventListener('click', () => {
             cerrarModalGenerico(modalEstadoCita);
             resetCamposReprogramar();
@@ -2151,6 +2477,7 @@
     });
 
     if (modalDetalleCita) {
+        // Evento click sobre modalDetalleCita: responde a clics del usuario para disparar la acción asociada.
         modalDetalleCita.addEventListener('click', event => {
             if (event.target === modalDetalleCita) {
                 cerrarModalGenerico(modalDetalleCita);
@@ -2160,6 +2487,7 @@
     }
 
     if (modalEstadoCita) {
+        // Evento click sobre modalEstadoCita: responde a clics del usuario para disparar la acción asociada.
         modalEstadoCita.addEventListener('click', event => {
             if (event.target === modalEstadoCita) {
                 cerrarModalGenerico(modalEstadoCita);
@@ -2170,12 +2498,14 @@
     }
 
     if (selectEstadoCita) {
+        // Evento change sobre selectEstadoCita: sincroniza los cambios de selects o campos dependientes.
         selectEstadoCita.addEventListener('change', () => {
             toggleCamposReprogramar(selectEstadoCita.value);
         });
     }
 
     if (formEstadoCita) {
+        // Evento submit sobre formEstadoCita: intercepta el envío del formulario para validar y enviar por AJAX.
         formEstadoCita.addEventListener('submit', async event => {
             event.preventDefault();
 
@@ -2231,6 +2561,7 @@
     }
 
     if (historiaSelectCita) {
+        // Evento change sobre historiaSelectCita: sincroniza los cambios de selects o campos dependientes.
         historiaSelectCita.addEventListener('change', async event => {
             const id = event.target.value;
 
@@ -2251,6 +2582,7 @@
     }
 
     if (spanClose) {
+        // Evento click sobre spanClose: responde a clics del usuario para disparar la acción asociada.
         spanClose.addEventListener('click', () => {
             cerrarModal();
             reiniciarFormulario();
@@ -2258,12 +2590,14 @@
     }
 
     if (modalConsultasClose) {
+        // Evento click sobre modalConsultasClose: responde a clics del usuario para disparar la acción asociada.
         modalConsultasClose.addEventListener('click', () => {
             cerrarModalGenerico(modalConsultas);
             limpiarFormularioConsulta();
         });
     }
 
+    // Evento click sobre window: responde a clics del usuario para disparar la acción asociada.
     window.addEventListener('click', event => {
         if (event.target === modal) {
             cerrarModal();
@@ -2277,6 +2611,7 @@
     });
 
     if (especieSelect) {
+        // Evento change sobre especieSelect: sincroniza los cambios de selects o campos dependientes.
         especieSelect.addEventListener('change', () => {
             if (especieSelect.value === 'otro') {
                 mostrarEspecieOtro();
@@ -2286,6 +2621,10 @@
         });
     }
 
+    /**
+     * cargarHistoriaParaEditar(): realiza peticiones AJAX con fetch para sincronizar datos; opera sobre historias
+     * clínicas (creación, listado o detalle); muestra mensajes de estado para guiar al usuario.
+     */
     async function cargarHistoriaParaEditar(id) {
         try {
             const response = await fetch(`${historiaBaseUrl}/${id}`, {
@@ -2304,6 +2643,14 @@
         }
     }
 
+    /**
+     * eliminarHistoria(): gestiona la visualización o el contexto de los modales; realiza peticiones AJAX con fetch
+     * para sincronizar datos; serializa formularios y los envía vía AJAX; agrega o remueve clases CSS para reflejar
+     * estados visuales; consulta nodos del DOM para actualizar la interfaz; registra listeners adicionales dentro
+     * del componente; lee o escribe valores de formularios; opera sobre historias clínicas (creación, listado o
+     * detalle); maneja consultas médicas de cada mascota; gestiona las citas agendadas del calendario; muestra
+     * mensajes de estado para guiar al usuario.
+     */
     async function eliminarHistoria(id) {
         if (!historiaBaseUrl) {
             return;
@@ -2331,12 +2678,14 @@
     }
 
     if (confirmCancelButton) {
+        // Evento click sobre confirmCancelButton: responde a clics del usuario para disparar la acción asociada.
         confirmCancelButton.addEventListener('click', () => {
             cerrarConfirmacion();
         });
     }
 
     if (confirmAcceptButton) {
+        // Evento click sobre confirmAcceptButton: responde a clics del usuario para disparar la acción asociada.
         confirmAcceptButton.addEventListener('click', async () => {
             if (!historiaPorAnularId) {
                 cerrarConfirmacion();
@@ -2350,6 +2699,7 @@
     }
 
     if (confirmModal) {
+        // Evento click sobre confirmModal: responde a clics del usuario para disparar la acción asociada.
         confirmModal.addEventListener('click', event => {
             if (event.target === confirmModal) {
                 cerrarConfirmacion();
@@ -2357,6 +2707,7 @@
         });
     }
 
+    // Evento keydown sobre document: controla atajos de teclado y evita comportamientos no deseados.
     document.addEventListener('keydown', event => {
         if (event.key !== 'Escape') {
             return;
@@ -2384,6 +2735,7 @@
     });
 
     if (tablaHistorias) {
+        // Evento click sobre tablaHistorias: responde a clics del usuario para disparar la acción asociada.
         tablaHistorias.addEventListener('click', event => {
             const botonConsultas = event.target.closest('.btnConsultas');
             const botonEditar = event.target.closest('.btnEditar');
@@ -2416,6 +2768,7 @@
     }
 
     if (formularioCita) {
+        // Evento submit sobre formularioCita: intercepta el envío del formulario para validar y enviar por AJAX.
         formularioCita.addEventListener('submit', async event => {
             event.preventDefault();
 
@@ -2497,6 +2850,7 @@
     }
 
     if (formConsulta) {
+        // Evento submit sobre formConsulta: intercepta el envío del formulario para validar y enviar por AJAX.
         formConsulta.addEventListener('submit', async event => {
             event.preventDefault();
 
@@ -2587,6 +2941,7 @@
     }
 
     if (form) {
+        // Evento submit sobre form: intercepta el envío del formulario para validar y enviar por AJAX.
         form.addEventListener('submit', async event => {
             event.preventDefault();
 
@@ -2669,6 +3024,10 @@
     }
 
 
+    /**
+     * iniciarBuscadorHistorias(): registra listeners adicionales dentro del componente; opera sobre historias
+     * clínicas (creación, listado o detalle).
+     */
     const iniciarBuscadorHistorias = () => {
         if (typeof window.inicializarBuscadorHistorias === 'function') {
             window.inicializarBuscadorHistorias();
@@ -2676,6 +3035,7 @@
     };
 
     if (document.readyState === 'loading') {
+        // Evento DOMContentLoaded sobre document: inicia la configuración una vez que el DOM está listo.
         document.addEventListener('DOMContentLoaded', iniciarBuscadorHistorias);
     } else {
         iniciarBuscadorHistorias();

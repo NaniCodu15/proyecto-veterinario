@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Modelo que representa a las mascotas registradas, incluyendo su vínculo con propietarios e historias.
+ */
 class Mascota extends Model
 {
     use HasFactory;
@@ -24,22 +27,28 @@ class Mascota extends Model
         'fecha_registro'
     ];
 
-    // Relación: una mascota pertenece a un propietario
+    /**
+     * Asociación principal con el propietario responsable.
+     */
     public function propietario()
     {
         return $this->belongsTo(Propietario::class, 'propietario_id', 'id_propietario');
     }
 
-    // Relación: una mascota tiene una historia clínica
+    /**
+     * Relación uno-a-uno con la historia clínica derivada de la mascota.
+     */
     public function historiaClinica()
     {
         return $this->hasOne(HistoriaClinica::class, 'id_mascota', 'id_mascota');
     }
 
-    // Relación: una mascota tiene una historia clínica
+    /**
+     * Alias adicional para acceder a la historia clínica desde otros componentes heredados.
+     */
     public function historia()
     {
-    return $this->belongsTo(HistoriaClinica::class, 'id_historia', 'id_historia');
+        return $this->belongsTo(HistoriaClinica::class, 'id_historia', 'id_historia');
     }
 
 }

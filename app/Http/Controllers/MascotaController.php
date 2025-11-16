@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+/**
+ * Controlador generado por artisan que aún no implementa operaciones concretas.
+ * Se mantiene para futuras ampliaciones relacionadas con CRUD tradicional de mascotas.
+ */
 class MascotaController extends Controller
 {
     /**

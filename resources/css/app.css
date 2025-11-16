@@ -1,3 +1,7 @@
+/*
+ * Importa el núcleo de Tailwind y habilita el procesamiento JIT leyendo únicamente los archivos que contienen clases.
+ * Esto mantiene el CSS final ligero al analizar vistas Blade, caché compilada de Laravel y los scripts front-end.
+ */
 @import 'tailwindcss';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -5,6 +9,9 @@
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
+/*
+ * Sobrescribe la fuente sans-serif utilizada por Tailwind para alinear la identidad visual del landing page.
+ */
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';

@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * Servicio dedicado a la generación y mantenimiento de respaldos de la base de datos.
+ */
 class BackupService
 {
     private bool $legacyDirectoryCleaned = false;
@@ -19,6 +22,7 @@ class BackupService
     {
         $this->cleanupLegacyBackupsDirectory();
 
+        // Se extraen los datos de conexión activos para determinar la estrategia de respaldo.
         $connectionName = config('database.default');
         $connection = config("database.connections.{$connectionName}");
         $driver = is_array($connection) ? ($connection['driver'] ?? null) : null;
@@ -43,6 +47,7 @@ class BackupService
             ];
         }
 
+        // Se define el nombre final del archivo según el driver.
         $timestamp = now();
         $extension = $driver === 'sqlite' ? 'sqlite' : 'sql';
         $fileName = 'backup_' . $timestamp->format('Y_m_d_His') . '.' . $extension;
@@ -77,6 +82,7 @@ class BackupService
             $this->cleanupBackupsDirectory($backupDirectory);
         }
 
+        // Persistimos los metadatos para mostrarlos en la interfaz.
         $respaldo = RespaldoDato::create([
             'fecha_respaldo' => $timestamp,
             'nombre_archivo' => $fileName,

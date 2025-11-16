@@ -1,9 +1,313 @@
+/*
+ * Descripción de reglas para historias_registradas.css:
+ * - .historias-registradas: usa flexbox para organizar los elementos internos; define espacios homogéneos entre
+  hijos para mejorar la legibilidad.
+ * - .historias-registradas__header: usa flexbox para organizar los elementos internos; controla la alineación
+  vertical de los hijos dentro del contenedor flex/grid; distribuye el espacio horizontal para equilibrar la
+  composición; define espacios homogéneos entre hijos para mejorar la legibilidad.
+ * - .historias-registradas__header p: separa el bloque de los elementos vecinos con márgenes claros; define el
+  color del texto para mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto
+  mostrado; fija límites de ancho para que el componente conserve su proporción; controla el interlineado para
+  mejorar la lectura de los párrafos.
+ * - .historias-registradas__alert: ajusta detalles visuales para mantener coherencia con el resto del tablero.
+ * - .historias-registradas__grid: utiliza CSS Grid para distribuir el contenido con precisión; define espacios
+  homogéneos entre hijos para mejorar la legibilidad.
+ * - .historia-card: aplica un degradado para lograr un fondo suave y moderno; redondea las esquinas para
+  suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire dentro del
+  contenedor; dibuja bordes que delimitan secciones y tablas para guiar la mirada; añade sombras para generar
+  profundidad y sensación de tarjeta flotante; usa flexbox para organizar los elementos internos; define
+  espacios homogéneos entre hijos para mejorar la legibilidad; agrega transiciones suaves que comunican
+  interactividad.
+ * - .historia-card:hover: aplica transformaciones que acompañan animaciones o estados hover; añade sombras para
+  generar profundidad y sensación de tarjeta flotante.
+ * - .historia-card__header: usa flexbox para organizar los elementos internos; distribuye el espacio horizontal
+  para equilibrar la composición; controla la alineación vertical de los hijos dentro del contenedor
+  flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad.
+ * - .historia-card__badge: establece un color de fondo que refuerza el contraste del módulo; define el color del
+  texto para mantener el contraste necesario; incorpora relleno para que el contenido respire dentro del
+  contenedor; redondea las esquinas para suavizar la interfaz y evitar bordes duros; modifica el peso
+  tipográfico para enfatizar información importante; ajusta el espaciado entre letras para darle estilo a los
+  títulos; añade sombras para generar profundidad y sensación de tarjeta flotante.
+ * - .historia-card__date: usa flexbox para organizar los elementos internos; controla la alineación vertical de
+  los hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la
+  legibilidad; define el color del texto para mantener el contraste necesario; ajusta el tamaño de fuente para
+  jerarquizar el texto mostrado; modifica el peso tipográfico para enfatizar información importante.
+ * - .historia-card__body: usa flexbox para organizar los elementos internos; define espacios homogéneos entre
+  hijos para mejorar la legibilidad.
+ * - .historia-card__row: usa flexbox para organizar los elementos internos; distribuye el espacio horizontal
+  para equilibrar la composición; controla la alineación vertical de los hijos dentro del contenedor
+  flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad.
+ * - .historia-card__label: usa flexbox para organizar los elementos internos; controla la alineación vertical de
+  los hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la
+  legibilidad; define el color del texto para mantener el contraste necesario; modifica el peso tipográfico
+  para enfatizar información importante; ajusta el tamaño de fuente para jerarquizar el texto mostrado.
+ * - .historia-card__label i: define el color del texto para mantener el contraste necesario.
+ * - .historia-card__value: modifica el peso tipográfico para enfatizar información importante; define el color
+  del texto para mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto
+  mostrado; controla la alineación horizontal del texto dentro del bloque.
+ * - .historia-card__actions: usa flexbox para organizar los elementos internos; distribuye el espacio horizontal
+  para equilibrar la composición; define espacios homogéneos entre hijos para mejorar la legibilidad.
+ * - .historias-registradas__empty: usa flexbox para organizar los elementos internos; controla la alineación
+  vertical de los hijos dentro del contenedor flex/grid; distribuye el espacio horizontal para equilibrar la
+  composición; define espacios homogéneos entre hijos para mejorar la legibilidad; incorpora relleno para que
+  el contenido respire dentro del contenedor; redondea las esquinas para suavizar la interfaz y evitar bordes
+  duros; dibuja bordes que delimitan secciones y tablas para guiar la mirada; establece un color de fondo que
+  refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario; modifica
+  el peso tipográfico para enfatizar información importante; controla la alineación horizontal del texto
+  dentro del bloque.
+ * - .historias-registradas__empty i: ajusta el tamaño de fuente para jerarquizar el texto mostrado; define el
+  color del texto para mantener el contraste necesario.
+ * - .historia-card__row: controla la alineación vertical de los hijos dentro del contenedor flex/grid.
+ * - .historia-card__value: controla la alineación horizontal del texto dentro del bloque.
+ * - .tabla-historias__empty td: controla la alineación horizontal del texto dentro del bloque; define el color
+  del texto para mantener el contraste necesario; incorpora relleno para que el contenido respire dentro del
+  contenedor.
+ * - .historias-registradas__header: crea un contexto relativo para posicionar hijos y badges; usa flexbox para
+  organizar los elementos internos; controla la alineación vertical de los hijos dentro del contenedor
+  flex/grid; distribuye el espacio horizontal para equilibrar la composición; define espacios homogéneos entre
+  hijos para mejorar la legibilidad; incorpora relleno para que el contenido respire dentro del contenedor;
+  redondea las esquinas para suavizar la interfaz y evitar bordes duros; aplica un degradado para lograr un
+  fondo suave y moderno; añade sombras para generar profundidad y sensación de tarjeta flotante; oculta
+  desbordes para mantener la composición limpia; dibuja bordes que delimitan secciones y tablas para guiar la
+  mirada.
+ * - .historias-registradas__header::after: se posiciona absolutamente respecto a su contenedor; fija límites de
+  ancho para que el componente conserve su proporción; establece alturas específicas que estabilizan la
+  sección; establece un color de fondo que refuerza el contraste del módulo.
+ * - .historias-registradas__header-content: crea un contexto relativo para posicionar hijos y badges; maneja el
+  apilamiento para que modales y paneles se superpongan correctamente; usa flexbox para organizar los
+  elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad.
+ * - .historias-registradas__eyebrow: ajusta el tamaño de fuente para jerarquizar el texto mostrado; ajusta el
+  espaciado entre letras para darle estilo a los títulos; transforma el texto (uppercase/lowercase) para
+  reforzar etiquetas visuales; define el color del texto para mantener el contraste necesario; modifica el
+  peso tipográfico para enfatizar información importante.
+ * - .historias-registradas__title: separa el bloque de los elementos vecinos con márgenes claros; ajusta el
+  tamaño de fuente para jerarquizar el texto mostrado; define el color del texto para mantener el contraste
+  necesario; modifica el peso tipográfico para enfatizar información importante.
+ * - .historias-registradas__subtitle: separa el bloque de los elementos vecinos con márgenes claros; fija
+  límites de ancho para que el componente conserve su proporción; define el color del texto para mantener el
+  contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado; controla el interlineado
+  para mejorar la lectura de los párrafos.
+ * - .historias-registradas__create-btn: crea un contexto relativo para posicionar hijos y badges; maneja el
+  apilamiento para que modales y paneles se superpongan correctamente; usa flexbox para organizar los
+  elementos internos; controla la alineación vertical de los hijos dentro del contenedor flex/grid; define
+  espacios homogéneos entre hijos para mejorar la legibilidad; dibuja bordes que delimitan secciones y tablas
+  para guiar la mirada; redondea las esquinas para suavizar la interfaz y evitar bordes duros; incorpora
+  relleno para que el contenido respire dentro del contenedor; aplica un degradado para lograr un fondo suave
+  y moderno; define el color del texto para mantener el contraste necesario; modifica el peso tipográfico para
+  enfatizar información importante; ajusta el tamaño de fuente para jerarquizar el texto mostrado; ajusta el
+  espaciado entre letras para darle estilo a los títulos; añade sombras para generar profundidad y sensación
+  de tarjeta flotante; cambia el cursor para comunicar que el elemento es interactivo; agrega transiciones
+  suaves que comunican interactividad.
+ * - .historias-registradas__create-btn:hover: aplica transformaciones que acompañan animaciones o estados hover;
+  añade sombras para generar profundidad y sensación de tarjeta flotante.
+ * - .historias-registradas__create-btn:focus-visible: ajusta detalles visuales para mantener coherencia con el
+  resto del tablero.
+ * - .historias-registradas__create-icon: utiliza CSS Grid para distribuir el contenido con precisión; fija
+  límites de ancho para que el componente conserve su proporción; establece alturas específicas que
+  estabilizan la sección; redondea las esquinas para suavizar la interfaz y evitar bordes duros; establece un
+  color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste
+  necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado.
+ * - .historias-registradas__create-label: define cómo se comportan los saltos de línea para mantener la lectura.
+ * - .historias-registradas__search: crea un contexto relativo para posicionar hijos y badges; fija límites de
+  ancho para que el componente conserve su proporción; incorpora relleno para que el contenido respire dentro
+  del contenedor; redondea las esquinas para suavizar la interfaz y evitar bordes duros; aplica un degradado
+  para lograr un fondo suave y moderno; dibuja bordes que delimitan secciones y tablas para guiar la mirada;
+  añade sombras para generar profundidad y sensación de tarjeta flotante; agrega transiciones suaves que
+  comunican interactividad; aplica desenfoque al fondo para resaltar tarjetas translúcidas.
+ * - .historias-registradas__search:focus-within: añade sombras para generar profundidad y sensación de tarjeta
+  flotante; aplica transformaciones que acompañan animaciones o estados hover.
+ * - .historias-registradas__search-input: fija límites de ancho para que el componente conserve su proporción;
+  redondea las esquinas para suavizar la interfaz y evitar bordes duros; dibuja bordes que delimitan secciones
+  y tablas para guiar la mirada; incorpora relleno para que el contenido respire dentro del contenedor; ajusta
+  el tamaño de fuente para jerarquizar el texto mostrado; establece un color de fondo que refuerza el
+  contraste del módulo; define el color del texto para mantener el contraste necesario; añade sombras para
+  generar profundidad y sensación de tarjeta flotante; agrega transiciones suaves que comunican
+  interactividad.
+ * - .historias-registradas__search-input::placeholder: define el color del texto para mantener el contraste
+  necesario.
+ * - .historias-registradas__search-input:focus: establece un color de fondo que refuerza el contraste del
+  módulo; añade sombras para generar profundidad y sensación de tarjeta flotante.
+ * - .historias-registradas__search-icon: se posiciona absolutamente respecto a su contenedor; aplica
+  transformaciones que acompañan animaciones o estados hover; define el color del texto para mantener el
+  contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado.
+ * - .btnAnular: usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos
+  dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad; dibuja
+  bordes que delimitan secciones y tablas para guiar la mirada; redondea las esquinas para suavizar la
+  interfaz y evitar bordes duros; incorpora relleno para que el contenido respire dentro del contenedor;
+  ajusta el tamaño de fuente para jerarquizar el texto mostrado; modifica el peso tipográfico para enfatizar
+  información importante; aplica un degradado para lograr un fondo suave y moderno; define el color del texto
+  para mantener el contraste necesario; añade sombras para generar profundidad y sensación de tarjeta
+  flotante; cambia el cursor para comunicar que el elemento es interactivo; agrega transiciones suaves que
+  comunican interactividad.
+ * - .btnAnular:hover: aplica transformaciones que acompañan animaciones o estados hover; añade sombras para
+  generar profundidad y sensación de tarjeta flotante.
+ * - .btnAnular:focus-visible: ajusta detalles visuales para mantener coherencia con el resto del tablero.
+ * - .historias-registradas__header: controla la alineación vertical de los hijos dentro del contenedor
+  flex/grid.
+ * - .historias-registradas__create-btn: fija límites de ancho para que el componente conserve su proporción;
+  distribuye el espacio horizontal para equilibrar la composición.
+ * - .historias-registradas__create-label: define cómo se comportan los saltos de línea para mantener la lectura.
+ * - .historias-registradas__search: fija límites de ancho para que el componente conserve su proporción.
+ * - .historias-registradas__header::after: fija límites de ancho para que el componente conserve su proporción;
+  establece alturas específicas que estabilizan la sección.
+ * - .modal--historia .modal-content--historia: fija límites de ancho para que el componente conserve su
+  proporción; aplica un degradado para lograr un fondo suave y moderno; redondea las esquinas para suavizar la
+  interfaz y evitar bordes duros; dibuja bordes que delimitan secciones y tablas para guiar la mirada;
+  incorpora relleno para que el contenido respire dentro del contenedor; añade sombras para generar
+  profundidad y sensación de tarjeta flotante.
+ * - .historia-detalle: usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos
+  para mejorar la legibilidad.
+ * - .historia-detalle__header: usa flexbox para organizar los elementos internos; distribuye el espacio
+  horizontal para equilibrar la composición; controla la alineación vertical de los hijos dentro del
+  contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad.
+ * - .historia-detalle__badge: usa flexbox para organizar los elementos internos; controla la alineación vertical
+  de los hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la
+  legibilidad; ajusta el tamaño de fuente para jerarquizar el texto mostrado; ajusta el espaciado entre letras
+  para darle estilo a los títulos; transforma el texto (uppercase/lowercase) para reforzar etiquetas visuales;
+  define el color del texto para mantener el contraste necesario; establece un color de fondo que refuerza el
+  contraste del módulo; incorpora relleno para que el contenido respire dentro del contenedor; redondea las
+  esquinas para suavizar la interfaz y evitar bordes duros; modifica el peso tipográfico para enfatizar
+  información importante.
+ * - .historia-detalle__title: ajusta el tamaño de fuente para jerarquizar el texto mostrado; define el color del
+  texto para mantener el contraste necesario; separa el bloque de los elementos vecinos con márgenes claros.
+ * - .historia-detalle__subtitle: define el color del texto para mantener el contraste necesario; ajusta el
+  tamaño de fuente para jerarquizar el texto mostrado; separa el bloque de los elementos vecinos con márgenes
+  claros.
+ * - .historia-detalle__info-grid: utiliza CSS Grid para distribuir el contenido con precisión; define espacios
+  homogéneos entre hijos para mejorar la legibilidad; establece un color de fondo que refuerza el contraste
+  del módulo; redondea las esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para
+  que el contenido respire dentro del contenedor.
+ * - .historia-detalle__info-item: usa flexbox para organizar los elementos internos; define espacios homogéneos
+  entre hijos para mejorar la legibilidad; define el color del texto para mantener el contraste necesario.
+ * - .historia-detalle__info-item > span: ajusta el tamaño de fuente para jerarquizar el texto mostrado;
+  transforma el texto (uppercase/lowercase) para reforzar etiquetas visuales; ajusta el espaciado entre letras
+  para darle estilo a los títulos; define el color del texto para mantener el contraste necesario.
+ * - .historia-detalle__info-item > strong: ajusta el tamaño de fuente para jerarquizar el texto mostrado;
+  modifica el peso tipográfico para enfatizar información importante; define el color del texto para mantener
+  el contraste necesario.
+ * - .historia-detalle__info-item > small: ajusta el tamaño de fuente para jerarquizar el texto mostrado; define
+  el color del texto para mantener el contraste necesario.
+ * - .historia-detalle__body: usa flexbox para organizar los elementos internos; define espacios homogéneos entre
+  hijos para mejorar la legibilidad.
+ * - .historia-detalle__tabs: usa flexbox para organizar los elementos internos; define espacios homogéneos entre
+  hijos para mejorar la legibilidad; establece un color de fondo que refuerza el contraste del módulo;
+  redondea las esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para que el
+  contenido respire dentro del contenedor; dibuja bordes que delimitan secciones y tablas para guiar la
+  mirada; añade sombras para generar profundidad y sensación de tarjeta flotante.
+ * - .historia-detalle__tab: dibuja bordes que delimitan secciones y tablas para guiar la mirada; establece un
+  color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste
+  necesario; modifica el peso tipográfico para enfatizar información importante; incorpora relleno para que el
+  contenido respire dentro del contenedor; redondea las esquinas para suavizar la interfaz y evitar bordes
+  duros; cambia el cursor para comunicar que el elemento es interactivo; agrega transiciones suaves que
+  comunican interactividad.
+ * - .historia-detalle__tab:hover: define el color del texto para mantener el contraste necesario.
+ * - .historia-detalle__tab:focus-visible: ajusta detalles visuales para mantener coherencia con el resto del
+  tablero.
+ * - .historia-detalle__tab.is-active: aplica un degradado para lograr un fondo suave y moderno; define el color
+  del texto para mantener el contraste necesario; añade sombras para generar profundidad y sensación de
+  tarjeta flotante.
+ * - .historia-detalle__panel: ajusta detalles visuales para mantener coherencia con el resto del tablero.
+ * - .historia-detalle__panel.is-active: ajusta detalles visuales para mantener coherencia con el resto del
+  tablero.
+ * - .historia-detalle__tabs: fija límites de ancho para que el componente conserve su proporción; distribuye el
+  espacio horizontal para equilibrar la composición.
+ * - .historia-detalle__tab: ajusta detalles visuales para mantener coherencia con el resto del tablero.
+ * - .historia-detalle__section-header: ajusta detalles visuales para mantener coherencia con el resto del
+  tablero.
+ * - .historia-detalle__section-header h3: separa el bloque de los elementos vecinos con márgenes claros; ajusta
+  el tamaño de fuente para jerarquizar el texto mostrado; define el color del texto para mantener el contraste
+  necesario.
+ * - .historia-detalle__section-header p: separa el bloque de los elementos vecinos con márgenes claros; define
+  el color del texto para mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el
+  texto mostrado.
+ * - .historia-detalle__timeline: establece un color de fondo que refuerza el contraste del módulo; redondea las
+  esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire
+  dentro del contenedor; dibuja bordes que delimitan secciones y tablas para guiar la mirada; añade sombras
+  para generar profundidad y sensación de tarjeta flotante; usa flexbox para organizar los elementos internos;
+  establece alturas específicas que estabilizan la sección.
+ * - .historia-detalle__timeline-list: elimina viñetas para integrar las listas al diseño de tarjetas; separa el
+  bloque de los elementos vecinos con márgenes claros; incorpora relleno para que el contenido respire dentro
+  del contenedor; usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos
+  para mejorar la legibilidad.
+ * - .historia-detalle__timeline-list::-webkit-scrollbar: fija límites de ancho para que el componente conserve
+  su proporción.
+ * - .historia-detalle__timeline-list::-webkit-scrollbar-thumb: establece un color de fondo que refuerza el
+  contraste del módulo; redondea las esquinas para suavizar la interfaz y evitar bordes duros.
+ * - .historia-detalle__timeline-list::-webkit-scrollbar-track: establece un color de fondo que refuerza el
+  contraste del módulo.
+ * - .historia-detalle__timeline: establece alturas específicas que estabilizan la sección.
+ * - .historia-detalle__timeline-list: ajusta detalles visuales para mantener coherencia con el resto del
+  tablero.
+ * - .consulta-item: aplica un degradado para lograr un fondo suave y moderno; redondea las esquinas para
+  suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire dentro del
+  contenedor; dibuja bordes que delimitan secciones y tablas para guiar la mirada; añade sombras para generar
+  profundidad y sensación de tarjeta flotante.
+ * - .consulta-item__header: usa flexbox para organizar los elementos internos; distribuye el espacio horizontal
+  para equilibrar la composición; controla la alineación vertical de los hijos dentro del contenedor
+  flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad.
+ * - .consulta-item__date: ajusta el tamaño de fuente para jerarquizar el texto mostrado; modifica el peso
+  tipográfico para enfatizar información importante; define el color del texto para mantener el contraste
+  necesario; transforma el texto (uppercase/lowercase) para reforzar etiquetas visuales; ajusta el espaciado
+  entre letras para darle estilo a los títulos.
+ * - .consulta-item__titulo: ajusta el tamaño de fuente para jerarquizar el texto mostrado; separa el bloque de
+  los elementos vecinos con márgenes claros; define el color del texto para mantener el contraste necesario.
+ * - .consulta-item__meta: usa flexbox para organizar los elementos internos; define espacios homogéneos entre
+  hijos para mejorar la legibilidad.
+ * - .consulta-item__meta-tag: usa flexbox para organizar los elementos internos; controla la alineación vertical
+  de los hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la
+  legibilidad; establece un color de fondo que refuerza el contraste del módulo; define el color del texto
+  para mantener el contraste necesario; modifica el peso tipográfico para enfatizar información importante;
+  redondea las esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para que el
+  contenido respire dentro del contenedor; ajusta el tamaño de fuente para jerarquizar el texto mostrado.
+ * - .consulta-item__body: utiliza CSS Grid para distribuir el contenido con precisión; define espacios
+  homogéneos entre hijos para mejorar la legibilidad.
+ * - .consulta-item__block: establece un color de fondo que refuerza el contraste del módulo; redondea las
+  esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire
+  dentro del contenedor.
+ * - .consulta-item__block-title: ajusta el tamaño de fuente para jerarquizar el texto mostrado; transforma el
+  texto (uppercase/lowercase) para reforzar etiquetas visuales; ajusta el espaciado entre letras para darle
+  estilo a los títulos; define el color del texto para mantener el contraste necesario.
+ * - .consulta-item__block-text: separa el bloque de los elementos vecinos con márgenes claros; define el color
+  del texto para mantener el contraste necesario; controla el interlineado para mejorar la lectura de los
+  párrafos.
+ * - .historia-detalle__form: establece un color de fondo que refuerza el contraste del módulo; redondea las
+  esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire
+  dentro del contenedor; dibuja bordes que delimitan secciones y tablas para guiar la mirada; añade sombras
+  para generar profundidad y sensación de tarjeta flotante.
+ * - .consulta-form: usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos
+  para mejorar la legibilidad.
+ * - .consulta-form__grid: utiliza CSS Grid para distribuir el contenido con precisión; define espacios
+  homogéneos entre hijos para mejorar la legibilidad.
+ * - .consulta-form .form-group label: modifica el peso tipográfico para enfatizar información importante; define
+  el color del texto para mantener el contraste necesario.
+ * - .consulta-form .form-group input, .consulta-form .form-group textarea: fija límites de ancho para que el
+  componente conserve su proporción; dibuja bordes que delimitan secciones y tablas para guiar la mirada;
+  redondea las esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para que el
+  contenido respire dentro del contenedor; ajusta el tamaño de fuente para jerarquizar el texto mostrado;
+  establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el
+  contraste necesario; agrega transiciones suaves que comunican interactividad.
+ * - .consulta-form .form-group textarea: establece alturas específicas que estabilizan la sección.
+ * - .consulta-form .form-group input:focus, .consulta-form .form-group textarea:focus: añade sombras para
+  generar profundidad y sensación de tarjeta flotante.
+ * - .consulta-alert: redondea las esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno
+  para que el contenido respire dentro del contenedor; modifica el peso tipográfico para enfatizar información
+  importante.
+ * - .consulta-alert.is-visible: ajusta detalles visuales para mantener coherencia con el resto del tablero.
+ * - .consulta-alert--success: establece un color de fondo que refuerza el contraste del módulo; define el color
+  del texto para mantener el contraste necesario; dibuja bordes que delimitan secciones y tablas para guiar la
+  mirada.
+ * - .consulta-alert--error: establece un color de fondo que refuerza el contraste del módulo; define el color
+  del texto para mantener el contraste necesario; dibuja bordes que delimitan secciones y tablas para guiar la
+  mirada.
+ */
+/* usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .historias-registradas {
     display: flex;
     flex-direction: column;
     gap: 24px;
 }
 
+/* usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos dentro del contenedor flex/grid; distribuye el espacio horizontal para equilibrar la composición; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .historias-registradas__header {
     display: flex;
     align-items: flex-start;
@@ -12,6 +316,7 @@
     flex-wrap: wrap;
 }
 
+/* separa el bloque de los elementos vecinos con márgenes claros; define el color del texto para mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado; fija límites de ancho para que el componente conserve su proporción; controla el interlineado para mejorar la lectura de los párrafos. */
 .historias-registradas__header p {
     margin: 0;
     color: var(--text-muted);
@@ -20,16 +325,19 @@
     line-height: 1.6;
 }
 
+/* ajusta detalles visuales para mantener coherencia con el resto del tablero. */
 .historias-registradas__alert {
     align-self: flex-start;
 }
 
+/* utiliza CSS Grid para distribuir el contenido con precisión; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .historias-registradas__grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 20px;
 }
 
+/* aplica un degradado para lograr un fondo suave y moderno; redondea las esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire dentro del contenedor; dibuja bordes que delimitan secciones y tablas para guiar la mirada; añade sombras para generar profundidad y sensación de tarjeta flotante; usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad; agrega transiciones suaves que comunican interactividad. */
 .historia-card {
     background: linear-gradient(150deg, rgba(228, 240, 255, 0.92), rgba(255, 229, 244, 0.9));
     border-radius: var(--radius-lg);
@@ -47,6 +355,7 @@
     box-shadow: 0 26px 50px rgba(122, 168, 255, 0.25);
 }
 
+/* usa flexbox para organizar los elementos internos; distribuye el espacio horizontal para equilibrar la composición; controla la alineación vertical de los hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .historia-card__header {
     display: flex;
     justify-content: space-between;
@@ -55,6 +364,7 @@
     flex-wrap: wrap;
 }
 
+/* establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario; incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas para suavizar la interfaz y evitar bordes duros; modifica el peso tipográfico para enfatizar información importante; ajusta el espaciado entre letras para darle estilo a los títulos; añade sombras para generar profundidad y sensación de tarjeta flotante. */
 .historia-card__badge {
     background: var(--surface);
     color: var(--primary-dark);
@@ -65,6 +375,7 @@
     box-shadow: 0 16px 30px rgba(122, 168, 255, 0.22);
 }
 
+/* usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad; define el color del texto para mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado; modifica el peso tipográfico para enfatizar información importante. */
 .historia-card__date {
     display: flex;
     align-items: center;
@@ -74,12 +385,14 @@
     font-weight: 600;
 }
 
+/* usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .historia-card__body {
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
 
+/* usa flexbox para organizar los elementos internos; distribuye el espacio horizontal para equilibrar la composición; controla la alineación vertical de los hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .historia-card__row {
     display: flex;
     justify-content: space-between;
@@ -87,6 +400,7 @@
     gap: 12px;
 }
 
+/* usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad; define el color del texto para mantener el contraste necesario; modifica el peso tipográfico para enfatizar información importante; ajusta el tamaño de fuente para jerarquizar el texto mostrado. */
 .historia-card__label {
     display: flex;
     align-items: center;
@@ -96,10 +410,12 @@
     font-size: 0.9rem;
 }
 
+/* define el color del texto para mantener el contraste necesario. */
 .historia-card__label i {
     color: var(--accent-dark);
 }
 
+/* modifica el peso tipográfico para enfatizar información importante; define el color del texto para mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado; controla la alineación horizontal del texto dentro del bloque. */
 .historia-card__value {
     font-weight: 600;
     color: var(--text-dark);
@@ -107,6 +423,7 @@
     text-align: right;
 }
 
+/* usa flexbox para organizar los elementos internos; distribuye el espacio horizontal para equilibrar la composición; define espacios homogéneos entre hijos para mejorar la legibilidad. */
 .historia-card__actions {
     display: flex;
     justify-content: flex-end;
@@ -114,6 +431,7 @@
     flex-wrap: wrap;
 }
 
+/* usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos dentro del contenedor flex/grid; distribuye el espacio horizontal para equilibrar la composición; define espacios homogéneos entre hijos para mejorar la legibilidad; incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas para suavizar la interfaz y evitar bordes duros; dibuja bordes que delimitan secciones y tablas para guiar la mirada; establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario; modifica el peso tipográfico para enfatizar información importante; controla la alineación horizontal del texto dentro del bloque. */
 .historias-registradas__empty {
     display: flex;
     flex-direction: column;
@@ -129,6 +447,7 @@
     text-align: center;
 }
 
+/* ajusta el tamaño de fuente para jerarquizar el texto mostrado; define el color del texto para mantener el contraste necesario. */
 .historias-registradas__empty i {
     font-size: 2rem;
     color: var(--primary-dark);
@@ -145,6 +464,7 @@
     }
 }
 
+/* controla la alineación horizontal del texto dentro del bloque; define el color del texto para mantener el contraste necesario; incorpora relleno para que el contenido respire dentro del contenedor. */
 .tabla-historias__empty td {
     text-align: center;
     color: var(--text-muted);
@@ -176,7 +496,8 @@
             mix-blend-mode: screen;
         }
 
-        .historias-registradas__header-content {
+        /* crea un contexto relativo para posicionar hijos y badges; maneja el apilamiento para que modales y paneles se superpongan correctamente; usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad. */
+.historias-registradas__header-content {
             position: relative;
             z-index: 1;
             display: flex;
@@ -184,7 +505,8 @@
             gap: 10px;
         }
 
-        .historias-registradas__eyebrow {
+        /* ajusta el tamaño de fuente para jerarquizar el texto mostrado; ajusta el espaciado entre letras para darle estilo a los títulos; transforma el texto (uppercase/lowercase) para reforzar etiquetas visuales; define el color del texto para mantener el contraste necesario; modifica el peso tipográfico para enfatizar información importante. */
+.historias-registradas__eyebrow {
             font-size: 0.8rem;
             letter-spacing: 0.12em;
             text-transform: uppercase;
@@ -192,14 +514,16 @@
             font-weight: 700;
         }
 
-        .historias-registradas__title {
+        /* separa el bloque de los elementos vecinos con márgenes claros; ajusta el tamaño de fuente para jerarquizar el texto mostrado; define el color del texto para mantener el contraste necesario; modifica el peso tipográfico para enfatizar información importante. */
+.historias-registradas__title {
             margin: 0;
             font-size: clamp(1.6rem, 4vw, 2.2rem);
             color: #2c2f66;
             font-weight: 800;
         }
 
-        .historias-registradas__subtitle {
+        /* separa el bloque de los elementos vecinos con márgenes claros; fija límites de ancho para que el componente conserve su proporción; define el color del texto para mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado; controla el interlineado para mejorar la lectura de los párrafos. */
+.historias-registradas__subtitle {
             margin: 0;
             max-width: 600px;
             color: rgba(48, 52, 110, 0.75);
@@ -207,7 +531,8 @@
             line-height: 1.5;
         }
 
-        .historias-registradas__create-btn {
+        /* crea un contexto relativo para posicionar hijos y badges; maneja el apilamiento para que modales y paneles se superpongan correctamente; usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad; dibuja bordes que delimitan secciones y tablas para guiar la mirada; redondea las esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire dentro del contenedor; aplica un degradado para lograr un fondo suave y moderno; define el color del texto para mantener el contraste necesario; modifica el peso tipográfico para enfatizar información importante; ajusta el tamaño de fuente para jerarquizar el texto mostrado; ajusta el espaciado entre letras para darle estilo a los títulos; añade sombras para generar profundidad y sensación de tarjeta flotante; cambia el cursor para comunicar que el elemento es interactivo; agrega transiciones suaves que comunican interactividad. */
+.historias-registradas__create-btn {
             position: relative;
             z-index: 1;
             display: inline-flex;
@@ -236,7 +561,8 @@
             outline-offset: 4px;
         }
 
-        .historias-registradas__create-icon {
+        /* utiliza CSS Grid para distribuir el contenido con precisión; fija límites de ancho para que el componente conserve su proporción; establece alturas específicas que estabilizan la sección; redondea las esquinas para suavizar la interfaz y evitar bordes duros; establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado. */
+.historias-registradas__create-icon {
             display: grid;
             place-items: center;
             width: 36px;
@@ -247,11 +573,13 @@
             font-size: 1.1rem;
         }
 
-        .historias-registradas__create-label {
+        /* define cómo se comportan los saltos de línea para mantener la lectura. */
+.historias-registradas__create-label {
             white-space: nowrap;
         }
 
-        .historias-registradas__search {
+        /* crea un contexto relativo para posicionar hijos y badges; fija límites de ancho para que el componente conserve su proporción; incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas para suavizar la interfaz y evitar bordes duros; aplica un degradado para lograr un fondo suave y moderno; dibuja bordes que delimitan secciones y tablas para guiar la mirada; añade sombras para generar profundidad y sensación de tarjeta flotante; agrega transiciones suaves que comunican interactividad; aplica desenfoque al fondo para resaltar tarjetas translúcidas. */
+.historias-registradas__search {
             position: relative;
             width: min(100%, 520px);
             margin-top: 12px;
@@ -269,7 +597,8 @@
             transform: translateY(-1px);
         }
 
-        .historias-registradas__search-input {
+        /* fija límites de ancho para que el componente conserve su proporción; redondea las esquinas para suavizar la interfaz y evitar bordes duros; dibuja bordes que delimitan secciones y tablas para guiar la mirada; incorpora relleno para que el contenido respire dentro del contenedor; ajusta el tamaño de fuente para jerarquizar el texto mostrado; establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario; añade sombras para generar profundidad y sensación de tarjeta flotante; agrega transiciones suaves que comunican interactividad. */
+.historias-registradas__search-input {
             width: 100%;
             border-radius: 16px;
             border: none;
@@ -291,7 +620,8 @@
             box-shadow: inset 0 0 0 1px rgba(142, 170, 255, 0.35), 0 0 0 4px rgba(196, 210, 255, 0.35);
         }
 
-        .historias-registradas__search-icon {
+        /* se posiciona absolutamente respecto a su contenedor; aplica transformaciones que acompañan animaciones o estados hover; define el color del texto para mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado. */
+.historias-registradas__search-icon {
             position: absolute;
             left: 18px;
             top: 50%;
@@ -300,7 +630,8 @@
             font-size: 1rem;
         }
 
-        .btnAnular {
+        /* usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad; dibuja bordes que delimitan secciones y tablas para guiar la mirada; redondea las esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire dentro del contenedor; ajusta el tamaño de fuente para jerarquizar el texto mostrado; modifica el peso tipográfico para enfatizar información importante; aplica un degradado para lograr un fondo suave y moderno; define el color del texto para mantener el contraste necesario; añade sombras para generar profundidad y sensación de tarjeta flotante; cambia el cursor para comunicar que el elemento es interactivo; agrega transiciones suaves que comunican interactividad. */
+.btnAnular {
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -353,7 +684,8 @@
             }
         }
 
-        .modal--historia .modal-content--historia {
+        /* fija límites de ancho para que el componente conserve su proporción; aplica un degradado para lograr un fondo suave y moderno; redondea las esquinas para suavizar la interfaz y evitar bordes duros; dibuja bordes que delimitan secciones y tablas para guiar la mirada; incorpora relleno para que el contenido respire dentro del contenedor; añade sombras para generar profundidad y sensación de tarjeta flotante. */
+.modal--historia .modal-content--historia {
             max-width: 1100px;
             background: linear-gradient(135deg, rgba(244, 248, 255, 0.98), rgba(255, 255, 255, 0.98));
             border-radius: 28px;
@@ -362,20 +694,23 @@
             box-shadow: 0 40px 80px rgba(132, 160, 255, 0.18);
         }
 
-        .historia-detalle {
+        /* usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad. */
+.historia-detalle {
             display: flex;
             flex-direction: column;
             gap: 28px;
         }
 
-        .historia-detalle__header {
+        /* usa flexbox para organizar los elementos internos; distribuye el espacio horizontal para equilibrar la composición; controla la alineación vertical de los hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad. */
+.historia-detalle__header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
             gap: 24px;
         }
 
-        .historia-detalle__badge {
+        /* usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad; ajusta el tamaño de fuente para jerarquizar el texto mostrado; ajusta el espaciado entre letras para darle estilo a los títulos; transforma el texto (uppercase/lowercase) para reforzar etiquetas visuales; define el color del texto para mantener el contraste necesario; establece un color de fondo que refuerza el contraste del módulo; incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas para suavizar la interfaz y evitar bordes duros; modifica el peso tipográfico para enfatizar información importante. */
+.historia-detalle__badge {
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -389,19 +724,22 @@
             font-weight: 600;
         }
 
-        .historia-detalle__title {
+        /* ajusta el tamaño de fuente para jerarquizar el texto mostrado; define el color del texto para mantener el contraste necesario; separa el bloque de los elementos vecinos con márgenes claros. */
+.historia-detalle__title {
             font-size: 1.75rem;
             color: var(--text-dark);
             margin: 10px 0 6px;
         }
 
-        .historia-detalle__subtitle {
+        /* define el color del texto para mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado; separa el bloque de los elementos vecinos con márgenes claros. */
+.historia-detalle__subtitle {
             color: rgba(43, 57, 144, 0.7);
             font-size: 0.95rem;
             margin: 0;
         }
 
-        .historia-detalle__info-grid {
+        /* utiliza CSS Grid para distribuir el contenido con precisión; define espacios homogéneos entre hijos para mejorar la legibilidad; establece un color de fondo que refuerza el contraste del módulo; redondea las esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire dentro del contenedor. */
+.historia-detalle__info-grid {
             display: grid;
             gap: 16px;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -410,38 +748,44 @@
             padding: 18px 22px;
         }
 
-        .historia-detalle__info-item {
+        /* usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad; define el color del texto para mantener el contraste necesario. */
+.historia-detalle__info-item {
             display: flex;
             flex-direction: column;
             gap: 4px;
             color: var(--text-dark);
         }
 
-        .historia-detalle__info-item > span {
+        /* ajusta el tamaño de fuente para jerarquizar el texto mostrado; transforma el texto (uppercase/lowercase) para reforzar etiquetas visuales; ajusta el espaciado entre letras para darle estilo a los títulos; define el color del texto para mantener el contraste necesario. */
+.historia-detalle__info-item > span {
             font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 0.08em;
             color: rgba(43, 57, 144, 0.55);
         }
 
-        .historia-detalle__info-item > strong {
+        /* ajusta el tamaño de fuente para jerarquizar el texto mostrado; modifica el peso tipográfico para enfatizar información importante; define el color del texto para mantener el contraste necesario. */
+.historia-detalle__info-item > strong {
             font-size: 1.1rem;
             font-weight: 600;
             color: var(--text-dark);
         }
 
-        .historia-detalle__info-item > small {
+        /* ajusta el tamaño de fuente para jerarquizar el texto mostrado; define el color del texto para mantener el contraste necesario. */
+.historia-detalle__info-item > small {
             font-size: 0.85rem;
             color: rgba(43, 57, 144, 0.6);
         }
 
-        .historia-detalle__body {
+        /* usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad. */
+.historia-detalle__body {
             display: flex;
             flex-direction: column;
             gap: 24px;
         }
 
-        .historia-detalle__tabs {
+        /* usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad; establece un color de fondo que refuerza el contraste del módulo; redondea las esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire dentro del contenedor; dibuja bordes que delimitan secciones y tablas para guiar la mirada; añade sombras para generar profundidad y sensación de tarjeta flotante. */
+.historia-detalle__tabs {
             display: inline-flex;
             gap: 12px;
             background: rgba(255, 255, 255, 0.68);
@@ -452,7 +796,8 @@
             align-self: flex-start;
         }
 
-        .historia-detalle__tab {
+        /* dibuja bordes que delimitan secciones y tablas para guiar la mirada; establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario; modifica el peso tipográfico para enfatizar información importante; incorpora relleno para que el contenido respire dentro del contenedor; redondea las esquinas para suavizar la interfaz y evitar bordes duros; cambia el cursor para comunicar que el elemento es interactivo; agrega transiciones suaves que comunican interactividad. */
+.historia-detalle__tab {
             border: none;
             background: transparent;
             color: rgba(43, 57, 144, 0.6);
@@ -472,17 +817,20 @@
             outline-offset: 2px;
         }
 
-        .historia-detalle__tab.is-active {
+        /* aplica un degradado para lograr un fondo suave y moderno; define el color del texto para mantener el contraste necesario; añade sombras para generar profundidad y sensación de tarjeta flotante. */
+.historia-detalle__tab.is-active {
             background: linear-gradient(135deg, rgba(122, 168, 255, 0.28), rgba(178, 214, 255, 0.45));
             color: var(--text-dark);
             box-shadow: 0 6px 18px rgba(122, 168, 255, 0.25);
         }
 
-        .historia-detalle__panel {
+        /* ajusta detalles visuales para mantener coherencia con el resto del tablero. */
+.historia-detalle__panel {
             display: none;
         }
 
-        .historia-detalle__panel.is-active {
+        /* ajusta detalles visuales para mantener coherencia con el resto del tablero. */
+.historia-detalle__panel.is-active {
             display: block;
         }
 
@@ -497,23 +845,27 @@
             }
         }
 
-        .historia-detalle__section-header {
+        /* ajusta detalles visuales para mantener coherencia con el resto del tablero. */
+.historia-detalle__section-header {
             margin-bottom: 18px;
         }
 
-        .historia-detalle__section-header h3 {
+        /* separa el bloque de los elementos vecinos con márgenes claros; ajusta el tamaño de fuente para jerarquizar el texto mostrado; define el color del texto para mantener el contraste necesario. */
+.historia-detalle__section-header h3 {
             margin: 0;
             font-size: 1.2rem;
             color: var(--text-dark);
         }
 
-        .historia-detalle__section-header p {
+        /* separa el bloque de los elementos vecinos con márgenes claros; define el color del texto para mantener el contraste necesario; ajusta el tamaño de fuente para jerarquizar el texto mostrado. */
+.historia-detalle__section-header p {
             margin: 6px 0 0;
             color: rgba(43, 57, 144, 0.65);
             font-size: 0.95rem;
         }
 
-        .historia-detalle__timeline {
+        /* establece un color de fondo que refuerza el contraste del módulo; redondea las esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire dentro del contenedor; dibuja bordes que delimitan secciones y tablas para guiar la mirada; añade sombras para generar profundidad y sensación de tarjeta flotante; usa flexbox para organizar los elementos internos; establece alturas específicas que estabilizan la sección. */
+.historia-detalle__timeline {
             background: rgba(255, 255, 255, 0.78);
             border-radius: 24px;
             padding: 24px;
@@ -524,7 +876,8 @@
             height: 520px;
         }
 
-        .historia-detalle__timeline-list {
+        /* elimina viñetas para integrar las listas al diseño de tarjetas; separa el bloque de los elementos vecinos con márgenes claros; incorpora relleno para que el contenido respire dentro del contenedor; usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad. */
+.historia-detalle__timeline-list {
             list-style: none;
             margin: 0;
             padding: 0;
@@ -560,7 +913,8 @@
             }
         }
 
-        .consulta-item {
+        /* aplica un degradado para lograr un fondo suave y moderno; redondea las esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire dentro del contenedor; dibuja bordes que delimitan secciones y tablas para guiar la mirada; añade sombras para generar profundidad y sensación de tarjeta flotante. */
+.consulta-item {
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(241, 247, 255, 0.95));
             border-radius: 20px;
             padding: 20px 22px;
@@ -568,7 +922,8 @@
             box-shadow: 0 14px 30px rgba(140, 173, 255, 0.12);
         }
 
-        .consulta-item__header {
+        /* usa flexbox para organizar los elementos internos; distribuye el espacio horizontal para equilibrar la composición; controla la alineación vertical de los hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad. */
+.consulta-item__header {
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
@@ -577,7 +932,8 @@
             margin-bottom: 12px;
         }
 
-        .consulta-item__date {
+        /* ajusta el tamaño de fuente para jerarquizar el texto mostrado; modifica el peso tipográfico para enfatizar información importante; define el color del texto para mantener el contraste necesario; transforma el texto (uppercase/lowercase) para reforzar etiquetas visuales; ajusta el espaciado entre letras para darle estilo a los títulos. */
+.consulta-item__date {
             font-size: 0.9rem;
             font-weight: 600;
             color: rgba(43, 57, 144, 0.7);
@@ -585,20 +941,23 @@
             letter-spacing: 0.08em;
         }
 
-        .consulta-item__titulo {
+        /* ajusta el tamaño de fuente para jerarquizar el texto mostrado; separa el bloque de los elementos vecinos con márgenes claros; define el color del texto para mantener el contraste necesario. */
+.consulta-item__titulo {
             font-size: 1.15rem;
             margin: 0;
             color: var(--text-dark);
         }
 
-        .consulta-item__meta {
+        /* usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad. */
+.consulta-item__meta {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 12px;
         }
 
-        .consulta-item__meta-tag {
+        /* usa flexbox para organizar los elementos internos; controla la alineación vertical de los hijos dentro del contenedor flex/grid; define espacios homogéneos entre hijos para mejorar la legibilidad; establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario; modifica el peso tipográfico para enfatizar información importante; redondea las esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire dentro del contenedor; ajusta el tamaño de fuente para jerarquizar el texto mostrado. */
+.consulta-item__meta-tag {
             display: inline-flex;
             align-items: center;
             gap: 6px;
@@ -610,18 +969,21 @@
             font-size: 0.85rem;
         }
 
-        .consulta-item__body {
+        /* utiliza CSS Grid para distribuir el contenido con precisión; define espacios homogéneos entre hijos para mejorar la legibilidad. */
+.consulta-item__body {
             display: grid;
             gap: 14px;
         }
 
-        .consulta-item__block {
+        /* establece un color de fondo que refuerza el contraste del módulo; redondea las esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire dentro del contenedor. */
+.consulta-item__block {
             background: rgba(237, 244, 255, 0.6);
             border-radius: 16px;
             padding: 12px 14px;
         }
 
-        .consulta-item__block-title {
+        /* ajusta el tamaño de fuente para jerarquizar el texto mostrado; transforma el texto (uppercase/lowercase) para reforzar etiquetas visuales; ajusta el espaciado entre letras para darle estilo a los títulos; define el color del texto para mantener el contraste necesario. */
+.consulta-item__block-title {
             display: block;
             font-size: 0.78rem;
             text-transform: uppercase;
@@ -630,13 +992,15 @@
             margin-bottom: 6px;
         }
 
-        .consulta-item__block-text {
+        /* separa el bloque de los elementos vecinos con márgenes claros; define el color del texto para mantener el contraste necesario; controla el interlineado para mejorar la lectura de los párrafos. */
+.consulta-item__block-text {
             margin: 0;
             color: var(--text-dark);
             line-height: 1.5;
         }
 
-        .historia-detalle__form {
+        /* establece un color de fondo que refuerza el contraste del módulo; redondea las esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire dentro del contenedor; dibuja bordes que delimitan secciones y tablas para guiar la mirada; añade sombras para generar profundidad y sensación de tarjeta flotante. */
+.historia-detalle__form {
             background: rgba(255, 255, 255, 0.85);
             border-radius: 24px;
             padding: 24px 26px;
@@ -644,25 +1008,30 @@
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
         }
 
-        .consulta-form {
+        /* usa flexbox para organizar los elementos internos; define espacios homogéneos entre hijos para mejorar la legibilidad. */
+.consulta-form {
             display: flex;
             flex-direction: column;
             gap: 16px;
         }
 
-        .consulta-form__grid {
+        /* utiliza CSS Grid para distribuir el contenido con precisión; define espacios homogéneos entre hijos para mejorar la legibilidad. */
+.consulta-form__grid {
             display: grid;
             gap: 16px;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
         }
 
-        .consulta-form .form-group label {
+        /* modifica el peso tipográfico para enfatizar información importante; define el color del texto para mantener el contraste necesario. */
+.consulta-form .form-group label {
             font-weight: 600;
             color: var(--text-dark);
         }
 
-        .consulta-form .form-group input,
-        .consulta-form .form-group textarea {
+        /* fija límites de ancho para que el componente conserve su proporción; dibuja bordes que delimitan secciones y tablas para guiar la mirada; redondea las esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire dentro del contenedor; ajusta el tamaño de fuente para jerarquizar el texto mostrado; establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario; agrega transiciones suaves que comunican interactividad. */
+.consulta-form .form-group input,
+        /* establece alturas específicas que estabilizan la sección. */
+.consulta-form .form-group textarea {
             width: 100%;
             border: 1px solid rgba(122, 168, 255, 0.3);
             border-radius: var(--radius-md);
@@ -685,24 +1054,28 @@
             box-shadow: 0 0 0 4px rgba(156, 194, 255, 0.2);
         }
 
-        .consulta-alert {
+        /* redondea las esquinas para suavizar la interfaz y evitar bordes duros; incorpora relleno para que el contenido respire dentro del contenedor; modifica el peso tipográfico para enfatizar información importante. */
+.consulta-alert {
             border-radius: var(--radius-md);
             padding: 14px 16px;
             font-weight: 600;
             display: none;
         }
 
-        .consulta-alert.is-visible {
+        /* ajusta detalles visuales para mantener coherencia con el resto del tablero. */
+.consulta-alert.is-visible {
             display: block;
         }
 
-        .consulta-alert--success {
+        /* establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario; dibuja bordes que delimitan secciones y tablas para guiar la mirada. */
+.consulta-alert--success {
             background: rgba(138, 199, 174, 0.18);
             color: rgba(23, 120, 88, 0.95);
             border: 1px solid rgba(138, 199, 174, 0.45);
         }
 
-        .consulta-alert--error {
+        /* establece un color de fondo que refuerza el contraste del módulo; define el color del texto para mantener el contraste necesario; dibuja bordes que delimitan secciones y tablas para guiar la mirada. / */
+.consulta-alert--error {
             background: rgba(255, 179, 179, 0.18);
             color: rgba(186, 30, 30, 0.95);
             border: 1px solid rgba(255, 179, 179, 0.45);

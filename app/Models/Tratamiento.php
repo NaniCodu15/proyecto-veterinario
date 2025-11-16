@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Modelo para los tratamientos recetados durante una consulta.
+ */
 class Tratamiento extends Model
 {
     use HasFactory;
@@ -21,7 +24,9 @@ class Tratamiento extends Model
         'indicaciones',
     ];
 
-    // Relación: un tratamiento pertenece a una consulta
+    /**
+     * Cada tratamiento pertenece a la consulta en la que fue indicado.
+     */
     public function consulta()
     {
         return $this->belongsTo(Consulta::class, 'id_consulta', 'id_consulta');
