@@ -1,3 +1,4 @@
+{{-- Vista de autenticación para acceder al sistema --}}
 @extends('layouts.login')
 
 @push('styles')
@@ -6,34 +7,38 @@
 @endpush
 
 @section('content')
+{{-- Contenedor principal centrado del login --}}
 <div class="login-container">
     <div class="login-form">
-        {{-- Logo --}}
+        {{-- Sección con el logo institucional --}}
         <div class="login-logo">
             <img src="{{ asset('images/logoVet.png') }}" alt="Dra. Alfaro" class="logo" />
         </div>
 
-        {{-- Mensaje de error --}}
+        {{-- Mensaje de error cuando las credenciales son inválidas --}}
         @if($errors->has('email'))
             <div class="login-error" role="alert">Las credenciales no son correctas.</div>
         @endif
 
-        {{-- Formulario --}}
+        {{-- Formulario de inicio de sesión --}}
         <form method="POST" action="{{ route('login') }}">
             @csrf
 
             <div class="input-group">
+                {{-- Campo de correo electrónico --}}
                 <i class="fa-solid fa-envelope icon"></i>
                 <input type="email" name="email" id="email" placeholder=" " required>
                 <label for="email">Email:</label>
             </div>
 
             <div class="input-group">
+                {{-- Campo de contraseña --}}
                 <i class="fa-solid fa-lock icon"></i>
                 <input type="password" name="password" id="password" placeholder=" " required>
                 <label for="password">Contraseña:</label>
             </div>
 
+            {{-- Acción para enviar las credenciales --}}
             <button type="submit">Iniciar Sesión</button>
         </form>
 
