@@ -1,7 +1,9 @@
+/* Variante de tarjeta para el listado de citas. */
 .citas-card--list {
     background: linear-gradient(145deg, rgba(228, 240, 255, 0.95), rgba(255, 229, 244, 0.85));
 }
 
+/* Barra de acciones con filtros y búsqueda. */
 .citas-toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -11,6 +13,7 @@
     margin-bottom: 20px;
 }
 
+/* Campo de búsqueda con icono dentro de la barra. */
 .citas-search {
     display: flex;
     align-items: center;
@@ -25,11 +28,13 @@
     transition: border 0.2s ease, box-shadow 0.2s ease;
 }
 
+/* Resalta el contorno cuando el buscador tiene foco. */
 .citas-search:focus-within {
     border-color: rgba(95, 141, 229, 0.6);
     box-shadow: 0 0 0 4px rgba(95, 141, 229, 0.18);
 }
 
+/* Input de texto sin bordes dentro del buscador. */
 .citas-search input {
     border: none;
     background: transparent;
@@ -39,6 +44,7 @@
     flex: 1;
 }
 
+/* Alertas informativas que aparecen sobre la tabla. */
 .citas-alert {
     display: none;
     border-radius: var(--radius-md);
@@ -48,25 +54,30 @@
     box-shadow: 0 18px 36px rgba(122, 168, 255, 0.16);
 }
 
+/* Muestra la alerta cuando hay mensajes. */
 .citas-alert.is-visible {
     display: block;
 }
 
+/* Variante azul para información. */
 .citas-alert--info {
     background: rgba(122, 168, 255, 0.16);
     color: var(--primary-dark);
 }
 
+/* Variante verde para operaciones exitosas. */
 .citas-alert--success {
     background: rgba(74, 199, 161, 0.18);
     color: #1b9d78;
 }
 
+/* Variante roja para errores. */
 .citas-alert--error {
     background: rgba(255, 143, 143, 0.18);
     color: #d03f3f;
 }
 
+/* Contenedor de la tabla con fondo degradado y bordes redondeados. */
 .citas-table-wrapper {
     background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(228, 240, 255, 0.9));
     border-radius: var(--radius-xl);
@@ -75,6 +86,7 @@
     overflow: hidden;
 }
 
+/* Área desplazable que limita la altura de la tabla. */
 .citas-table-container {
     max-height: 460px;
     overflow-y: auto;
@@ -83,19 +95,23 @@
     scrollbar-color: rgba(122, 168, 255, 0.7) rgba(228, 240, 255, 0.6);
 }
 
+/* Tamaño de la barra de scroll personalizada. */
 .citas-table-container::-webkit-scrollbar {
     width: 8px;
 }
 
+/* Color de la pista del scrollbar. */
 .citas-table-container::-webkit-scrollbar-track {
     background: rgba(228, 240, 255, 0.6);
 }
 
+/* Estilo del pulgar del scrollbar. */
 .citas-table-container::-webkit-scrollbar-thumb {
     background: rgba(122, 168, 255, 0.7);
     border-radius: 999px;
 }
 
+/* Tabla principal que lista las citas agendadas. */
 .citas-table {
     width: 100%;
     table-layout: fixed;
@@ -104,12 +120,14 @@
     color: var(--text-dark);
 }
 
+/* Permite que el texto se ajuste dentro de las celdas. */
 .citas-table thead th,
 .citas-table tbody td {
     word-wrap: break-word;
     white-space: normal;
 }
 
+/* Define anchos específicos por columna para mantener alineación. */
 .citas-table th:nth-child(1),
 .citas-table td:nth-child(1) {
     width: 64px;
@@ -142,6 +160,7 @@
     width: 150px;
 }
 
+/* Encabezados pegajosos con fondo claro y sombra. */
 .citas-table thead th {
     text-align: left;
     padding: 18px 22px;
@@ -156,29 +175,35 @@
     box-shadow: inset 0 -1px 0 rgba(122, 168, 255, 0.25), 0 6px 12px rgba(122, 168, 255, 0.08);
 }
 
+/* Redondea la esquina superior izquierda de la tabla. */
 .citas-table thead th:first-child {
     border-top-left-radius: var(--radius-lg);
 }
 
+/* Redondea la esquina superior derecha de la tabla. */
 .citas-table thead th:last-child {
     border-top-right-radius: var(--radius-lg);
 }
 
+/* Filas del cuerpo con transición para hover. */
 .citas-table tbody tr {
     background: rgba(255, 255, 255, 0.9);
     transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
+/* Alterna el color de fondo en filas pares. */
 .citas-table tbody tr:nth-child(even) {
     background: rgba(247, 249, 255, 0.95);
 }
 
+/* Resalta la fila al pasar el cursor. */
 .citas-table tbody tr:hover {
     transform: translateY(-1px);
     background: rgba(228, 240, 255, 0.7);
     box-shadow: 0 18px 30px rgba(122, 168, 255, 0.18);
 }
 
+/* Celdas con padding generoso y tipografía base. */
 .citas-table td {
     padding: 18px 22px;
     border-bottom: 1px solid rgba(122, 168, 255, 0.14);
@@ -187,14 +212,17 @@
     color: var(--text-dark);
 }
 
+/* Permite que la columna de motivo use todo el espacio. */
 .citas-table__motivo {
     max-width: none;
 }
 
+/* Mantiene acciones en una sola línea. */
 .citas-table__acciones {
     white-space: nowrap;
 }
 
+/* Grupo de botones para cada fila de cita. */
 .citas-actions {
     display: flex;
     flex-wrap: wrap;
@@ -202,6 +230,7 @@
     align-items: center;
 }
 
+/* Botón circular para contactar por WhatsApp. */
 .citas-accion__whatsapp {
     display: inline-flex;
     align-items: center;
@@ -215,12 +244,14 @@
     transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
+/* Efecto de elevación al pasar el cursor. */
 .citas-accion__whatsapp:hover {
     transform: translateY(-2px);
     box-shadow: 0 16px 30px rgba(74, 199, 161, 0.25);
     background: rgba(74, 199, 161, 0.22);
 }
 
+/* Estado inactivo del botón de WhatsApp. */
 .citas-accion__whatsapp.is-disabled {
     background: rgba(101, 112, 147, 0.14);
     color: var(--text-muted);
@@ -228,6 +259,7 @@
     box-shadow: none;
 }
 
+/* Píldoras de estado para cada cita. */
 .cita-status {
     display: inline-flex;
     align-items: center;
@@ -240,35 +272,42 @@
     box-shadow: 0 10px 20px rgba(122, 168, 255, 0.16);
 }
 
+/* Estado pendiente en ámbar. */
 .cita-status--pending {
     background: rgba(255, 190, 118, 0.2);
     color: #c37a2d;
 }
 
+/* Estado informativo en azul. */
 .cita-status--info {
     background: rgba(122, 168, 255, 0.2);
     color: var(--primary-dark);
 }
 
+/* Estado exitoso en verde. */
 .cita-status--success {
     background: rgba(74, 199, 161, 0.2);
     color: #1b9d78;
 }
 
+/* Estado de advertencia en rosa. */
 .cita-status--warning {
     background: rgba(255, 159, 207, 0.2);
     color: #c74f8f;
 }
 
+/* Estado crítico en rojo. */
 .cita-status--danger {
     background: rgba(255, 143, 143, 0.22);
     color: #d03f3f;
 }
 
+/* Ajusta el ancho del modal de detalle de cita. */
 .modal-content--cita {
     width: min(540px, 92%);
 }
 
+/* Contenedor vertical para los datos de la cita. */
 .cita-detalle {
     display: flex;
     flex-direction: column;
@@ -276,6 +315,7 @@
     margin-top: 18px;
 }
 
+/* Fila con borde y fondo suave para pares etiqueta-valor. */
 .cita-detalle__row {
     display: flex;
     gap: 16px;
@@ -286,12 +326,14 @@
     border: 1px solid rgba(122, 168, 255, 0.16);
 }
 
+/* Etiqueta descriptiva del dato. */
 .cita-detalle__label {
     font-weight: 600;
     color: var(--text-muted);
     min-width: 140px;
 }
 
+/* Valor alineado a la derecha. */
 .cita-detalle__value {
     color: var(--text-dark);
     font-weight: 600;
@@ -299,23 +341,27 @@
     text-align: right;
 }
 
+/* Variante de fila para textos extensos. */
 .cita-detalle__row--full {
     flex-direction: column;
     align-items: flex-start;
 }
 
+/* Alinea a la izquierda y permite saltos de línea en textos largos. */
 .cita-detalle__row--full .cita-detalle__value {
     text-align: left;
     line-height: 1.5;
     white-space: pre-wrap;
 }
 
+/* Subtítulo introductorio para el formulario de estado. */
 .cita-estado__subtitle {
     margin-top: 0;
     color: var(--text-muted);
     font-size: 0.95rem;
 }
 
+/* Formulario para cambiar el estado de la cita. */
 .cita-estado-form {
     display: flex;
     flex-direction: column;
@@ -323,30 +369,35 @@
     margin-top: 18px;
 }
 
+/* Grupos de campos dentro del formulario de estado. */
 .cita-estado-form .form-group {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
 
+/* Contenedor de campos adicionales al reprogramar. */
 .reprogramar-campos {
     display: grid;
     gap: 16px;
     margin-top: 16px;
 }
 
+/* Divide los campos en dos columnas en pantallas medianas. */
 @media (min-width: 768px) {
     .reprogramar-campos {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
+/* Acciones alineadas a la derecha en el modal. */
 .cita-estado-actions {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
 }
 
+/* Estilo para el mensaje de tabla vacía. */
 .citas-table__empty td {
     text-align: center;
     color: var(--text-muted);

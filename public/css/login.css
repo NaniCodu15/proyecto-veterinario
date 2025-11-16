@@ -11,7 +11,7 @@ html, body {
     font-family: 'Poppins', sans-serif; /* Aplica la fuente importada a todo el contenido */
 }
 
-/* Contenedor principal */
+/* Contenedor principal que aloja el formulario frente al fondo. */
 .login-container {
     display: flex; /* Usa flexbox para alinear el contenido */
     justify-content: center; /* Centra horizontalmente el contenido */
@@ -24,7 +24,7 @@ html, body {
     padding-top: 60px; /* Espacio desde la parte superior */
 }
 
-/* Caja del formulario */
+/* Caja del formulario con sombra y bordes redondeados. */
 .login-form {
     background: #fff; /* Fondo blanco */
     padding: 20px 25px; /* Espaciado interno */
@@ -35,6 +35,7 @@ html, body {
     position: relative; /* Posición relativa para elementos internos posicionados absolutamente */
 }
 
+/* Alerta para mostrar errores de autenticación. */
 .login-error {
     background: rgba(242, 65, 215, 0.08); /* Fondo sutil */
     border: 1px solid rgba(242, 65, 215, 0.4); /* Borde fino y moderno */
@@ -47,6 +48,7 @@ html, body {
     text-align: center;
 }
 
+/* Logo centrado que encabeza el formulario. */
 .login-logo img.logo {
     width: 180px;      /* más pequeño */
     height: auto;

@@ -1,9 +1,11 @@
+/* Contenedor principal de la vista de historias clínicas. */
 .historias-wrapper {
     display: flex;
     flex-direction: column;
     gap: 24px;
 }
 
+/* Encabezado con título y acciones para las historias. */
 .historias-header {
     display: flex;
     align-items: center;
@@ -14,6 +16,7 @@
     border-bottom: 1px solid rgba(127, 169, 255, 0.18);
 }
 
+/* Sección destacada para crear nuevas historias clínicas. */
 .historias-create {
     display: grid;
     gap: 32px;
@@ -28,6 +31,7 @@
     overflow: hidden;
 }
 
+/* Burbuja decorativa que añade profundidad al panel de creación. */
 .historias-create::after {
     content: '';
     position: absolute;
@@ -40,6 +44,7 @@
     filter: blur(0.5px);
 }
 
+/* Columna de texto introductorio dentro del panel de creación. */
 .historias-create__content {
     display: flex;
     flex-direction: column;
@@ -49,6 +54,7 @@
     z-index: 1;
 }
 
+/* Insignia que resalta el bloque de creación. */
 .historias-create__badge {
     display: inline-flex;
     align-items: center;
@@ -61,10 +67,12 @@
     font-size: 0.85rem;
 }
 
+/* Título del panel de creación. */
 .historias-create__title {
     margin: 4px 0 0;
 }
 
+/* Descripción de beneficios o instrucciones. */
 .historias-create__text {
     margin: 0;
     color: var(--text-muted);
@@ -72,12 +80,14 @@
     font-size: 1rem;
 }
 
+/* Agrupa botones u opciones en el panel de creación. */
 .historias-create__actions {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
 }
 
+/* Tarjeta con checklist de ventajas o pasos a seguir. */
 .historias-create__panel {
     position: relative;
     z-index: 1;
@@ -92,12 +102,14 @@
     justify-content: center;
 }
 
+/* Encabezado de la tarjeta informativa. */
 .historias-create__panel-title {
     margin: 0;
     font-size: 1.15rem;
     color: var(--primary-dark);
 }
 
+/* Lista de beneficios presentada en columnas. */
 .historias-create__benefits {
     list-style: none;
     margin: 0;
@@ -107,6 +119,7 @@
     gap: 12px;
 }
 
+/* Cada punto de la lista de beneficios con icono. */
 .historias-create__benefits li {
     display: flex;
     align-items: flex-start;
@@ -116,15 +129,18 @@
     line-height: 1.5;
 }
 
+/* Icono de verificación para cada beneficio. */
 .historias-create__benefits li i {
     color: var(--accent-dark);
     margin-top: 4px;
 }
 
+/* Permite mostrar una alerta contextual en el panel. */
 .historias-create__alert {
     align-self: flex-start;
 }
 
+/* Bloque dedicado a información y acciones de respaldo. */
 .backup-panel {
     margin-top: 36px;
     background: linear-gradient(140deg, rgba(123, 164, 255, 0.22), rgba(255, 159, 207, 0.18));
@@ -137,12 +153,14 @@
     gap: 20px;
 }
 
+/* Agrupa textos descriptivos del respaldo. */
 .backup-panel__content {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
+/* Chip que etiqueta la sección de respaldo. */
 .backup-panel__badge {
     display: inline-flex;
     align-items: center;
@@ -156,16 +174,19 @@
     box-shadow: var(--shadow-lighter);
 }
 
+/* Icono decorativo dentro del chip. */
 .backup-panel__badge i {
     color: var(--accent-dark);
 }
 
+/* Título principal del panel de respaldo. */
 .backup-panel__title {
     margin: 0;
     font-size: 1.4rem;
     color: var(--primary-dark);
 }
 
+/* Texto explicativo sobre las copias de seguridad. */
 .backup-panel__text {
     margin: 0;
     max-width: 640px;
@@ -173,12 +194,14 @@
     line-height: 1.6;
 }
 
+/* Contenedor flexible para botones de respaldo. */
 .backup-panel__actions {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
 }
 
+/* Botones del panel de respaldo con íconos. */
 .backup-panel__button {
     display: inline-flex;
     align-items: center;
@@ -188,20 +211,24 @@
     justify-content: center;
 }
 
+/* Evita interacción mientras se procesa una acción. */
 .backup-panel__button.is-loading {
     pointer-events: none;
 }
 
+/* Muestra mensajes de estado relacionados al respaldo. */
 .backup-panel__alert {
     align-self: flex-start;
 }
 
+/* Sección que muestra el historial de respaldos. */
 .backup-log {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
+/* Estilos compartidos para el loader y estado vacío del log. */
 .backup-log__loader,
 .backup-log__empty {
     display: flex;
@@ -214,16 +241,19 @@
     color: var(--text-muted);
 }
 
+/* Íconos usados en el loader y en el estado vacío. */
 .backup-log__loader i,
 .backup-log__empty i {
     font-size: 1.1rem;
     color: var(--accent-dark);
 }
 
+/* Contenedor para permitir desplazamiento horizontal si es necesario. */
 .backup-log__wrapper {
     padding: 0;
 }
 
+/* Tabla que lista los registros de respaldo. */
 .backup-log__table {
     width: 100%;
     border-collapse: collapse;
@@ -231,6 +261,7 @@
     color: var(--text-dark);
 }
 
+/* Encabezados de la tabla con fondo degradado. */
 .backup-log__table thead th {
     background: linear-gradient(135deg, rgba(122, 168, 255, 0.22), rgba(255, 159, 207, 0.2));
     text-align: left;
@@ -240,26 +271,31 @@
     letter-spacing: 0.1em;
 }
 
+/* Filas del cuerpo con transición para hover. */
 .backup-log__table tbody tr {
     background: rgba(247, 249, 255, 0.95);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+/* Alterna el color de fondo en filas pares. */
 .backup-log__table tbody tr:nth-child(even) {
     background: rgba(255, 255, 255, 0.96);
 }
 
+/* Eleva la fila al pasar el cursor. */
 .backup-log__table tbody tr:hover {
     transform: translateY(-3px);
     box-shadow: 0 16px 32px rgba(127, 169, 255, 0.16);
 }
 
+/* Celdas con padding y separación inferior. */
 .backup-log__table td {
     padding: 16px 20px;
     border-bottom: 1px solid rgba(127, 169, 255, 0.12);
     font-size: 0.95rem;
 }
 
+/* Ruta del respaldo con tipografía monoespaciada. */
 .backup-log__path {
     font-family: 'Fira Code', 'JetBrains Mono', monospace;
     font-size: 0.9rem;
@@ -267,20 +303,24 @@
     word-break: break-all;
 }
 
+/* Estado en mayúsculas para mayor énfasis. */
 .backup-log__status {
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
 }
 
+/* Color verde para respaldos exitosos. */
 .backup-log__status--success {
     color: var(--success);
 }
 
+/* Color rojo para respaldos con error. */
 .backup-log__status--error {
     color: #d03f3f;
 }
 
+/* Ajustes para pantallas medianas. */
 @media (max-width: 900px) {
     .historias-create {
         padding: 32px;
@@ -291,6 +331,7 @@
     }
 }
 
+/* Contenedor de la tabla de consultas con borde y sombra. */
 .tabla-wrapper {
     background: var(--surface);
     border-radius: var(--radius-lg);
@@ -300,6 +341,7 @@
     overflow-x: auto;
 }
 
+/* Tabla principal de consultas médicas. */
 .tabla-consultas {
     width: 100%;
     border-collapse: collapse;
@@ -307,6 +349,7 @@
     color: var(--text-dark);
 }
 
+/* Encabezados de la tabla de consultas. */
 .tabla-consultas thead th {
     background: linear-gradient(135deg, rgba(122, 168, 255, 0.22), rgba(255, 159, 207, 0.22));
     text-align: left;
@@ -317,36 +360,43 @@
     color: var(--text-dark);
 }
 
+/* Filas del cuerpo con efecto hover. */
 .tabla-consultas tbody tr {
     background: rgba(247, 249, 255, 0.9);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+/* Fondo alterno para las filas pares. */
 .tabla-consultas tbody tr:nth-child(even) {
     background: rgba(255, 255, 255, 0.95);
 }
 
+/* Eleva la fila en hover para dar feedback. */
 .tabla-consultas tbody tr:hover {
     transform: translateY(-3px);
     box-shadow: 0 16px 32px rgba(127, 169, 255, 0.18);
 }
 
+/* Celdas con padding y separación inferior. */
 .tabla-consultas td {
     padding: 16px 18px;
     border-bottom: 1px solid rgba(127, 169, 255, 0.12);
     font-size: 0.95rem;
 }
 
+/* Resalta la primera columna con mayor peso. */
 .tabla-consultas td:first-child {
     font-weight: 600;
 }
 
+/* Distribuye acciones en la última columna. */
 .tabla-consultas td.acciones {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
+/* Optimiza la cabecera para móviles. */
 @media (max-width: 600px) {
     .historias-header {
         flex-direction: column;
