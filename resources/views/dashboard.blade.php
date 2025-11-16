@@ -1,19 +1,26 @@
+{{-- Plantilla principal del panel de control --}}
 @extends('layouts.app')
 
 @section('content')
 
 @push('scripts')
+    {{-- Librería para campos seleccionables mejorados --}}
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.4.0/dist/js/tom-select.complete.min.js"></script>
 @endpush
+{{-- Contenedor general de la vista del dashboard --}}
 <div class="dashboard-container">
-    <!-- SIDEBAR FIJO -->
+    {{-- Barra lateral fija con navegación principal --}}
     <div class="sidebar" id="sidebar">
+        {{-- Encabezado de la barra lateral con logotipo --}}
         <div class="sidebar-header">
             <img src="{{ asset('images/logoVet.png') }}" alt="Logo" class="sidebar-logo">
         </div>
 
+        {{-- Menú de navegación de módulos --}}
         <ul class="sidebar-menu">
+            {{-- Acceso directo a la sección de inicio --}}
             <li><a href="#" class="nav-link active" data-section="inicio"><i class="fas fa-home"></i><span>Inicio</span></a></li>
+            {{-- Navegación hacia el módulo de historias clínicas --}}
             <li class="sidebar-item sidebar-item--has-submenu">
                 <a href="#" class="nav-link" data-section="historias"><i class="fas fa-notes-medical"></i><span>Historias Clínicas</span></a>
                 <ul class="sidebar-submenu">
@@ -45,6 +52,7 @@
             $avatarUrl = $user?->profile_photo_url ?? 'https://ui-avatars.com/api/?name=' . urlencode($userName) . '&background=7aa8ff&color=ffffff';
         @endphp
 
+        {{-- Tarjeta con datos del usuario autenticado y cierre de sesión --}}
         <div class="user-card">
             <div class="user-card__info">
                 <div class="user-card__avatar">
@@ -64,9 +72,9 @@
         </div>
     </div>
 
-    <!-- CONTENIDO PRINCIPAL (CAMBIA SEGÚN OPCIÓN) -->
+    {{-- Contenido principal que cambia según la sección seleccionada --}}
     <div id="main-content" class="content">
-        <!-- SECCIÓN INICIO -->
+        {{-- Sección de bienvenida e indicadores principales --}}
         <div id="section-inicio" class="section active">
             <div class="home-hero">
                 <div class="home-hero__content">
@@ -89,6 +97,7 @@
                 </div>
             </div>
 
+            {{-- Cuadrícula de métricas principales del sistema --}}
             <div class="metrics-grid">
                 <article class="metric-card metric-card--patients">
                     <header class="metric-card__header">
@@ -163,6 +172,7 @@
                 </article>
             </div>
 
+            {{-- Panel con listado de próximas citas --}}
             <div class="overview-grid">
                 <section class="panel panel--appointments">
                     <div class="panel__header">
@@ -174,6 +184,7 @@
                     </div>
                     <ul class="appointment-list" id="citasProximasLista">
                         @forelse ($upcomingAppointments as $appointment)
+                            {{-- Definición de clases de estado según el estado de la cita --}}
                             @php
                                 $status = $appointment['estado'] ?? 'Pendiente';
                                 $statusClasses = [
@@ -184,6 +195,7 @@
                                 ];
                                 $statusClass = $statusClasses[$status] ?? 'is-pending';
                             @endphp
+                            {{-- Fila de cita próxima --}}
                             <li class="appointment-list__item">
                                 <div class="appointment-list__time">
                                     <span class="appointment-list__hour">{{ $appointment['hora'] ?? '--:--' }}</span>
@@ -196,6 +208,7 @@
                                 <span class="appointment-list__status {{ $statusClass }}">{{ $status }}</span>
                             </li>
                         @empty
+                            {{-- Mensaje cuando no hay citas próximas registradas --}}
                             <li class="appointment-list__item appointment-list__item--empty">
                                 <div>
                                     <p>No hay citas próximas registradas.</p>
@@ -209,19 +222,24 @@
             </div>
         </div>
 
+        {{-- Inclusión de la sección de creación de historias clínicas --}}
         @include('historias_clinicas')
 
+        {{-- Inclusión de la sección de historias ya registradas --}}
         @include('historias_registradas')
 
 
 
+        {{-- Inclusión del formulario de registro de citas --}}
         @include('citas')
 
+        {{-- Inclusión del listado de citas agendadas --}}
         @include('citas_agendadas')
 
     </div>
 </div>
 
+{{-- Modal de confirmación para acciones sensibles --}}
 <div id="confirmModal" class="confirm-modal" role="alertdialog" aria-modal="true" aria-labelledby="confirmModalMessage" hidden>
     <div class="confirm-modal__dialog">
         <p id="confirmModalMessage" class="confirm-modal__message">¿Desea anular esta historia clínica?</p>
@@ -233,6 +251,7 @@
 </div>
 
 
+{{-- Configuración JSON para rutas utilizadas por los scripts del dashboard --}}
 <div id="dashboard-config" hidden>
     {!! json_encode([
         'historiaListUrl' => route('historia_clinicas.list'),
@@ -251,6 +270,7 @@
 
 
 @push('styles')
+    {{-- Hojas de estilo externas e internas para las secciones del dashboard --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.4.0/dist/css/tom-select.default.min.css">
     <link rel="stylesheet" href="{{ asset('css/historias_clinicas.css') }}">
     <link rel="stylesheet" href="{{ asset('css/historias_registradas.css') }}">
@@ -259,6 +279,7 @@
 @endpush
 
 @push('scripts')
+    {{-- Script principal del dashboard que gestiona las interacciones --}}
     <script src="{{ asset('js/dashboard.js') }}"></script>
 @endpush
 
