@@ -39,8 +39,12 @@
                             <div class="cita-form__group">
                                 <label for="citaMascotaNombre">Nombre de la mascota</label>
                                 <input type="text" id="citaMascotaNombre" readonly>
-                            </div>
-                        </div>
+    </div>
+</div>
+
+@push('scripts')
+    <script src="{{ asset('js/citas.js') }}"></script>
+@endpush
 
                         <div class="cita-form__group">
                             <label for="citaMotivo">Motivo de la cita</label>

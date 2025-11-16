@@ -62,9 +62,13 @@
                             </thead>
                             <tbody data-backup-body></tbody>
                         </table>
-                    </div>
-                </div>
-            </div>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+    <script src="{{ asset('js/historias_clinicas.js') }}"></script>
+@endpush
         </div>
 
         <!-- MODAL NUEVA/EDITAR HISTORIA -->
