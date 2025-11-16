@@ -37,22 +37,10 @@
             <button type="submit">Iniciar Sesión</button>
         </form>
 
-{{-- Script para ocultar el mensaje de error al escribir --}}
-        <script>
-            // Selecciona todos los inputs del formulario
-            const inputs = document.querySelectorAll('.login-form input');
-            const errorDiv = document.querySelector('.login-form .login-error');
-
-            if(errorDiv){
-                inputs.forEach(input => {
-                    input.addEventListener('input', () => {
-                        // Oculta el mensaje de error al escribir
-                        errorDiv.style.display = 'none';
-                    });
-                });
-            }
-        </script>
-
-    </div> 
-</div> 
+    </div>
+</div>
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('js/login.js') }}"></script>
+@endpush
