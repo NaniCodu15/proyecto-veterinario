@@ -223,18 +223,18 @@
         </div>
 
         {{-- Inclusión de la sección de creación de historias clínicas --}}
-        @include('historias_clinicas')
+        @include('layouts.historias_clinicas')
 
         {{-- Inclusión de la sección de historias ya registradas --}}
-        @include('historias_registradas')
+        @include('layouts.historias_registradas')
 
 
 
         {{-- Inclusión del formulario de registro de citas --}}
-        @include('citas')
+        @include('layouts.citas')
 
         {{-- Inclusión del listado de citas agendadas --}}
-        @include('citas_agendadas')
+        @include('layouts.citas_agendadas')
 
     </div>
 </div>
