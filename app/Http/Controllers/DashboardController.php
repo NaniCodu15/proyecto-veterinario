@@ -71,7 +71,7 @@ class DashboardController extends Controller
             'totalHistorias',
             'totalConsultas',
             'mascotas',
-            'upcomingAppointments',
+            'upcomingAppointments'
         ));
     }
 }
