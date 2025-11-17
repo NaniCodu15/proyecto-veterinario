@@ -7,7 +7,6 @@ use App\Models\Mascota;
 use App\Models\Propietario;
 use App\Models\HistoriaClinica;
 use App\Models\Consulta;
-use App\Models\Vacuna;
 use App\Models\Cita;
 use Carbon\Carbon;
 
@@ -25,13 +24,11 @@ class DashboardController extends Controller
         $totalPropietarios = Propietario::count();
         $totalHistorias = HistoriaClinica::count();
         $totalConsultas = Consulta::count();
-        $totalVacunas = Vacuna::count();
 
         // Mascotas con sus relaciones para la tabla
         $mascotas = Mascota::with([
             'propietario',
             'historiaClinica.consultas',
-            'historiaClinica.vacunas'
         ])->paginate(10); // Paginación de 10 por página
 
         $today = Carbon::today();
@@ -73,7 +70,6 @@ class DashboardController extends Controller
             'totalPropietarios',
             'totalHistorias',
             'totalConsultas',
-            'totalVacunas',
             'mascotas',
             'upcomingAppointments',
         ));
