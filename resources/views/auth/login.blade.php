@@ -1,5 +1,5 @@
 {{-- Vista de autenticación para acceder al sistema --}}
-@extends('layouts.login')
+@extends('layouts.app')
 
 @push('styles')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
