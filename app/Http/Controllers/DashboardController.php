@@ -65,7 +65,7 @@ class DashboardController extends Controller
                 ];
             });
 
-        return view('dashboard', compact(
+        return view('layouts.dashboard', compact(
             'totalMascotas',
             'totalPropietarios',
             'totalHistorias',
