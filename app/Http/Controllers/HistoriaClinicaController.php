@@ -337,7 +337,7 @@ class HistoriaClinicaController extends Controller
      * Recupera la historia clínica con todas sus relaciones necesarias para vistas y PDFs.
      *
      * @param int|string $id Identificador de la historia clínica.
-     * @return HistoriaClinica Modelo cargado con mascota, propietario, consultas y tratamientos.
+     * @return HistoriaClinica Modelo cargado con mascota, propietario y consultas.
      */
     private function obtenerHistoriaCompleta($id): HistoriaClinica
     {
@@ -346,7 +346,6 @@ class HistoriaClinicaController extends Controller
             'consultas' => fn ($query) => $query
                 ->orderBy('fecha_consulta')
                 ->orderBy('id_consulta'),
-            'consultas.tratamientos' => fn ($query) => $query->orderBy('id_tratamiento'),
         ])->findOrFail($id);
     }
 
@@ -372,14 +371,7 @@ class HistoriaClinicaController extends Controller
                 'observaciones' => $consulta->observaciones,
                 'peso' => $consulta->peso,
                 'temperatura' => $consulta->temperatura,
-                'tratamientos_detallados' => $consulta->tratamientos->map(fn ($tratamiento) => [
-                    'medicamento' => $tratamiento->medicamento,
-                    'dosis' => $tratamiento->dosis,
-                    'duracion' => $tratamiento->duracion,
-                    'indicaciones' => $tratamiento->indicaciones,
-                ])->filter(function ($datos) {
-                    return collect($datos)->filter()->isNotEmpty();
-                })->values(),
+                'tratamientos_detallados' => collect(),
             ];
         })->values();
 

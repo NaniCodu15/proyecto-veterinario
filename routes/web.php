@@ -7,7 +7,6 @@ use App\Http\Controllers\HistoriaClinicaController;
 use App\Http\Controllers\CitaController;
 use App\Http\Controllers\MascotaController;
 use App\Http\Controllers\PropietarioController;
-use App\Http\Controllers\TratamientoController;
 use App\Http\Controllers\VacunaController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\BackupController;
@@ -44,8 +43,6 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('mascotas', MascotaController::class);
     // Rutas REST protegidas: CRUD de propietarios gestionadas por PropietarioController para el módulo de clientes.
     Route::resource('propietarios', PropietarioController::class);
-    // Rutas REST protegidas: CRUD de tratamientos gestionadas por TratamientoController para el módulo de tratamientos.
-    Route::resource('tratamientos', TratamientoController::class);
     // Rutas REST protegidas: CRUD de vacunas gestionadas por VacunaController para el módulo de inmunizaciones.
     Route::resource('vacunas', VacunaController::class);
 
