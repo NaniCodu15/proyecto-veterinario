@@ -44,12 +44,4 @@ class Consulta extends Model
         return $this->belongsTo(HistoriaClinica::class, 'id_historia', 'id_historia');
     }
 
-    /**
-     * Relación: una consulta puede tener muchos tratamientos recetados.
-     * Los tratamientos se obtienen con $consulta->tratamientos.
-     */
-    public function tratamientos()
-    {
-        return $this->hasMany(Tratamiento::class, 'id_consulta', 'id_consulta');
-    }
 }
