@@ -21,7 +21,7 @@
         @endif
 
         {{-- Formulario de inicio de sesión --}}
-        <form method="POST" action="{{ route('login') }}">
+        <form method="POST" action="{{ route('login.post') }}">
             @csrf
 
             <div class="input-group">
