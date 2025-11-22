@@ -1,5 +1,10 @@
+        @php
+            $isAsistente = auth()->user()?->isAsistente();
+        @endphp
+
         {{-- Sección para registrar nuevas citas --}}
         <div id="section-citas" class="section">
+            @if ($isAsistente)
             <div class="citas-grid citas-grid--single">
                 {{-- Tarjeta principal del formulario de cita --}}
                 <section class="citas-card" id="registrarCitaCard">
@@ -83,4 +88,15 @@
                     </form>
                 </section>
             </div>
+            @else
+                <div class="citas-card citas-card--list">
+                    <div class="citas-card__header">
+                        <div>
+                            <h2>Registro de citas</h2>
+                            <p>Solo el rol de asistente puede registrar o editar citas.</p>
+                        </div>
+                        <div class="citas-card__icon" aria-hidden="true"><i class="fas fa-user-lock"></i></div>
+                    </div>
+                </div>
+            @endif
         </div>

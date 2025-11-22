@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Consulta;
 use App\Models\HistoriaClinica;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
@@ -18,6 +19,10 @@ class ConsultaController extends Controller
      */
     public function index(Request $request)
     {
+        if (!$this->userHasRole([User::ROLE_ASISTENTE])) {
+            return $this->redirectNoPermission();
+        }
+
         $historiaId = $request->query('id_historia');
 
         $consultas = Consulta::query()
@@ -38,6 +43,10 @@ class ConsultaController extends Controller
      */
     public function store(Request $request)
     {
+        if (!$this->userHasRole([User::ROLE_ASISTENTE])) {
+            return $this->redirectNoPermission();
+        }
+
         $validated = $this->validarConsulta($request);
 
         $historia = HistoriaClinica::findOrFail($validated['id_historia']);
@@ -63,6 +72,10 @@ class ConsultaController extends Controller
      */
     public function show(Consulta $consulta)
     {
+        if (!$this->userHasRole([User::ROLE_ASISTENTE])) {
+            return $this->redirectNoPermission();
+        }
+
         return response()->json([
             'consulta' => $this->formatearConsulta($consulta),
         ]);
@@ -77,6 +90,10 @@ class ConsultaController extends Controller
      */
     public function update(Request $request, Consulta $consulta)
     {
+        if (!$this->userHasRole([User::ROLE_ASISTENTE])) {
+            return $this->redirectNoPermission();
+        }
+
         $validated = $this->validarConsulta($request, $consulta);
 
         if ($consulta->id_historia !== (int) $validated['id_historia']) {
@@ -104,6 +121,10 @@ class ConsultaController extends Controller
      */
     public function destroy(Consulta $consulta)
     {
+        if (!$this->userHasRole([User::ROLE_ASISTENTE])) {
+            return $this->redirectNoPermission();
+        }
+
         $consulta->loadMissing('historiaClinica');
         $historia = $consulta->historiaClinica;
         $consulta->delete();
@@ -120,6 +141,10 @@ class ConsultaController extends Controller
      */
     public function porHistoria($historiaId)
     {
+        if (!$this->userHasRole([User::ROLE_ASISTENTE])) {
+            return $this->redirectNoPermission();
+        }
+
         $historia = HistoriaClinica::findOrFail($historiaId);
 
         $consultas = $historia->consultas()

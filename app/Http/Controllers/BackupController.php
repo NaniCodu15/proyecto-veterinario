@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\RespaldoDato;
 use App\Services\BackupService;
 use Illuminate\Http\JsonResponse;
+use App\Models\User;
 
 class BackupController extends Controller
 {
@@ -24,6 +25,10 @@ class BackupController extends Controller
      */
     public function generate(): JsonResponse
     {
+        if (!$this->userHasRole([User::ROLE_ADMIN])) {
+            return $this->redirectNoPermission();
+        }
+
         $result = $this->backupService->generate();
 
         return response()->json($result['data'], $result['status']);
@@ -36,6 +41,10 @@ class BackupController extends Controller
      */
     public function index(): JsonResponse
     {
+        if (!$this->userHasRole([User::ROLE_ADMIN])) {
+            return $this->redirectNoPermission();
+        }
+
         $this->backupService->cleanupLegacyBackupsDirectory();
 
         $respaldos = RespaldoDato::query()

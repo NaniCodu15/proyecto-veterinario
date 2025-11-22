@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use App\Models\Cita;
+use App\Models\User;
 use Carbon\Carbon;
 
 class CitaController extends Controller
@@ -20,6 +21,10 @@ class CitaController extends Controller
      */
     public function list(Request $request)
     {
+        if (!$this->userHasRole([User::ROLE_ADMIN, User::ROLE_ASISTENTE])) {
+            return $this->redirectNoPermission();
+        }
+
         $search = trim((string) $request->input('q', ''));
 
         $citasQuery = Cita::with(['historiaClinica.mascota.propietario']);
@@ -64,6 +69,10 @@ class CitaController extends Controller
      */
     public function upcoming(Request $request)
     {
+        if (!$this->userHasRole([User::ROLE_ADMIN, User::ROLE_ASISTENTE])) {
+            return $this->redirectNoPermission();
+        }
+
         $today = Carbon::today();
         $limitDate = $today->copy()->addDays(3);
 
@@ -88,6 +97,10 @@ class CitaController extends Controller
      */
     public function index()
     {
+        if (!$this->userHasRole([User::ROLE_ADMIN, User::ROLE_ASISTENTE])) {
+            return $this->redirectNoPermission();
+        }
+
         $citas = Cita::all();
         return view('citas.index', compact('citas'));
     }
@@ -99,6 +112,10 @@ class CitaController extends Controller
      */
     public function create()
     {
+        if (!$this->userHasRole([User::ROLE_ASISTENTE])) {
+            return $this->redirectNoPermission();
+        }
+
         return view('citas.create');
     }
 
@@ -110,6 +127,10 @@ class CitaController extends Controller
      */
     public function store(Request $request)
     {
+        if (!$this->userHasRole([User::ROLE_ASISTENTE])) {
+            return $this->redirectNoPermission();
+        }
+
         $validated = $request->validate([
             'fecha_cita' => ['required', 'date'],
             'hora_cita' => ['required', 'date_format:H:i'],
@@ -146,6 +167,10 @@ class CitaController extends Controller
      */
     public function show(Cita $cita)
     {
+        if (!$this->userHasRole([User::ROLE_ADMIN, User::ROLE_ASISTENTE])) {
+            return $this->redirectNoPermission();
+        }
+
         return view('citas.show', compact('cita'));
     }
 
@@ -157,6 +182,10 @@ class CitaController extends Controller
      */
     public function edit(Cita $cita)
     {
+        if (!$this->userHasRole([User::ROLE_ASISTENTE])) {
+            return $this->redirectNoPermission();
+        }
+
         return view('citas.edit', compact('cita'));
     }
 
@@ -169,6 +198,10 @@ class CitaController extends Controller
      */
     public function update(Request $request, Cita $cita)
     {
+        if (!$this->userHasRole([User::ROLE_ASISTENTE])) {
+            return $this->redirectNoPermission();
+        }
+
         $request->validate([
             'fecha_cita' => 'required|date',
             'hora_cita' => 'required',
@@ -193,6 +226,10 @@ class CitaController extends Controller
      */
     public function destroy(Request $request, Cita $cita)
     {
+        if (!$this->userHasRole([User::ROLE_ADMIN])) {
+            return $this->redirectNoPermission();
+        }
+
         $cita->delete();
 
         if ($request->expectsJson()) {
@@ -214,6 +251,10 @@ class CitaController extends Controller
      */
     public function updateEstado(Request $request, Cita $cita)
     {
+        if (!$this->userHasRole([User::ROLE_ASISTENTE])) {
+            return $this->redirectNoPermission();
+        }
+
         $validated = $request->validate([
             'estado' => ['required', 'string', Rule::in(self::ESTADOS_PERMITIDOS)],
             'fecha_cita' => ['nullable', 'date'],

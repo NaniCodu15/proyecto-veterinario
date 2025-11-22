@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\HistoriaClinica;
 use App\Models\Mascota;
 use App\Models\Propietario;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -22,6 +23,10 @@ class HistoriaClinicaController extends Controller
      */
     public function list()
     {
+        if (!$this->userHasRole([User::ROLE_ADMIN, User::ROLE_ASISTENTE])) {
+            return $this->redirectNoPermission();
+        }
+
         $historias = HistoriaClinica::with(['mascota.propietario'])
             ->orderByDesc('fecha_apertura')
             ->orderByDesc('created_at')
@@ -40,6 +45,10 @@ class HistoriaClinicaController extends Controller
      */
     public function store(Request $request)
     {
+        if (!$this->userHasRole([User::ROLE_ASISTENTE])) {
+            return $this->redirectNoPermission();
+        }
+
         $validated = $request->validate([
             'nombreMascota' => ['required', 'string', 'max:100'],
             'especie' => ['required', Rule::in(['perro', 'gato', 'otro'])],
@@ -131,6 +140,10 @@ class HistoriaClinicaController extends Controller
      */
     public function show($id)
     {
+        if (!$this->userHasRole([User::ROLE_ADMIN, User::ROLE_ASISTENTE])) {
+            return $this->redirectNoPermission();
+        }
+
         $historia = HistoriaClinica::with([
             'mascota.propietario',
             'consultas' => fn ($query) => $query
@@ -155,6 +168,10 @@ class HistoriaClinicaController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (!$this->userHasRole([User::ROLE_ASISTENTE])) {
+            return $this->redirectNoPermission();
+        }
+
         $validated = $request->validate([
             'nombreMascota' => ['required', 'string', 'max:100'],
             'especie' => ['required', Rule::in(['perro', 'gato', 'otro'])],
@@ -231,6 +248,10 @@ class HistoriaClinicaController extends Controller
      */
     public function destroy($id)
     {
+        if (!$this->userHasRole([User::ROLE_ADMIN])) {
+            return $this->redirectNoPermission();
+        }
+
         HistoriaClinica::findOrFail($id)->delete();
         return response()->json(['success' => true]);
     }
@@ -243,6 +264,10 @@ class HistoriaClinicaController extends Controller
      */
     public function ver($id)
     {
+        if (!$this->userHasRole([User::ROLE_ADMIN, User::ROLE_ASISTENTE])) {
+            return $this->redirectNoPermission();
+        }
+
         $historia = $this->obtenerHistoriaCompleta($id);
 
         $codigo = $historia->numero_historia ?: sprintf('HC-%05d', $historia->id_historia);
@@ -264,6 +289,10 @@ class HistoriaClinicaController extends Controller
      */
     public function pdf(Request $request, $id)
     {
+        if (!$this->userHasRole([User::ROLE_ADMIN, User::ROLE_ASISTENTE])) {
+            return $this->redirectNoPermission();
+        }
+
         $historia = $this->obtenerHistoriaCompleta($id);
         $codigo = $historia->numero_historia ?: sprintf('HC-%05d', $historia->id_historia);
 

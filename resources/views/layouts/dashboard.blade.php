@@ -50,6 +50,8 @@
             $userName = $user?->name ?? 'Usuario';
             $userEmail = $user?->email ?? 'usuario@correo.com';
             $avatarUrl = $user?->profile_photo_url ?? 'https://ui-avatars.com/api/?name=' . urlencode($userName) . '&background=7aa8ff&color=ffffff';
+            $isAdmin = $user?->isAdmin();
+            $isAsistente = $user?->isAsistente();
         @endphp
 
         {{-- Tarjeta con datos del usuario autenticado y cierre de sesión --}}
@@ -74,6 +76,11 @@
 
     {{-- Contenido principal que cambia según la sección seleccionada --}}
     <div id="main-content" class="content">
+        @if (session('error'))
+            <div class="alert alert-error" role="alert">
+                {{ session('error') }}
+            </div>
+        @endif
         {{-- Sección de bienvenida e indicadores principales --}}
         <div id="section-inicio" class="section active">
             <div class="home-hero">
@@ -255,16 +262,16 @@
 <div id="dashboard-config" hidden>
     {!! json_encode([
         'historiaListUrl' => route('historia_clinicas.list'),
-        'historiaStoreUrl' => route('historia_clinicas.store'),
+        'historiaStoreUrl' => $isAsistente ? route('historia_clinicas.store') : null,
         'historiaBaseUrl' => url('historia_clinicas'),
-        'consultaStoreUrl' => route('consultas.store'),
-        'citasStoreUrl' => route('citas.store'),
+        'consultaStoreUrl' => $isAsistente ? route('consultas.store') : null,
+        'citasStoreUrl' => $isAsistente ? route('citas.store') : null,
         'citasListUrl' => route('citas.list'),
-        'citasEstadoBaseUrl' => url('citas'),
+        'citasEstadoBaseUrl' => $isAsistente ? url('citas') : null,
         'citasBaseUrl' => url('citas'),
         'citasUpcomingUrl' => route('citas.upcoming'),
-        'backupGenerateUrl' => route('backups.generate'),
-        'backupListUrl' => route('backups.index'),
+        'backupGenerateUrl' => $isAdmin ? route('backups.generate') : null,
+        'backupListUrl' => $isAdmin ? route('backups.index') : null,
     ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
 </div>
 

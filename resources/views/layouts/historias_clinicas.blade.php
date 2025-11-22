@@ -1,3 +1,8 @@
+        @php
+            $isAdmin = auth()->user()?->isAdmin();
+            $isAsistente = auth()->user()?->isAsistente();
+        @endphp
+
         {{-- Sección para creación de historias clínicas --}}
         <div id="section-historias" class="section">
             <div class="historias-create">
@@ -8,10 +13,12 @@
                         Genera nuevas historias clínicas para cada paciente y mantén un seguimiento cálido y organizado de su bienestar.
                     </p>
                     <div class="historias-create__actions">
-                        <button id="btnNuevaHistoria" class="btn btn-primary">
-                            <i class="fas fa-plus"></i>
-                            Crear nueva historia
-                        </button>
+                        @if ($isAsistente)
+                            <button id="btnNuevaHistoria" class="btn btn-primary">
+                                <i class="fas fa-plus"></i>
+                                Crear nueva historia
+                            </button>
+                        @endif
                     </div>
                     {{-- Alerta informativa de resultados al crear historia --}}
                     <div class="alert historias-create__alert" role="status" aria-live="polite" data-historia-mensaje hidden></div>
@@ -26,6 +33,7 @@
                 </div>
             </div>
 
+            @if ($isAdmin)
             <div class="backup-panel" id="panelBackups">
                 {{-- Información de respaldo de datos --}}
                 <div class="backup-panel__content">
@@ -67,8 +75,9 @@
                             <tbody data-backup-body></tbody>
                         </table>
         </div>
-    </div>
-</div>
+            </div>
+            @endif
+        </div>
 
 @push('scripts')
     {{-- Script dedicado al manejo de historias clínicas --}}
@@ -176,7 +185,9 @@
 
                     <div class="form-actions">
                         {{-- Botón de guardado del formulario de historia clínica --}}
-                        <button type="submit" class="btn btn-success btn-guardar">Guardar</button>
+                        @if ($isAsistente)
+                            <button type="submit" class="btn btn-success btn-guardar">Guardar</button>
+                        @endif
                     </div>
                 </form>
             </div>

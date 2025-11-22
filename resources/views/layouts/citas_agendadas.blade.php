@@ -1,3 +1,8 @@
+        @php
+            $isAdmin = auth()->user()?->isAdmin();
+            $isAsistente = auth()->user()?->isAsistente();
+        @endphp
+
         {{-- Sección con el listado y gestión de citas agendadas --}}
         <div id="section-citas-agendadas" class="section">
             {{-- Tarjeta de agenda de citas --}}
@@ -105,7 +110,9 @@
                     <div class="cita-estado-actions">
                         {{-- Acciones para cerrar o guardar el cambio de estado --}}
                         <button type="button" class="btn btn-outline" data-close="estadoCita">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                        @if ($isAsistente)
+                            <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                        @endif
                     </div>
                 </form>
             </div>
