@@ -28,12 +28,14 @@ Route::middleware(['auth'])->group(function () {
     // Ruta protegida: panel de control general atendido por DashboardController@index para el módulo principal.
     Route::get('/dashboard', [DashboardController::class,'index'])->name('dashboard');
 
-    // Ruta protegida: listado JSON de citas (CitaController@list) para el módulo de citas.
-    Route::get('citas/list', [CitaController::class, 'list'])->name('citas.list');
-    // Ruta protegida: próximas citas pendientes (CitaController@upcoming) del módulo de citas.
-    Route::get('citas/upcoming', [CitaController::class, 'upcoming'])->name('citas.upcoming');
-    // Ruta protegida: actualización de estado de cita (CitaController@updateEstado) para flujo de gestión de citas.
-    Route::patch('citas/{cita}/estado', [CitaController::class, 'updateEstado'])->name('citas.estado');
+    Route::middleware(['role:asistente'])->group(function () {
+        // Ruta protegida: listado JSON de citas (CitaController@list) para el módulo de citas.
+        Route::get('citas/list', [CitaController::class, 'list'])->name('citas.list');
+        // Ruta protegida: próximas citas pendientes (CitaController@upcoming) del módulo de citas.
+        Route::get('citas/upcoming', [CitaController::class, 'upcoming'])->name('citas.upcoming');
+        // Ruta protegida: actualización de estado de cita (CitaController@updateEstado) para flujo de gestión de citas.
+        Route::patch('citas/{cita}/estado', [CitaController::class, 'updateEstado'])->name('citas.estado');
+    });
 
     // Rutas REST protegidas: CRUD de consultas gestionadas por ConsultaController para el módulo de consultas.
     Route::resource('consultas', ConsultaController::class);
@@ -46,10 +48,12 @@ Route::middleware(['auth'])->group(function () {
     // Rutas REST protegidas: CRUD de vacunas gestionadas por VacunaController para el módulo de inmunizaciones.
     Route::resource('vacunas', VacunaController::class);
 
-    // Ruta protegida: generación de respaldo (BackupController@generate) para el módulo de copias de seguridad.
-    Route::post('backups/generate', [BackupController::class, 'generate'])->name('backups.generate');
-    // Ruta protegida: listado de respaldos (BackupController@index) para el módulo de copias de seguridad.
-    Route::get('backups', [BackupController::class, 'index'])->name('backups.index');
+    Route::middleware(['role:admin'])->group(function () {
+        // Ruta protegida: generación de respaldo (BackupController@generate) para el módulo de copias de seguridad.
+        Route::post('backups/generate', [BackupController::class, 'generate'])->name('backups.generate');
+        // Ruta protegida: listado de respaldos (BackupController@index) para el módulo de copias de seguridad.
+        Route::get('backups', [BackupController::class, 'index'])->name('backups.index');
+    });
 
     // Ruta protegida: listado AJAX de historias clínicas (HistoriaClinicaController@list) para el módulo de historias.
     Route::get('historia_clinicas/list', [HistoriaClinicaController::class,'list'])->name('historia_clinicas.list');
