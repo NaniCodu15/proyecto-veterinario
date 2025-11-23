@@ -65,13 +65,34 @@ class DashboardController extends Controller
                 ];
             });
 
+        $historias = HistoriaClinica::with(['mascota.propietario'])
+            ->orderByDesc('fecha_apertura')
+            ->orderByDesc('created_at')
+            ->get()
+            ->map(function (HistoriaClinica $historia) {
+                $mascota = $historia->mascota;
+                $propietario = $mascota?->propietario;
+                $nombrePropietario = trim(($propietario->nombres ?? '') . ' ' . ($propietario->apellidos ?? ''));
+
+                return [
+                    'id' => $historia->id_historia,
+                    'numero_historia' => $historia->numero_historia,
+                    'mascota' => $mascota?->nombre ?? 'Sin nombre',
+                    'propietario' => $nombrePropietario !== '' ? $nombrePropietario : 'Sin propietario',
+                    'propietario_dni' => $propietario->dni ?? null,
+                    'fecha_apertura' => optional($historia->fecha_apertura)->format('d/m/Y'),
+                ];
+            })
+            ->values();
+
         return view('layouts.dashboard', compact(
             'totalMascotas',
             'totalPropietarios',
             'totalHistorias',
             'totalConsultas',
             'mascotas',
-            'upcomingAppointments'
+            'upcomingAppointments',
+            'historias'
         ));
     }
 }

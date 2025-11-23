@@ -242,12 +242,12 @@
         </div>
 
         {{-- Inclusión de la sección de creación y gestión de historias clínicas --}}
-        @if ($isAssistant || $isAdmin)
-            @include('layouts.historias_clinicas')
+        @include('layouts.historias_clinicas')
 
-            {{-- Inclusión de la sección de historias ya registradas --}}
+        {{-- Inclusión de la sección de historias ya registradas --}}
+        <div id="section-historias-registradas" class="section">
             @include('layouts.historias_registradas')
-        @endif
+        </div>
 
 
 
@@ -283,6 +283,7 @@
         'historiaStoreUrl' => route('historia_clinicas.store'),
         'historiaBaseUrl' => url('historia_clinicas'),
         'consultaStoreUrl' => route('consultas.store'),
+        'historias' => $historias ?? [],
         'citasStoreUrl' => route('citas.store'),
         'citasListUrl' => route('citas.list'),
         'citasEstadoBaseUrl' => url('citas'),

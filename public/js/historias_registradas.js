@@ -17,6 +17,12 @@
         window.dashboardConfig = moduleConfig;
     }
 
+    if (!Array.isArray(moduleConfig.historias)) {
+        moduleConfig.historias = [];
+    }
+
+    window.dashboardConfig = moduleConfig;
+
     // Rutas y tokens utilizados para obtener historias, consultas y registrar nuevas consultas.
     const historiaListUrl = moduleConfig.historiaListUrl || '';
     const historiaBaseUrl = moduleConfig.historiaBaseUrl || '';
@@ -68,7 +74,7 @@
     };
 
     // Estados locales para manejo de listado, filtros y detalles.
-    let historiasRegistradas = [];
+    let historiasRegistradas = moduleConfig.historias;
     let terminoBusquedaHistorias = '';
     let historiaDetalleActual = null;
     let consultasDetalleActual = [];
@@ -586,6 +592,8 @@
 
         tablaHistorias.appendChild(fragment);
     }
+
+    renderHistorias(historiasRegistradas);
 
     // Petición AJAX para obtener historias clínicas y renderizarlas.
     async function cargarHistorias() {
