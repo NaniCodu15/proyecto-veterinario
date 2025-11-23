@@ -22,6 +22,9 @@
     const historiaBaseUrl = moduleConfig.historiaBaseUrl || '';
     const backupGenerateUrl = moduleConfig.backupGenerateUrl || '';
     const backupListUrl = moduleConfig.backupListUrl || '';
+    const userRole = (moduleConfig.role || '').toLowerCase();
+    const esAsistente = userRole === 'asistente';
+    const esAdmin = userRole === 'admin';
     const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
     const csrfToken = csrfTokenElement ? csrfTokenElement.getAttribute('content') : '';
 
@@ -430,7 +433,7 @@
 
     // Abre el modal de confirmación antes de anular una historia clínica.
     function abrirConfirmacionPara(id) {
-        if (!id) {
+        if (!id || !esAdmin) {
             return;
         }
 
@@ -490,6 +493,10 @@
             return;
         }
 
+        if (!esAdmin) {
+            return;
+        }
+
         try {
             const response = await fetch(`${historiaBaseUrl}/${id}`, {
                 method: 'DELETE',
@@ -514,21 +521,21 @@
     }
 
     // Botón para abrir el modal de creación de historia clínica.
-    if (btnNueva) {
+    if (btnNueva && esAsistente) {
         btnNueva.addEventListener('click', () => {
             abrirModalParaCrear();
         });
     }
 
     // Botón para solicitar la generación de un respaldo.
-    if (btnGenerarBackup) {
+    if (btnGenerarBackup && esAdmin) {
         btnGenerarBackup.addEventListener('click', () => {
             generarBackup();
         });
     }
 
     // Botón para listar los respaldos disponibles.
-    if (btnVerBackups) {
+    if (btnVerBackups && esAdmin) {
         btnVerBackups.addEventListener('click', async () => {
             mostrarMensajeBackup('');
             setButtonLoading(btnVerBackups, true, 'Cargando...');
@@ -561,7 +568,7 @@
     }
 
     // Evento submit del formulario: valida, prepara payload y envía creación/actualización vía fetch.
-    if (form) {
+    if (form && esAsistente) {
         form.addEventListener('submit', async event => {
             event.preventDefault();
 

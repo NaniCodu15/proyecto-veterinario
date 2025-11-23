@@ -21,6 +21,9 @@
     const citasListUrl = moduleConfig.citasListUrl || '';
     const citasEstadoBaseUrl = moduleConfig.citasEstadoBaseUrl || '';
     const citasBaseUrl = moduleConfig.citasBaseUrl || '';
+    const userRole = (moduleConfig.role || '').toLowerCase();
+    const puedeActualizarEstado = userRole === 'asistente';
+    const puedeAnularCita = userRole === 'admin';
     const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
     const csrfToken = csrfTokenElement ? csrfTokenElement.getAttribute('content') : '';
 
@@ -357,27 +360,32 @@
         btnDetalles.className = 'btn btn-outline btn-sm btnVerCita';
         btnDetalles.innerHTML = '<i class="fas fa-eye"></i> Ver detalles';
 
-        const btnEstado = document.createElement('button');
-        btnEstado.type = 'button';
-        btnEstado.className = 'btn btn-warning btn-sm btnEstadoCita';
-        btnEstado.innerHTML = '<i class="fas fa-exchange-alt"></i> Cambiar estado';
-
-        const btnAnular = document.createElement('button');
-        btnAnular.type = 'button';
-        btnAnular.className = 'btn btn-danger btn-sm btnAnularCita';
-        btnAnular.innerHTML = '<i class="fas fa-ban"></i> Anular';
-
-        if (String(cita.estado || '').trim().toLowerCase() === 'atendida') {
-            btnEstado.disabled = true;
-            btnEstado.classList.add('is-disabled');
-            btnEstado.setAttribute('aria-disabled', 'true');
-            btnEstado.title = 'Las citas atendidas no pueden modificarse.';
-        }
-
         accionesWrapper.appendChild(whatsappLink);
         accionesWrapper.appendChild(btnDetalles);
-        accionesWrapper.appendChild(btnEstado);
-        accionesWrapper.appendChild(btnAnular);
+
+        if (puedeActualizarEstado) {
+            const btnEstado = document.createElement('button');
+            btnEstado.type = 'button';
+            btnEstado.className = 'btn btn-warning btn-sm btnEstadoCita';
+            btnEstado.innerHTML = '<i class="fas fa-exchange-alt"></i> Cambiar estado';
+
+            if (String(cita.estado || '').trim().toLowerCase() === 'atendida') {
+                btnEstado.disabled = true;
+                btnEstado.classList.add('is-disabled');
+                btnEstado.setAttribute('aria-disabled', 'true');
+                btnEstado.title = 'Las citas atendidas no pueden modificarse.';
+            }
+
+            accionesWrapper.appendChild(btnEstado);
+        }
+
+        if (puedeAnularCita) {
+            const btnAnular = document.createElement('button');
+            btnAnular.type = 'button';
+            btnAnular.className = 'btn btn-danger btn-sm btnAnularCita';
+            btnAnular.innerHTML = '<i class="fas fa-ban"></i> Anular';
+            accionesWrapper.appendChild(btnAnular);
+        }
         accionesCell.appendChild(accionesWrapper);
         fila.appendChild(accionesCell);
 
@@ -525,7 +533,7 @@
 
     // Envía al backend la actualización de estado (incluida reprogramación) de una cita.
     async function actualizarEstadoCita(id, cambios = {}) {
-        if (!id || !citasEstadoBaseUrl) {
+        if (!puedeActualizarEstado || !id || !citasEstadoBaseUrl) {
             throw new Error('No se pudo identificar la cita seleccionada.');
         }
 
@@ -557,7 +565,7 @@
     }
 
     async function eliminarCita(id) {
-        if (!id || !citasBaseUrl) {
+        if (!puedeAnularCita || !id || !citasBaseUrl) {
             throw new Error('No se pudo identificar la cita seleccionada.');
         }
 
@@ -625,6 +633,10 @@
 
             const cita = obtenerCitaPorId(id);
 
+            if (botonAnular && !puedeAnularCita) {
+                return;
+            }
+
             if (botonAnular) {
                 if (botonAnular.disabled) {
                     return;
@@ -659,11 +671,11 @@
                 return;
             }
 
-            if (botonEstado?.disabled) {
+            if (botonEstado?.disabled || (botonEstado && !puedeActualizarEstado)) {
                 return;
             }
 
-            if (botonEstado && cita) {
+            if (botonEstado && cita && puedeActualizarEstado) {
                 prepararModalEstado(cita);
             }
         });
@@ -709,7 +721,7 @@
         });
     }
 
-    if (formEstadoCita) {
+    if (formEstadoCita && puedeActualizarEstado) {
         formEstadoCita.addEventListener('submit', async event => {
             event.preventDefault();
 

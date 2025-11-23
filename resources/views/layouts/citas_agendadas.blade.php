@@ -1,3 +1,4 @@
+        @php($userRole = $userRole ?? 'asistente')
         {{-- Sección con el listado y gestión de citas agendadas --}}
         <div id="section-citas-agendadas" class="section">
             {{-- Tarjeta de agenda de citas --}}

@@ -33,7 +33,7 @@
                 </ul>
             </li>
             <li class="sidebar-item sidebar-item--has-submenu">
-                <a href="#" class="nav-link" data-section="citas"><i class="fas fa-calendar-alt"></i><span>Citas</span></a>
+                <a href="#" class="nav-link" data-section="{{ $userRole === 'asistente' ? 'citas' : 'citas-agendadas' }}"><i class="fas fa-calendar-alt"></i><span>Citas</span></a>
                 <ul class="sidebar-submenu">
                     <li>
                         <a href="#" class="nav-link nav-link--sublayer" data-section="citas-agendadas" data-parent="citas">
@@ -50,6 +50,7 @@
             $userName = $user?->name ?? 'Usuario';
             $userEmail = $user?->email ?? 'usuario@correo.com';
             $avatarUrl = $user?->profile_photo_url ?? 'https://ui-avatars.com/api/?name=' . urlencode($userName) . '&background=7aa8ff&color=ffffff';
+            $userRole = strtolower($user?->role ?? 'asistente');
         @endphp
 
         {{-- Tarjeta con datos del usuario autenticado y cierre de sesión --}}
@@ -223,18 +224,18 @@
         </div>
 
         {{-- Inclusión de la sección de creación de historias clínicas --}}
-        @include('layouts.historias_clinicas')
+        @include('layouts.historias_clinicas', ['userRole' => $userRole])
 
         {{-- Inclusión de la sección de historias ya registradas --}}
-        @include('layouts.historias_registradas')
+        @include('layouts.historias_registradas', ['userRole' => $userRole])
 
 
 
         {{-- Inclusión del formulario de registro de citas --}}
-        @include('layouts.citas')
+        @include('layouts.citas', ['userRole' => $userRole])
 
         {{-- Inclusión del listado de citas agendadas --}}
-        @include('layouts.citas_agendadas')
+        @include('layouts.citas_agendadas', ['userRole' => $userRole])
 
     </div>
 </div>
@@ -265,6 +266,7 @@
         'citasUpcomingUrl' => route('citas.upcoming'),
         'backupGenerateUrl' => route('backups.generate'),
         'backupListUrl' => route('backups.index'),
+        'role' => $userRole,
     ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
 </div>
 

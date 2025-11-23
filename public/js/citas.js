@@ -19,6 +19,8 @@
 
     // Rutas y tokens para enviar la cita registrada.
     const citasStoreUrl = moduleConfig.citasStoreUrl || '';
+    const userRole = (moduleConfig.role || '').toLowerCase();
+    const esAsistente = userRole === 'asistente';
     const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
     const csrfToken = csrfTokenElement ? csrfTokenElement.getAttribute('content') : '';
 
@@ -68,6 +70,10 @@
     }
 
     window.mostrarMensajeCita = mostrarMensajeCita;
+
+    if (!esAsistente) {
+        return;
+    }
 
     // Limpia los campos dependientes de la historia cuando no hay selección.
     function limpiarDatosHistoriaEnCita() {

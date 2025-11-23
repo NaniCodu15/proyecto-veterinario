@@ -33,8 +33,12 @@ let citasProximasIntervalId = null;
 
 // Muestra la sección cuyo id coincide con la clave recibida y oculta el resto.
 function showSection(key) {
+    const targetId = `section-${key}`;
+    const existeSeccion = sections.some(sec => sec.id === targetId);
+    const keyEfectivo = existeSeccion ? key : 'inicio';
+
     sections.forEach(sec => {
-        const activa = sec.id === `section-${key}`;
+        const activa = sec.id === `section-${keyEfectivo}`;
         sec.style.display = activa ? 'block' : 'none';
         sec.classList.toggle('active', activa);
     });

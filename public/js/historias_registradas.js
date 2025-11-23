@@ -21,6 +21,9 @@
     const historiaListUrl = moduleConfig.historiaListUrl || '';
     const historiaBaseUrl = moduleConfig.historiaBaseUrl || '';
     const consultaStoreUrl = moduleConfig.consultaStoreUrl || '';
+    const userRole = (moduleConfig.role || '').toLowerCase();
+    const esAsistente = userRole === 'asistente';
+    const esAdmin = userRole === 'admin';
     const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
     const csrfToken = csrfTokenElement ? csrfTokenElement.getAttribute('content') : '';
 
@@ -45,8 +48,8 @@
         observaciones: document.getElementById('consultaObservaciones'),
     };
 
-    const consultaTabs = Array.from(document.querySelectorAll('[data-tab-target]'));
-    const consultaPanels = Array.from(document.querySelectorAll('[data-tab-content]'));
+    let consultaTabs = Array.from(document.querySelectorAll('[data-tab-target]'));
+    let consultaPanels = Array.from(document.querySelectorAll('[data-tab-content]'));
 
     // Elementos donde se despliega el detalle de la historia seleccionada.
     const detalleHistoriaCampos = {
@@ -67,6 +70,9 @@
     let terminoBusquedaHistorias = '';
     let historiaDetalleActual = null;
     let consultasDetalleActual = [];
+    const puedeRegistrarConsultas = esAsistente;
+    const puedeEditarHistoria = esAsistente;
+    const puedeAnularHistoria = esAdmin;
 
     // Reutiliza mensajes del módulo de historias clínicas si están disponibles.
     const mostrarMensajeHistoria = window.mostrarMensajeHistoria || (() => {});
@@ -173,8 +179,9 @@
         });
     });
 
-    // Activa por defecto la pestaña de registro de consultas cuando se carga el módulo.
-    activarTabConsulta('registro');
+    // Activa por defecto la pestaña adecuada según el rol.
+    const tabInicial = esAsistente ? 'registro' : 'consultas';
+    activarTabConsulta(tabInicial);
 
     // Restablece campos del formulario de consulta y asigna la historia actual.
     function limpiarFormularioConsulta() {
@@ -485,18 +492,24 @@
         btnVerConsultas.title = 'Ver historial clínico';
         btnVerConsultas.innerHTML = '<i class="fas fa-stream"></i> Consultas';
 
-        const btnEditar = document.createElement('button');
-        btnEditar.className = 'btn btn-warning btn-sm btnEditar';
-        btnEditar.title = 'Editar historia';
-        btnEditar.setAttribute('aria-label', 'Editar historia');
-        btnEditar.innerHTML = '<i class="fas fa-pen"></i>';
+        acciones.append(btnVerPdf, btnVerConsultas);
 
-        const btnAnular = document.createElement('button');
-        btnAnular.className = 'btn btn-sm btnAnular';
-        btnAnular.title = 'Anular historia';
-        btnAnular.innerHTML = '<i class="fas fa-ban" aria-hidden="true"></i> Anular';
+        if (puedeEditarHistoria) {
+            const btnEditar = document.createElement('button');
+            btnEditar.className = 'btn btn-warning btn-sm btnEditar';
+            btnEditar.title = 'Editar historia';
+            btnEditar.setAttribute('aria-label', 'Editar historia');
+            btnEditar.innerHTML = '<i class="fas fa-pen"></i>';
+            acciones.appendChild(btnEditar);
+        }
 
-        acciones.append(btnVerPdf, btnVerConsultas, btnEditar, btnAnular);
+        if (puedeAnularHistoria) {
+            const btnAnular = document.createElement('button');
+            btnAnular.className = 'btn btn-sm btnAnular';
+            btnAnular.title = 'Anular historia';
+            btnAnular.innerHTML = '<i class="fas fa-ban" aria-hidden="true"></i> Anular';
+            acciones.appendChild(btnAnular);
+        }
 
         card.append(header, body, acciones);
 
@@ -630,7 +643,7 @@
                 }
             }
 
-            if (botonEditar) {
+            if (botonEditar && puedeEditarHistoria) {
                 const tarjeta = botonEditar.closest('.historia-card');
                 const id = tarjeta?.dataset.historiaId;
                 if (id && typeof window.cargarHistoriaParaEditar === 'function') {
@@ -638,7 +651,7 @@
                 }
             }
 
-            if (botonAnular) {
+            if (botonAnular && puedeAnularHistoria) {
                 const tarjeta = botonAnular.closest('.historia-card');
                 const id = tarjeta?.dataset.historiaId;
                 if (id && typeof window.abrirConfirmacionPara === 'function') {
@@ -649,7 +662,7 @@
     }
 
     // Enlace rápido que lleva a la sección de alta de historias en el dashboard.
-    if (btnIrCrearHistoria) {
+    if (btnIrCrearHistoria && esAsistente) {
         btnIrCrearHistoria.addEventListener('click', event => {
             event.preventDefault();
             if (typeof window.navegarAHistorias === 'function') {
@@ -685,7 +698,7 @@
         }
     });
 
-    if (formConsulta) {
+    if (formConsulta && puedeRegistrarConsultas) {
         formConsulta.addEventListener('submit', async event => {
             event.preventDefault();
 

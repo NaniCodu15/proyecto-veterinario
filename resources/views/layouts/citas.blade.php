@@ -1,21 +1,23 @@
-        {{-- Sección para registrar nuevas citas --}}
-        <div id="section-citas" class="section">
-            <div class="citas-grid citas-grid--single">
-                {{-- Tarjeta principal del formulario de cita --}}
-                <section class="citas-card" id="registrarCitaCard">
-                    <div class="citas-card__header">
-                        <div>
-                            <h2>Registrar Cita</h2>
-                            <p>Selecciona una historia clínica existente para completar automáticamente los datos.</p>
+        @php($userRole = $userRole ?? 'asistente')
+        @if($userRole === 'asistente')
+            {{-- Sección para registrar nuevas citas --}}
+            <div id="section-citas" class="section">
+                <div class="citas-grid citas-grid--single">
+                    {{-- Tarjeta principal del formulario de cita --}}
+                    <section class="citas-card" id="registrarCitaCard">
+                        <div class="citas-card__header">
+                            <div>
+                                <h2>Registrar Cita</h2>
+                                <p>Selecciona una historia clínica existente para completar automáticamente los datos.</p>
+                            </div>
+                            <div class="citas-card__icon" aria-hidden="true"><i class="fas fa-calendar-plus"></i></div>
                         </div>
-                        <div class="citas-card__icon" aria-hidden="true"><i class="fas fa-calendar-plus"></i></div>
-                    </div>
 
                     {{-- Mensaje de retroalimentación para acciones de cita --}}
-                    <div id="citaMensaje" class="cita-alert" role="alert" hidden></div>
+                        <div id="citaMensaje" class="cita-alert" role="alert" hidden></div>
 
                     {{-- Formulario de registro de cita con datos precargados --}}
-                    <form id="formRegistrarCita" class="cita-form" novalidate>
+                        <form id="formRegistrarCita" class="cita-form" novalidate>
                         <div class="cita-form__group">
                             {{-- Selección de la historia clínica relacionada --}}
                             <label for="historiaSelectCitas">Historia clínica</label>
@@ -80,7 +82,8 @@
                                 Guardar cita
                             </button>
                         </div>
-                    </form>
-                </section>
+                        </form>
+                    </section>
+                </div>
             </div>
-        </div>
+        @endif
