@@ -22,6 +22,7 @@
     const historiaBaseUrl = moduleConfig.historiaBaseUrl || '';
     const consultaStoreUrl = moduleConfig.consultaStoreUrl || '';
     const permissions = moduleConfig.permissions || {};
+    const historiasIniciales = Array.isArray(moduleConfig.historias) ? moduleConfig.historias : [];
     const canCreateHistoria = !!permissions.can_create_historia;
     const canEditHistoria = !!permissions.can_edit_historia;
     const canDeleteHistoria = !!permissions.can_delete_historia;
@@ -68,7 +69,7 @@
     };
 
     // Estados locales para manejo de listado, filtros y detalles.
-    let historiasRegistradas = [];
+    let historiasRegistradas = Array.isArray(historiasIniciales) ? [...historiasIniciales] : [];
     let terminoBusquedaHistorias = '';
     let historiaDetalleActual = null;
     let consultasDetalleActual = [];
@@ -585,6 +586,10 @@
         });
 
         tablaHistorias.appendChild(fragment);
+    }
+
+    if (historiasIniciales.length) {
+        renderHistorias(historiasIniciales);
     }
 
     // Petición AJAX para obtener historias clínicas y renderizarlas.

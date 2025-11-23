@@ -25,6 +25,27 @@ class DashboardController extends Controller
         $totalHistorias = HistoriaClinica::count();
         $totalConsultas = Consulta::count();
 
+        // Historias clínicas con mascota y propietario para la sección de historias registradas
+        $historias = HistoriaClinica::with(['mascota.propietario'])
+            ->orderByDesc('fecha_apertura')
+            ->orderByDesc('created_at')
+            ->get()
+            ->map(function (HistoriaClinica $historia) {
+                $mascota = $historia->mascota;
+                $propietario = $mascota?->propietario;
+                $nombrePropietario = trim(($propietario->nombres ?? '') . ' ' . ($propietario->apellidos ?? ''));
+
+                return [
+                    'id' => $historia->id_historia,
+                    'numero_historia' => $historia->numero_historia,
+                    'mascota' => $mascota?->nombre ?? 'Sin nombre',
+                    'propietario' => $nombrePropietario !== '' ? $nombrePropietario : 'Sin propietario',
+                    'propietario_dni' => $propietario->dni ?? null,
+                    'fecha_apertura' => optional($historia->fecha_apertura)->format('d/m/Y'),
+                ];
+            })
+            ->values();
+
         // Mascotas con sus relaciones para la tabla
         $mascotas = Mascota::with([
             'propietario',
@@ -70,6 +91,7 @@ class DashboardController extends Controller
             'totalPropietarios',
             'totalHistorias',
             'totalConsultas',
+            'historias',
             'mascotas',
             'upcomingAppointments'
         ));

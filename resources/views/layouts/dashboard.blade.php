@@ -282,6 +282,7 @@
         'historiaListUrl' => route('historia_clinicas.list'),
         'historiaStoreUrl' => route('historia_clinicas.store'),
         'historiaBaseUrl' => url('historia_clinicas'),
+        'historias' => $historias ?? [],
         'consultaStoreUrl' => route('consultas.store'),
         'citasStoreUrl' => route('citas.store'),
         'citasListUrl' => route('citas.list'),
