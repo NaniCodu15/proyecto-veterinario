@@ -241,11 +241,13 @@
             </div>
         </div>
 
-        {{-- Inclusión de la sección de creación de historias clínicas --}}
-        @include('layouts.historias_clinicas')
+        {{-- Inclusión de la sección de creación y gestión de historias clínicas --}}
+        @if ($isAssistant || $isAdmin)
+            @include('layouts.historias_clinicas')
 
-        {{-- Inclusión de la sección de historias ya registradas --}}
-        @include('layouts.historias_registradas')
+            {{-- Inclusión de la sección de historias ya registradas --}}
+            @include('layouts.historias_registradas')
+        @endif
 
 
 
@@ -260,16 +262,18 @@
     </div>
 </div>
 
-{{-- Modal de confirmación para acciones sensibles --}}
-<div id="confirmModal" class="confirm-modal" role="alertdialog" aria-modal="true" aria-labelledby="confirmModalMessage" hidden>
-    <div class="confirm-modal__dialog">
-        <p id="confirmModalMessage" class="confirm-modal__message">¿Desea anular esta historia clínica?</p>
-        <div class="confirm-modal__actions">
-            <button type="button" class="btn btn-confirm-cancel" data-confirm="cancel">Cancelar</button>
-            <button type="button" class="btn btn-confirm-accept" data-confirm="accept">Sí, anular</button>
+{{-- Modal de confirmación para acciones sensibles (solo administradores pueden anular) --}}
+@if ($isAdmin)
+    <div id="confirmModal" class="confirm-modal" role="alertdialog" aria-modal="true" aria-labelledby="confirmModalMessage" hidden>
+        <div class="confirm-modal__dialog">
+            <p id="confirmModalMessage" class="confirm-modal__message">¿Desea anular esta historia clínica?</p>
+            <div class="confirm-modal__actions">
+                <button type="button" class="btn btn-confirm-cancel" data-confirm="cancel">Cancelar</button>
+                <button type="button" class="btn btn-confirm-accept" data-confirm="accept">Sí, anular</button>
+            </div>
         </div>
     </div>
-</div>
+@endif
 
 
 {{-- Configuración JSON para rutas utilizadas por los scripts del dashboard --}}
