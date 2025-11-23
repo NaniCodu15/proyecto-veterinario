@@ -32,17 +32,32 @@
                     </li>
                 </ul>
             </li>
-            <li class="sidebar-item sidebar-item--has-submenu">
-                <a href="#" class="nav-link" data-section="citas"><i class="fas fa-calendar-alt"></i><span>Citas</span></a>
-                <ul class="sidebar-submenu">
-                    <li>
-                        <a href="#" class="nav-link nav-link--sublayer" data-section="citas-agendadas" data-parent="citas">
-                            <i class="fas fa-calendar-check"></i>
-                            <span>Citas Agendadas</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
+
+            @if ($isAssistant)
+                <li class="sidebar-item sidebar-item--has-submenu">
+                    <a href="#" class="nav-link" data-section="citas"><i class="fas fa-calendar-alt"></i><span>Citas</span></a>
+                    <ul class="sidebar-submenu">
+                        <li>
+                            <a href="#" class="nav-link nav-link--sublayer" data-section="citas-agendadas" data-parent="citas">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>Citas Agendadas</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            @elseif($isAdmin)
+                <li class="sidebar-item sidebar-item--has-submenu">
+                    <a href="#" class="nav-link" data-section="citas-agendadas"><i class="fas fa-calendar-alt"></i><span>Citas</span></a>
+                    <ul class="sidebar-submenu">
+                        <li>
+                            <a href="#" class="nav-link nav-link--sublayer" data-section="citas-agendadas" data-parent="citas-agendadas">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>Citas Agendadas</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            @endif
         </ul>
 
         @php
@@ -50,6 +65,8 @@
             $userName = $user?->name ?? 'Usuario';
             $userEmail = $user?->email ?? 'usuario@correo.com';
             $avatarUrl = $user?->profile_photo_url ?? 'https://ui-avatars.com/api/?name=' . urlencode($userName) . '&background=7aa8ff&color=ffffff';
+            $isAdmin = $user?->hasRole('admin');
+            $isAssistant = $user?->hasRole('asistente');
         @endphp
 
         {{-- Tarjeta con datos del usuario autenticado y cierre de sesión --}}
@@ -231,7 +248,9 @@
 
 
         {{-- Inclusión del formulario de registro de citas --}}
-        @include('layouts.citas')
+        @if ($isAssistant)
+            @include('layouts.citas')
+        @endif
 
         {{-- Inclusión del listado de citas agendadas --}}
         @include('layouts.citas_agendadas')
@@ -265,6 +284,17 @@
         'citasUpcomingUrl' => route('citas.upcoming'),
         'backupGenerateUrl' => route('backups.generate'),
         'backupListUrl' => route('backups.index'),
+        'permissions' => [
+            'is_admin' => $isAdmin,
+            'is_assistant' => $isAssistant,
+            'can_create_historia' => $isAssistant,
+            'can_edit_historia' => $isAssistant,
+            'can_delete_historia' => $isAdmin,
+            'can_manage_backups' => $isAdmin,
+            'can_manage_consultas' => $isAssistant,
+            'can_manage_citas' => $isAssistant,
+            'can_delete_citas' => $isAdmin,
+        ],
     ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
 </div>
 
