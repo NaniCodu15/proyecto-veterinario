@@ -22,10 +22,9 @@
     const historiaBaseUrl = moduleConfig.historiaBaseUrl || '';
     const backupGenerateUrl = moduleConfig.backupGenerateUrl || '';
     const backupListUrl = moduleConfig.backupListUrl || '';
-    const permissions = moduleConfig.permissions || {};
-    const canCreateHistoria = !!permissions.can_create_historia;
-    const canDeleteHistoria = !!permissions.can_delete_historia;
-    const canManageBackups = !!permissions.can_manage_backups;
+    const canCreateHistoria = true;
+    const canDeleteHistoria = true;
+    const canManageBackups = true;
     const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
     const csrfToken = csrfTokenElement ? csrfTokenElement.getAttribute('content') : '';
 
