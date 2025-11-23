@@ -284,19 +284,21 @@
         'citasEstadoBaseUrl' => url('citas'),
         'citasBaseUrl' => url('citas'),
         'citasUpcomingUrl' => route('citas.upcoming'),
-        'backupGenerateUrl' => route('backups.generate'),
-        'backupListUrl' => route('backups.index'),
-            'permissions' => [
-                'is_admin' => $isAdmin,
-                'is_assistant' => $isAssistant,
-                'can_create_historia' => $isAssistant || $isAdmin,
-                'can_edit_historia' => $isAssistant || $isAdmin,
-                'can_delete_historia' => $isAdmin,
-                'can_manage_backups' => $isAdmin,
-                'can_manage_consultas' => $isAssistant || $isAdmin,
-                'can_manage_citas' => $isAssistant || $isAdmin,
-                'can_delete_citas' => $isAdmin,
-            ],
+        @if ($isAdmin)
+            'backupGenerateUrl' => route('backups.generate'),
+            'backupListUrl' => route('backups.index'),
+        @endif
+        'permissions' => [
+            'is_admin' => $isAdmin,
+            'is_assistant' => $isAssistant,
+            'can_create_historia' => $isAssistant || $isAdmin,
+            'can_edit_historia' => $isAssistant || $isAdmin,
+            'can_delete_historia' => $isAdmin,
+            'can_manage_backups' => $isAdmin,
+            'can_manage_consultas' => $isAssistant || $isAdmin,
+            'can_manage_citas' => $isAssistant || $isAdmin,
+            'can_delete_citas' => $isAdmin,
+        ],
     ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
 </div>
 
