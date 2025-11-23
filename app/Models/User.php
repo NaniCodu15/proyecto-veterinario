@@ -67,4 +67,14 @@ class User extends Authenticatable
             ? false
             : $normalized->contains($currentRole);
     }
+
+    public function isAdmin(): bool
+    {
+        return $this->hasRole('admin');
+    }
+
+    public function isAssistant(): bool
+    {
+        return $this->hasRole('assistant');
+    }
 }
