@@ -3,6 +3,15 @@
 
 @section('content')
 
+    @php
+        $user = auth()->user();
+        $userName = $user?->name ?? 'Usuario';
+        $userEmail = $user?->email ?? 'usuario@correo.com';
+        $avatarUrl = $user?->profile_photo_url ?? 'https://ui-avatars.com/api/?name=' . urlencode($userName) . '&background=7aa8ff&color=ffffff';
+        $isAdmin = $user?->hasRole('admin');
+        $isAssistant = $user?->hasRole('asistente');
+    @endphp
+
 @push('scripts')
     {{-- Librería para campos seleccionables mejorados --}}
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.4.0/dist/js/tom-select.complete.min.js"></script>
@@ -24,6 +33,14 @@
             <li class="sidebar-item sidebar-item--has-submenu">
                 <a href="#" class="nav-link" data-section="historias"><i class="fas fa-notes-medical"></i><span>Historias Clínicas</span></a>
                 <ul class="sidebar-submenu">
+                    @if ($isAssistant)
+                        <li>
+                            <a href="#" class="nav-link nav-link--sublayer" data-section="historias" data-parent="historias">
+                                <i class="fas fa-plus-circle"></i>
+                                <span>Crear historia clínica</span>
+                            </a>
+                        </li>
+                    @endif
                     <li>
                         <a href="#" class="nav-link nav-link--sublayer" data-section="historias-registradas" data-parent="historias">
                             <i class="fas fa-folder-open"></i>
@@ -35,8 +52,34 @@
 
             @if ($isAssistant)
                 <li class="sidebar-item sidebar-item--has-submenu">
+                    <a href="#" class="nav-link" data-section="historias-registradas"><i class="fas fa-stethoscope"></i><span>Consultas</span></a>
+                    <ul class="sidebar-submenu">
+                        <li>
+                            <a href="#" class="nav-link nav-link--sublayer" data-section="historias-registradas" data-parent="historias-registradas">
+                                <i class="fas fa-notes-medical"></i>
+                                <span>Registrar consulta</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link nav-link--sublayer" data-section="historias-registradas" data-parent="historias-registradas">
+                                <i class="fas fa-list-alt"></i>
+                                <span>Consultas registradas</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            @endif
+
+            @if ($isAssistant)
+                <li class="sidebar-item sidebar-item--has-submenu">
                     <a href="#" class="nav-link" data-section="citas"><i class="fas fa-calendar-alt"></i><span>Citas</span></a>
                     <ul class="sidebar-submenu">
+                        <li>
+                            <a href="#" class="nav-link nav-link--sublayer" data-section="citas" data-parent="citas">
+                                <i class="fas fa-calendar-plus"></i>
+                                <span>Registrar cita</span>
+                            </a>
+                        </li>
                         <li>
                             <a href="#" class="nav-link nav-link--sublayer" data-section="citas-agendadas" data-parent="citas">
                                 <i class="fas fa-calendar-check"></i>
@@ -59,15 +102,6 @@
                 </li>
             @endif
         </ul>
-
-        @php
-            $user = auth()->user();
-            $userName = $user?->name ?? 'Usuario';
-            $userEmail = $user?->email ?? 'usuario@correo.com';
-            $avatarUrl = $user?->profile_photo_url ?? 'https://ui-avatars.com/api/?name=' . urlencode($userName) . '&background=7aa8ff&color=ffffff';
-            $isAdmin = $user?->hasRole('admin');
-            $isAssistant = $user?->hasRole('asistente');
-        @endphp
 
         {{-- Tarjeta con datos del usuario autenticado y cierre de sesión --}}
         <div class="user-card">
