@@ -1,8 +1,11 @@
 // JS para el módulo Dashboard principal: controla navegación lateral, secciones visibles y panel de citas próximas.
-// Selecciona todos los enlaces del menú lateral para gestionar el estado activo en la navegación.
-const links = Array.from(document.querySelectorAll('.sidebar-menu a.nav-link'));
-// Selecciona cada sección del contenido principal para mostrar u ocultar según la opción activa.
-const sections = Array.from(document.querySelectorAll('#main-content .section'));
+// Colecciones dinámicas de enlaces y secciones del panel. Se inicializan al cargar el DOM
+// para asegurar que las referencias existan incluso si el script se ejecuta antes de que
+// Blade termine de renderizar el contenido. Esto permite que las opciones del menú, como
+// "Historias Registradas", "Citas" y "Citas Agendadas", muestren su contenido en el rol
+// asistente.
+let links = [];
+let sections = [];
 // Nodo que expone la configuración JSON embebida en el DOM.
 const configElement = document.getElementById('dashboard-config');
 // Botón que redirige directamente a la sección de historias clínicas desde tarjetas o accesos rápidos.
@@ -96,14 +99,6 @@ function navegarAHistorias() {
 
 // Expone la función de navegación a historias para ser invocada desde otros módulos.
 window.navegarAHistorias = navegarAHistorias;
-
-// Evento click en cada enlace de menú: evita navegación por defecto y usa manejo SPA.
-links.forEach(link => {
-    link.addEventListener('click', event => {
-        event.preventDefault();
-        manejarNavegacion(link);
-    });
-});
 
 // Botón de acceso directo a historias clínicas en la tarjeta de resumen.
 if (btnIrHistorias) {
@@ -305,11 +300,23 @@ function iniciarActualizacionCitasProximas() {
     }, 60000);
 }
 
-// Enlace predefinido para seleccionar la sección de inicio cuando carga la página.
-const enlaceInicio = document.querySelector('.sidebar-menu a[data-section="inicio"]');
-
 // Al cargar el DOM, activa la sección inicio, carga historias, citas y programa refresco de próximas.
 document.addEventListener('DOMContentLoaded', () => {
+    // Refresca las referencias del menú y las secciones ya renderizadas por Blade.
+    links = Array.from(document.querySelectorAll('.sidebar-menu a.nav-link'));
+    sections = Array.from(document.querySelectorAll('#main-content .section'));
+
+    // Evento click en cada enlace de menú: evita navegación por defecto y usa manejo SPA.
+    links.forEach(link => {
+        link.addEventListener('click', event => {
+            event.preventDefault();
+            manejarNavegacion(link);
+        });
+    });
+
+    // Enlace predefinido para seleccionar la sección de inicio cuando carga la página.
+    const enlaceInicio = document.querySelector('.sidebar-menu a[data-section="inicio"]');
+
     if (enlaceInicio) {
         manejarNavegacion(enlaceInicio);
     }
