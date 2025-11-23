@@ -231,13 +231,6 @@ class HistoriaClinicaController extends Controller
      */
     public function destroy($id)
     {
-        if (!Auth::user()?->hasRole('admin')) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No tienes permiso para eliminar historias clínicas.',
-            ], 403);
-        }
-
         HistoriaClinica::findOrFail($id)->delete();
         return response()->json(['success' => true]);
     }

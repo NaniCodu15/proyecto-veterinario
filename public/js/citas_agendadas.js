@@ -21,9 +21,8 @@
     const citasListUrl = moduleConfig.citasListUrl || '';
     const citasEstadoBaseUrl = moduleConfig.citasEstadoBaseUrl || '';
     const citasBaseUrl = moduleConfig.citasBaseUrl || '';
-    const permissions = moduleConfig.permissions || {};
-    const canManageCitas = !!permissions.can_manage_citas;
-    const canDeleteCitas = !!permissions.can_delete_citas;
+    const canManageCitas = true;
+    const canDeleteCitas = true;
     const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
     const csrfToken = csrfTokenElement ? csrfTokenElement.getAttribute('content') : '';
 

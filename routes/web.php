@@ -21,9 +21,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-});
 
-Route::middleware(['auth', 'role:admin,asistente'])->group(function () {
     Route::get('citas/list', [CitaController::class, 'list'])->name('citas.list');
     Route::get('citas/upcoming', [CitaController::class, 'upcoming'])->name('citas.upcoming');
     Route::get('citas', [CitaController::class, 'index'])->name('citas.index');
@@ -47,9 +45,7 @@ Route::middleware(['auth', 'role:admin,asistente'])->group(function () {
     Route::get('consultas/{consulta}', [ConsultaController::class, 'show'])
         ->name('consultas.show')
         ->whereNumber('consulta');
-});
 
-Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::delete('historia_clinicas/{id}', [HistoriaClinicaController::class, 'destroy'])
         ->name('historia_clinicas.destroy')
         ->whereNumber('id');
@@ -64,9 +60,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::post('backups/generate', [BackupController::class, 'generate'])->name('backups.generate');
     Route::get('backups', [BackupController::class, 'index'])->name('backups.index');
-});
-
-Route::middleware(['auth', 'role:admin,asistente'])->group(function () {
     Route::post('historia_clinicas', [HistoriaClinicaController::class, 'store'])->name('historia_clinicas.store');
     Route::put('historia_clinicas/{id}', [HistoriaClinicaController::class, 'update'])
         ->name('historia_clinicas.update')

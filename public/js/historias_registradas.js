@@ -21,11 +21,10 @@
     const historiaListUrl = moduleConfig.historiaListUrl || '';
     const historiaBaseUrl = moduleConfig.historiaBaseUrl || '';
     const consultaStoreUrl = moduleConfig.consultaStoreUrl || '';
-    const permissions = moduleConfig.permissions || {};
-    const canCreateHistoria = !!permissions.can_create_historia;
-    const canEditHistoria = !!permissions.can_edit_historia;
-    const canDeleteHistoria = !!permissions.can_delete_historia;
-    const canManageConsultas = !!permissions.can_manage_consultas;
+    const canCreateHistoria = true;
+    const canEditHistoria = true;
+    const canDeleteHistoria = true;
+    const canManageConsultas = true;
     const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
     const csrfToken = csrfTokenElement ? csrfTokenElement.getAttribute('content') : '';
 
