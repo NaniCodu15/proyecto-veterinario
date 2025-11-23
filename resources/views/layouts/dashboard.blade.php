@@ -1,3 +1,7 @@
+@php
+    $isAdmin = auth()->user()?->hasRole('admin');
+    $isAssistant = auth()->user()?->hasRole('asistente');
+@endphp
 {{-- Plantilla principal del panel de control --}}
 @extends('layouts.app')
 
@@ -32,17 +36,32 @@
                     </li>
                 </ul>
             </li>
-            <li class="sidebar-item sidebar-item--has-submenu">
-                <a href="#" class="nav-link" data-section="citas"><i class="fas fa-calendar-alt"></i><span>Citas</span></a>
-                <ul class="sidebar-submenu">
-                    <li>
-                        <a href="#" class="nav-link nav-link--sublayer" data-section="citas-agendadas" data-parent="citas">
-                            <i class="fas fa-calendar-check"></i>
-                            <span>Citas Agendadas</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
+
+            @if ($isAssistant)
+                <li class="sidebar-item sidebar-item--has-submenu">
+                    <a href="#" class="nav-link" data-section="citas"><i class="fas fa-calendar-alt"></i><span>Citas</span></a>
+                    <ul class="sidebar-submenu">
+                        <li>
+                            <a href="#" class="nav-link nav-link--sublayer" data-section="citas-agendadas" data-parent="citas">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>Citas Agendadas</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            @elseif($isAdmin)
+                <li class="sidebar-item sidebar-item--has-submenu">
+                    <a href="#" class="nav-link" data-section="citas-agendadas"><i class="fas fa-calendar-alt"></i><span>Citas</span></a>
+                    <ul class="sidebar-submenu">
+                        <li>
+                            <a href="#" class="nav-link nav-link--sublayer" data-section="citas-agendadas" data-parent="citas-agendadas">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>Citas Agendadas</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            @endif
         </ul>
 
         @php
@@ -222,16 +241,20 @@
             </div>
         </div>
 
-        {{-- Inclusión de la sección de creación de historias clínicas --}}
-        @include('layouts.historias_clinicas')
+        {{-- Inclusión de la sección de creación y gestión de historias clínicas --}}
+        @if ($isAssistant || $isAdmin)
+            @include('layouts.historias_clinicas')
 
-        {{-- Inclusión de la sección de historias ya registradas --}}
-        @include('layouts.historias_registradas')
+            {{-- Inclusión de la sección de historias ya registradas --}}
+            @include('layouts.historias_registradas')
+        @endif
 
 
 
         {{-- Inclusión del formulario de registro de citas --}}
-        @include('layouts.citas')
+        @if ($isAssistant)
+            @include('layouts.citas')
+        @endif
 
         {{-- Inclusión del listado de citas agendadas --}}
         @include('layouts.citas_agendadas')
@@ -239,16 +262,18 @@
     </div>
 </div>
 
-{{-- Modal de confirmación para acciones sensibles --}}
-<div id="confirmModal" class="confirm-modal" role="alertdialog" aria-modal="true" aria-labelledby="confirmModalMessage" hidden>
-    <div class="confirm-modal__dialog">
-        <p id="confirmModalMessage" class="confirm-modal__message">¿Desea anular esta historia clínica?</p>
-        <div class="confirm-modal__actions">
-            <button type="button" class="btn btn-confirm-cancel" data-confirm="cancel">Cancelar</button>
-            <button type="button" class="btn btn-confirm-accept" data-confirm="accept">Sí, anular</button>
+{{-- Modal de confirmación para acciones sensibles (solo administradores pueden anular) --}}
+@if ($isAdmin)
+    <div id="confirmModal" class="confirm-modal" role="alertdialog" aria-modal="true" aria-labelledby="confirmModalMessage" hidden>
+        <div class="confirm-modal__dialog">
+            <p id="confirmModalMessage" class="confirm-modal__message">¿Desea anular esta historia clínica?</p>
+            <div class="confirm-modal__actions">
+                <button type="button" class="btn btn-confirm-cancel" data-confirm="cancel">Cancelar</button>
+                <button type="button" class="btn btn-confirm-accept" data-confirm="accept">Sí, anular</button>
+            </div>
         </div>
     </div>
-</div>
+@endif
 
 
 {{-- Configuración JSON para rutas utilizadas por los scripts del dashboard --}}
@@ -263,8 +288,19 @@
         'citasEstadoBaseUrl' => url('citas'),
         'citasBaseUrl' => url('citas'),
         'citasUpcomingUrl' => route('citas.upcoming'),
-        'backupGenerateUrl' => route('backups.generate'),
-        'backupListUrl' => route('backups.index'),
+        'backupGenerateUrl' => $isAdmin ? route('backups.generate') : null,
+        'backupListUrl' => $isAdmin ? route('backups.index') : null,
+            'permissions' => [
+                'is_admin' => $isAdmin,
+                'is_assistant' => $isAssistant,
+                'can_create_historia' => $isAssistant || $isAdmin,
+                'can_edit_historia' => $isAssistant || $isAdmin,
+                'can_delete_historia' => $isAdmin,
+                'can_manage_backups' => $isAdmin,
+                'can_manage_consultas' => $isAssistant || $isAdmin,
+                'can_manage_citas' => $isAssistant || $isAdmin,
+                'can_delete_citas' => $isAdmin,
+            ],
     ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
 </div>
 

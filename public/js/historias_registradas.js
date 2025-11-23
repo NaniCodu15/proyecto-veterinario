@@ -21,6 +21,11 @@
     const historiaListUrl = moduleConfig.historiaListUrl || '';
     const historiaBaseUrl = moduleConfig.historiaBaseUrl || '';
     const consultaStoreUrl = moduleConfig.consultaStoreUrl || '';
+    const permissions = moduleConfig.permissions || {};
+    const canCreateHistoria = !!permissions.can_create_historia;
+    const canEditHistoria = !!permissions.can_edit_historia;
+    const canDeleteHistoria = !!permissions.can_delete_historia;
+    const canManageConsultas = !!permissions.can_manage_consultas;
     const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
     const csrfToken = csrfTokenElement ? csrfTokenElement.getAttribute('content') : '';
 
@@ -484,19 +489,24 @@
         btnVerConsultas.className = 'btn btn-primary btn-sm btnConsultas';
         btnVerConsultas.title = 'Ver historial clínico';
         btnVerConsultas.innerHTML = '<i class="fas fa-stream"></i> Consultas';
+        acciones.append(btnVerPdf, btnVerConsultas);
 
-        const btnEditar = document.createElement('button');
-        btnEditar.className = 'btn btn-warning btn-sm btnEditar';
-        btnEditar.title = 'Editar historia';
-        btnEditar.setAttribute('aria-label', 'Editar historia');
-        btnEditar.innerHTML = '<i class="fas fa-pen"></i>';
+        if (canEditHistoria) {
+            const btnEditar = document.createElement('button');
+            btnEditar.className = 'btn btn-warning btn-sm btnEditar';
+            btnEditar.title = 'Editar historia';
+            btnEditar.setAttribute('aria-label', 'Editar historia');
+            btnEditar.innerHTML = '<i class="fas fa-pen"></i>';
+            acciones.appendChild(btnEditar);
+        }
 
-        const btnAnular = document.createElement('button');
-        btnAnular.className = 'btn btn-sm btnAnular';
-        btnAnular.title = 'Anular historia';
-        btnAnular.innerHTML = '<i class="fas fa-ban" aria-hidden="true"></i> Anular';
-
-        acciones.append(btnVerPdf, btnVerConsultas, btnEditar, btnAnular);
+        if (canDeleteHistoria) {
+            const btnAnular = document.createElement('button');
+            btnAnular.className = 'btn btn-sm btnAnular';
+            btnAnular.title = 'Anular historia';
+            btnAnular.innerHTML = '<i class="fas fa-ban" aria-hidden="true"></i> Anular';
+            acciones.appendChild(btnAnular);
+        }
 
         card.append(header, body, acciones);
 

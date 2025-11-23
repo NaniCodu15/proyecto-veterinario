@@ -21,6 +21,9 @@
     const citasListUrl = moduleConfig.citasListUrl || '';
     const citasEstadoBaseUrl = moduleConfig.citasEstadoBaseUrl || '';
     const citasBaseUrl = moduleConfig.citasBaseUrl || '';
+    const permissions = moduleConfig.permissions || {};
+    const canManageCitas = !!permissions.can_manage_citas;
+    const canDeleteCitas = !!permissions.can_delete_citas;
     const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
     const csrfToken = csrfTokenElement ? csrfTokenElement.getAttribute('content') : '';
 
@@ -357,27 +360,32 @@
         btnDetalles.className = 'btn btn-outline btn-sm btnVerCita';
         btnDetalles.innerHTML = '<i class="fas fa-eye"></i> Ver detalles';
 
-        const btnEstado = document.createElement('button');
-        btnEstado.type = 'button';
-        btnEstado.className = 'btn btn-warning btn-sm btnEstadoCita';
-        btnEstado.innerHTML = '<i class="fas fa-exchange-alt"></i> Cambiar estado';
-
-        const btnAnular = document.createElement('button');
-        btnAnular.type = 'button';
-        btnAnular.className = 'btn btn-danger btn-sm btnAnularCita';
-        btnAnular.innerHTML = '<i class="fas fa-ban"></i> Anular';
-
-        if (String(cita.estado || '').trim().toLowerCase() === 'atendida') {
-            btnEstado.disabled = true;
-            btnEstado.classList.add('is-disabled');
-            btnEstado.setAttribute('aria-disabled', 'true');
-            btnEstado.title = 'Las citas atendidas no pueden modificarse.';
-        }
-
         accionesWrapper.appendChild(whatsappLink);
         accionesWrapper.appendChild(btnDetalles);
-        accionesWrapper.appendChild(btnEstado);
-        accionesWrapper.appendChild(btnAnular);
+
+        if (canManageCitas) {
+            const btnEstado = document.createElement('button');
+            btnEstado.type = 'button';
+            btnEstado.className = 'btn btn-warning btn-sm btnEstadoCita';
+            btnEstado.innerHTML = '<i class="fas fa-exchange-alt"></i> Cambiar estado';
+
+            if (String(cita.estado || '').trim().toLowerCase() === 'atendida') {
+                btnEstado.disabled = true;
+                btnEstado.classList.add('is-disabled');
+                btnEstado.setAttribute('aria-disabled', 'true');
+                btnEstado.title = 'Las citas atendidas no pueden modificarse.';
+            }
+
+            accionesWrapper.appendChild(btnEstado);
+        }
+
+        if (canDeleteCitas) {
+            const btnAnular = document.createElement('button');
+            btnAnular.type = 'button';
+            btnAnular.className = 'btn btn-danger btn-sm btnAnularCita';
+            btnAnular.innerHTML = '<i class="fas fa-ban"></i> Anular';
+            accionesWrapper.appendChild(btnAnular);
+        }
         accionesCell.appendChild(accionesWrapper);
         fila.appendChild(accionesCell);
 
@@ -626,6 +634,10 @@
             const cita = obtenerCitaPorId(id);
 
             if (botonAnular) {
+                if (!canDeleteCitas) {
+                    return;
+                }
+
                 if (botonAnular.disabled) {
                     return;
                 }
@@ -664,6 +676,10 @@
             }
 
             if (botonEstado && cita) {
+                if (!canManageCitas) {
+                    return;
+                }
+
                 prepararModalEstado(cita);
             }
         });
@@ -709,7 +725,7 @@
         });
     }
 
-    if (formEstadoCita) {
+    if (formEstadoCita && canManageCitas) {
         formEstadoCita.addEventListener('submit', async event => {
             event.preventDefault();
 
