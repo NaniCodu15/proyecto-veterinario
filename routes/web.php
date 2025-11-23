@@ -54,6 +54,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         ->name('historia_clinicas.destroy')
         ->whereNumber('id');
 
+    Route::delete('consultas/{consulta}', [ConsultaController::class, 'destroy'])
+        ->name('consultas.destroy')
+        ->whereNumber('consulta');
+
     Route::delete('citas/{cita}', [CitaController::class, 'destroy'])
         ->name('citas.destroy')
         ->whereNumber('cita');
@@ -62,7 +66,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('backups', [BackupController::class, 'index'])->name('backups.index');
 });
 
-Route::middleware(['auth', 'role:asistente'])->group(function () {
+Route::middleware(['auth', 'role:admin,asistente'])->group(function () {
     Route::post('historia_clinicas', [HistoriaClinicaController::class, 'store'])->name('historia_clinicas.store');
     Route::put('historia_clinicas/{id}', [HistoriaClinicaController::class, 'update'])
         ->name('historia_clinicas.update')
@@ -71,9 +75,6 @@ Route::middleware(['auth', 'role:asistente'])->group(function () {
     Route::post('consultas', [ConsultaController::class, 'store'])->name('consultas.store');
     Route::put('consultas/{consulta}', [ConsultaController::class, 'update'])
         ->name('consultas.update')
-        ->whereNumber('consulta');
-    Route::delete('consultas/{consulta}', [ConsultaController::class, 'destroy'])
-        ->name('consultas.destroy')
         ->whereNumber('consulta');
 
     Route::get('citas/create', [CitaController::class, 'create'])->name('citas.create');

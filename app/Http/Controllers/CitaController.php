@@ -7,6 +7,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use App\Models\Cita;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class CitaController extends Controller
 {
@@ -193,6 +194,16 @@ class CitaController extends Controller
      */
     public function destroy(Request $request, Cita $cita)
     {
+        if (!Auth::user()?->hasRole('admin')) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'No tienes permiso para eliminar citas.',
+                ], 403);
+            }
+
+            return redirect()->back()->with('error', 'No tienes permiso para eliminar citas.');
+        }
+
         $cita->delete();
 
         if ($request->expectsJson()) {

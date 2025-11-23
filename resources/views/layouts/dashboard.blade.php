@@ -1,3 +1,7 @@
+@php
+    $isAdmin = auth()->user()?->hasRole('admin');
+    $isAssistant = auth()->user()?->hasRole('asistente');
+@endphp
 {{-- Plantilla principal del panel de control --}}
 @extends('layouts.app')
 
@@ -65,8 +69,6 @@
             $userName = $user?->name ?? 'Usuario';
             $userEmail = $user?->email ?? 'usuario@correo.com';
             $avatarUrl = $user?->profile_photo_url ?? 'https://ui-avatars.com/api/?name=' . urlencode($userName) . '&background=7aa8ff&color=ffffff';
-            $isAdmin = $user?->hasRole('admin');
-            $isAssistant = $user?->hasRole('asistente');
         @endphp
 
         {{-- Tarjeta con datos del usuario autenticado y cierre de sesión --}}
@@ -284,17 +286,17 @@
         'citasUpcomingUrl' => route('citas.upcoming'),
         'backupGenerateUrl' => route('backups.generate'),
         'backupListUrl' => route('backups.index'),
-        'permissions' => [
-            'is_admin' => $isAdmin,
-            'is_assistant' => $isAssistant,
-            'can_create_historia' => $isAssistant,
-            'can_edit_historia' => $isAssistant,
-            'can_delete_historia' => $isAdmin,
-            'can_manage_backups' => $isAdmin,
-            'can_manage_consultas' => $isAssistant,
-            'can_manage_citas' => $isAssistant,
-            'can_delete_citas' => $isAdmin,
-        ],
+            'permissions' => [
+                'is_admin' => $isAdmin,
+                'is_assistant' => $isAssistant,
+                'can_create_historia' => $isAssistant || $isAdmin,
+                'can_edit_historia' => $isAssistant || $isAdmin,
+                'can_delete_historia' => $isAdmin,
+                'can_manage_backups' => $isAdmin,
+                'can_manage_consultas' => $isAssistant || $isAdmin,
+                'can_manage_citas' => $isAssistant || $isAdmin,
+                'can_delete_citas' => $isAdmin,
+            ],
     ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
 </div>
 
