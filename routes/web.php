@@ -14,81 +14,33 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+// Ruta pública: muestra el formulario de autenticación (Auth\LoginController@showLoginForm) para el módulo de acceso.
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+// Ruta pública: procesa las credenciales enviadas (Auth\LoginController@login) para iniciar sesión.
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
+// Ruta pública: finaliza la sesión activa (Auth\LoginController@logout) sin requerir middleware adicional.
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+// Rutas protegidas por autenticación: todo el bloque requiere sesión activa mediante el middleware `auth`.
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-});
 
-Route::middleware(['auth', 'role:admin,asistente'])->group(function () {
+    // Ruta protegida: panel de control general atendido por DashboardController@index para el módulo principal.
+    Route::get('/dashboard', [DashboardController::class,'index'])->name('dashboard');
+
+    // Ruta protegida: listado JSON de citas (CitaController@list) para el módulo de citas.
     Route::get('citas/list', [CitaController::class, 'list'])->name('citas.list');
+    // Ruta protegida: próximas citas pendientes (CitaController@upcoming) del módulo de citas.
     Route::get('citas/upcoming', [CitaController::class, 'upcoming'])->name('citas.upcoming');
-    Route::get('citas', [CitaController::class, 'index'])->name('citas.index');
-    Route::get('citas/{cita}', [CitaController::class, 'show'])->name('citas.show')->whereNumber('cita');
+    // Ruta protegida: actualización de estado de cita (CitaController@updateEstado) para flujo de gestión de citas.
+    Route::patch('citas/{cita}/estado', [CitaController::class, 'updateEstado'])->name('citas.estado');
 
-    Route::get('historia_clinicas/list', [HistoriaClinicaController::class, 'list'])->name('historia_clinicas.list');
-    Route::get('historia_clinicas/{id}/ver', [HistoriaClinicaController::class, 'ver'])
-        ->name('historia_clinicas.ver')
-        ->whereNumber('id');
-    Route::get('historia_clinicas/{historia}/pdf', [HistoriaClinicaController::class, 'pdf'])
-        ->name('historia_clinicas.pdf')
-        ->whereNumber('historia');
-    Route::get('historia_clinicas/{id}', [HistoriaClinicaController::class, 'show'])
-        ->name('historia_clinicas.show')
-        ->whereNumber('id');
-    Route::get('historia_clinicas/{historia}/consultas', [ConsultaController::class, 'porHistoria'])
-        ->name('historia_clinicas.consultas')
-        ->whereNumber('historia');
-
-    Route::get('consultas', [ConsultaController::class, 'index'])->name('consultas.index');
-    Route::get('consultas/{consulta}', [ConsultaController::class, 'show'])
-        ->name('consultas.show')
-        ->whereNumber('consulta');
-});
-
-Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::delete('historia_clinicas/{id}', [HistoriaClinicaController::class, 'destroy'])
-        ->name('historia_clinicas.destroy')
-        ->whereNumber('id');
-
-    Route::delete('consultas/{consulta}', [ConsultaController::class, 'destroy'])
-        ->name('consultas.destroy')
-        ->whereNumber('consulta');
-
-    Route::delete('citas/{cita}', [CitaController::class, 'destroy'])
-        ->name('citas.destroy')
-        ->whereNumber('cita');
-
-    Route::post('backups/generate', [BackupController::class, 'generate'])->name('backups.generate');
-    Route::get('backups', [BackupController::class, 'index'])->name('backups.index');
-});
-
-Route::middleware(['auth', 'role:admin,asistente'])->group(function () {
-    Route::post('historia_clinicas', [HistoriaClinicaController::class, 'store'])->name('historia_clinicas.store');
-    Route::put('historia_clinicas/{id}', [HistoriaClinicaController::class, 'update'])
-        ->name('historia_clinicas.update')
-        ->whereNumber('id');
-
-    Route::post('consultas', [ConsultaController::class, 'store'])->name('consultas.store');
-    Route::put('consultas/{consulta}', [ConsultaController::class, 'update'])
-        ->name('consultas.update')
-        ->whereNumber('consulta');
-
-    Route::get('citas/create', [CitaController::class, 'create'])->name('citas.create');
-    Route::get('citas/{cita}/edit', [CitaController::class, 'edit'])
-        ->name('citas.edit')
-        ->whereNumber('cita');
-    Route::post('citas', [CitaController::class, 'store'])->name('citas.store');
-    Route::put('citas/{cita}', [CitaController::class, 'update'])
-        ->name('citas.update')
-        ->whereNumber('cita');
-    Route::patch('citas/{cita}/estado', [CitaController::class, 'updateEstado'])
-        ->name('citas.estado')
-        ->whereNumber('cita');
-
+    // Rutas REST protegidas: CRUD de consultas gestionadas por ConsultaController para el módulo de consultas.
+    Route::resource('consultas', ConsultaController::class);
+    // Rutas REST protegidas: CRUD de citas gestionadas por CitaController para el módulo de citas.
+    Route::resource('citas', CitaController::class);
+    // Rutas REST protegidas: CRUD de mascotas gestionadas por MascotaController para el módulo de mascotas.
     Route::resource('mascotas', MascotaController::class);
+    // Rutas REST protegidas: CRUD de propietarios gestionadas por PropietarioController para el módulo de clientes.
     Route::resource('propietarios', PropietarioController::class);
 
     // Ruta protegida: generación de respaldo (BackupController@generate) para el módulo de copias de seguridad.

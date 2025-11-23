@@ -6,7 +6,6 @@ use App\Models\Consulta;
 use App\Models\HistoriaClinica;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class ConsultaController extends Controller
@@ -105,13 +104,6 @@ class ConsultaController extends Controller
      */
     public function destroy(Consulta $consulta)
     {
-        if (!Auth::user()?->hasRole('admin')) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No tienes permiso para eliminar consultas.',
-            ], 403);
-        }
-
         $consulta->loadMissing('historiaClinica');
         $historia = $consulta->historiaClinica;
         $consulta->delete();

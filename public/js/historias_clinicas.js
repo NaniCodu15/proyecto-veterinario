@@ -22,10 +22,6 @@
     const historiaBaseUrl = moduleConfig.historiaBaseUrl || '';
     const backupGenerateUrl = moduleConfig.backupGenerateUrl || '';
     const backupListUrl = moduleConfig.backupListUrl || '';
-    const permissions = moduleConfig.permissions || {};
-    const canCreateHistoria = !!permissions.can_create_historia;
-    const canDeleteHistoria = !!permissions.can_delete_historia;
-    const canManageBackups = !!permissions.can_manage_backups;
     const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
     const csrfToken = csrfTokenElement ? csrfTokenElement.getAttribute('content') : '';
 
@@ -87,7 +83,7 @@
 
     // Muestra el modal principal de historias clínicas.
     function abrirModal() {
-        if (!modal || !canCreateHistoria) {
+        if (!modal) {
             return;
         }
 
@@ -169,10 +165,6 @@
 
     // Prepara la UI y abre el modal para un nuevo registro.
     function abrirModalParaCrear() {
-        if (!canCreateHistoria) {
-            return;
-        }
-
         reiniciarFormulario();
         abrirModal();
     }
@@ -438,7 +430,7 @@
 
     // Abre el modal de confirmación antes de anular una historia clínica.
     function abrirConfirmacionPara(id) {
-        if (!id || !canDeleteHistoria) {
+        if (!id) {
             return;
         }
 
@@ -473,10 +465,6 @@
 
     // Recupera una historia desde el servidor para editarla y rellena el formulario.
     async function cargarHistoriaParaEditar(id) {
-        if (!canCreateHistoria) {
-            return;
-        }
-
         try {
             const response = await fetch(`${historiaBaseUrl}/${id}`, {
                 headers: { Accept: 'application/json' },
@@ -498,7 +486,7 @@
 
     // Envía la solicitud de eliminación (anulación) de una historia clínica.
     async function eliminarHistoria(id) {
-        if (!historiaBaseUrl || !canDeleteHistoria) {
+        if (!historiaBaseUrl) {
             return;
         }
 
@@ -526,21 +514,21 @@
     }
 
     // Botón para abrir el modal de creación de historia clínica.
-    if (btnNueva && canCreateHistoria) {
+    if (btnNueva) {
         btnNueva.addEventListener('click', () => {
             abrirModalParaCrear();
         });
     }
 
     // Botón para solicitar la generación de un respaldo.
-    if (btnGenerarBackup && canManageBackups) {
+    if (btnGenerarBackup) {
         btnGenerarBackup.addEventListener('click', () => {
             generarBackup();
         });
     }
 
     // Botón para listar los respaldos disponibles.
-    if (btnVerBackups && canManageBackups) {
+    if (btnVerBackups) {
         btnVerBackups.addEventListener('click', async () => {
             mostrarMensajeBackup('');
             setButtonLoading(btnVerBackups, true, 'Cargando...');
@@ -565,7 +553,7 @@
     }
 
     // Cierra el modal principal desde el icono de cierre o desde clics en el overlay.
-    if (spanClose && canCreateHistoria) {
+    if (spanClose) {
         spanClose.addEventListener('click', () => {
             cerrarModal();
             reiniciarFormulario();
@@ -573,7 +561,7 @@
     }
 
     // Evento submit del formulario: valida, prepara payload y envía creación/actualización vía fetch.
-    if (form && canCreateHistoria) {
+    if (form) {
         form.addEventListener('submit', async event => {
             event.preventDefault();
 
@@ -660,14 +648,14 @@
     }
 
     // Cierra la confirmación de anulación cuando se hace clic en cancelar.
-    if (confirmCancelButton && canDeleteHistoria) {
+    if (confirmCancelButton) {
         confirmCancelButton.addEventListener('click', () => {
             cerrarConfirmacion();
         });
     }
 
     // Acepta la anulación de la historia clínica al confirmar en el modal personalizado.
-    if (confirmAcceptButton && canDeleteHistoria) {
+    if (confirmAcceptButton) {
         confirmAcceptButton.addEventListener('click', async () => {
             if (!historiaPorAnularId) {
                 cerrarConfirmacion();
@@ -681,7 +669,7 @@
     }
 
     // Cierra el modal de confirmación cuando se hace clic fuera del contenido.
-    if (confirmModal && canDeleteHistoria) {
+    if (confirmModal) {
         confirmModal.addEventListener('click', event => {
             if (event.target === confirmModal) {
                 cerrarConfirmacion();
@@ -690,15 +678,13 @@
     }
 
     // Captura la tecla Escape para cerrar el modal de confirmación si está visible.
-    if (canDeleteHistoria) {
-        document.addEventListener('keydown', event => {
-            if (event.key !== 'Escape') {
-                return;
-            }
+    document.addEventListener('keydown', event => {
+        if (event.key !== 'Escape') {
+            return;
+        }
 
-            if (confirmModal?.classList.contains('is-visible')) {
-                cerrarConfirmacion();
-            }
-        });
-    }
+        if (confirmModal?.classList.contains('is-visible')) {
+            cerrarConfirmacion();
+        }
+    });
 })();
