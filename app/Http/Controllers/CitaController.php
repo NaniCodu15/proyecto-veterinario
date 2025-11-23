@@ -66,15 +66,38 @@ class CitaController extends Controller
     public function upcoming(Request $request)
     {
         $today = Carbon::today();
-        $limitDate = $today->copy()->addDays(3);
 
         $citas = Cita::with(['historiaClinica.mascota.propietario'])
             ->where('estado', 'Pendiente')
-            ->whereBetween('fecha_cita', [$today, $limitDate])
+            ->whereDate('fecha_cita', '>=', $today)
             ->orderBy('fecha_cita')
             ->orderBy('hora_cita')
+            ->limit(5)
             ->get()
-            ->map(fn ($cita) => $this->transformCita($cita))
+            ->map(function ($cita) {
+                $historia = $cita->historiaClinica;
+                $mascota = $historia?->mascota;
+                $propietario = $mascota?->propietario;
+
+                $nombrePropietario = trim(collect([
+                    $propietario?->nombres,
+                    $propietario?->apellidos,
+                ])->filter()->implode(' '));
+
+                $fecha = $cita->fecha_cita ? Carbon::parse($cita->fecha_cita) : null;
+                $hora = $cita->hora_cita ? substr($cita->hora_cita, 0, 5) : null;
+
+                return [
+                    'id_cita' => $cita->id_cita,
+                    'fecha' => $fecha?->format('d/m'),
+                    'fecha_detalle' => $fecha?->format('d/m/Y'),
+                    'hora' => $hora,
+                    'mascota' => $mascota?->nombre ?? 'Sin mascota',
+                    'propietario' => $nombrePropietario !== '' ? $nombrePropietario : 'Sin propietario',
+                    'estado' => $cita->estado ?? 'Pendiente',
+                    'motivo' => $cita->motivo,
+                ];
+            })
             ->values();
 
         return response()->json([
