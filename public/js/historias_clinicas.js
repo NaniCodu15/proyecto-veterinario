@@ -44,6 +44,8 @@
     const especieSelect = document.getElementById('especie');
     const especieOtroGroup = document.getElementById('grupoEspecieOtro');
     const especieOtroInput = document.getElementById('especieOtro');
+    const propietarioSelect = document.getElementById('propietarioSelect');
+    const propietarioNuevoWrapper = document.getElementById('datosPropietarioNuevo');
     const mensajesHistoria = Array.from(document.querySelectorAll('[data-historia-mensaje]'));
     const btnGenerarBackup = document.getElementById('btnGenerarBackup');
     const btnVerBackups = document.getElementById('btnVerBackups');
@@ -66,6 +68,13 @@
         direccion: document.getElementById('direccion'),
         dni: document.getElementById('dni'),
         peso: document.getElementById('peso'),
+    };
+
+    const camposPropietario = {
+        nombrePropietario: campos.nombrePropietario,
+        telefono: campos.telefono,
+        direccion: campos.direccion,
+        dni: campos.dni,
     };
 
     let historiaEditandoId = null;
@@ -136,6 +145,11 @@
 
         form.reset();
         ocultarEspecieOtro();
+
+        if (propietarioSelect) {
+            propietarioSelect.value = '';
+        }
+        actualizarVisibilidadPropietario();
 
         if (numeroHistoriaInput) {
             numeroHistoriaInput.value = window.proximoNumeroHistoria || 'HC-00001';
@@ -220,6 +234,41 @@
         });
 
         abrirModal();
+    }
+
+    function actualizarRequeridosPropietario(sonRequeridos) {
+        Object.values(camposPropietario).forEach(campo => {
+            if (!campo) {
+                return;
+            }
+
+            if (sonRequeridos) {
+                campo.setAttribute('required', 'required');
+            } else {
+                campo.removeAttribute('required');
+            }
+        });
+    }
+
+    function actualizarVisibilidadPropietario() {
+        if (!propietarioNuevoWrapper) {
+            return;
+        }
+
+        const usandoExistente = propietarioSelect?.value;
+
+        if (usandoExistente) {
+            propietarioNuevoWrapper.style.display = 'none';
+            actualizarRequeridosPropietario(false);
+            Object.values(camposPropietario).forEach(campo => {
+                if (campo) {
+                    campo.value = '';
+                }
+            });
+        } else {
+            propietarioNuevoWrapper.style.display = 'grid';
+            actualizarRequeridosPropietario(true);
+        }
     }
 
     // Muestra mensajes de éxito o error en el contexto de historias clínicas.
@@ -552,6 +601,14 @@
             }
         });
     }
+
+    if (propietarioSelect) {
+        propietarioSelect.addEventListener('change', () => {
+            actualizarVisibilidadPropietario();
+        });
+    }
+
+    actualizarVisibilidadPropietario();
 
     // Muestra u oculta el campo de especie "Otro" según la selección.
     if (especieSelect) {

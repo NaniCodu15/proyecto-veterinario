@@ -48,12 +48,14 @@ class HistoriaClinicaController extends Controller
             'sexo' => ['required', Rule::in(['macho', 'hembra'])],
             'edad' => ['nullable', 'integer', 'min:0', 'max:60'],
             'peso' => ['required', 'numeric', 'min:0'],
-            'nombrePropietario' => ['required', 'string', 'max:200'],
-            'telefono' => ['required', 'string', 'max:20'],
-            'direccion' => ['required', 'string', 'max:200'],
-            'dni' => ['required', 'string', 'max:15'],
+            'propietario_id' => ['nullable', 'exists:propietarios,id_propietario'],
+            'nombrePropietario' => ['required_without:propietario_id', 'string', 'max:200'],
+            'telefono' => ['required_without:propietario_id', 'string', 'max:20'],
+            'direccion' => ['required_without:propietario_id', 'string', 'max:200'],
+            'dni' => ['required_without:propietario_id', 'string', 'max:15'],
         ], [
             'especieOtro.required_if' => 'Debe especificar la especie de la mascota.',
+            'nombrePropietario.required_without' => 'Debe seleccionar o registrar un propietario.',
         ]);
 
         $historia = DB::transaction(function () use ($validated) {
@@ -64,17 +66,9 @@ class HistoriaClinicaController extends Controller
             $especieNormalizada = ucfirst(strtolower($especieSeleccionada));
             $sexoNormalizado = $validated['sexo'] === 'macho' ? 'Macho' : 'Hembra';
 
-            [$nombresPropietario, $apellidosPropietario] = $this->separarNombreCompleto($validated['nombrePropietario']);
-
-            $propietario = Propietario::updateOrCreate(
-                ['dni' => $validated['dni']],
-                [
-                    'nombres' => $nombresPropietario,
-                    'apellidos' => $apellidosPropietario,
-                    'telefono' => $validated['telefono'],
-                    'direccion' => $validated['direccion'],
-                ]
-            );
+            $propietario = isset($validated['propietario_id'])
+                ? Propietario::findOrFail($validated['propietario_id'])
+                : $this->crearPropietarioDesdeFormulario($validated);
 
             $mascota = Mascota::firstOrCreate(
                 [
@@ -163,12 +157,14 @@ class HistoriaClinicaController extends Controller
             'sexo' => ['required', Rule::in(['macho', 'hembra'])],
             'edad' => ['nullable', 'integer', 'min:0', 'max:60'],
             'peso' => ['required', 'numeric', 'min:0'],
-            'nombrePropietario' => ['required', 'string', 'max:200'],
-            'telefono' => ['required', 'string', 'max:20'],
-            'direccion' => ['required', 'string', 'max:200'],
-            'dni' => ['required', 'string', 'max:15'],
+            'propietario_id' => ['nullable', 'exists:propietarios,id_propietario'],
+            'nombrePropietario' => ['required_without:propietario_id', 'string', 'max:200'],
+            'telefono' => ['required_without:propietario_id', 'string', 'max:20'],
+            'direccion' => ['required_without:propietario_id', 'string', 'max:200'],
+            'dni' => ['required_without:propietario_id', 'string', 'max:15'],
         ], [
             'especieOtro.required_if' => 'Debe especificar la especie de la mascota.',
+            'nombrePropietario.required_without' => 'Debe seleccionar o registrar un propietario.',
         ]);
 
         $historia = HistoriaClinica::with(['mascota.propietario'])->findOrFail($id);
@@ -181,17 +177,9 @@ class HistoriaClinicaController extends Controller
             $especieNormalizada = ucfirst(strtolower($especieSeleccionada));
             $sexoNormalizado = $validated['sexo'] === 'macho' ? 'Macho' : 'Hembra';
 
-            [$nombresPropietario, $apellidosPropietario] = $this->separarNombreCompleto($validated['nombrePropietario']);
-
-            $propietario = Propietario::updateOrCreate(
-                ['dni' => $validated['dni']],
-                [
-                    'nombres' => $nombresPropietario,
-                    'apellidos' => $apellidosPropietario,
-                    'telefono' => $validated['telefono'],
-                    'direccion' => $validated['direccion'],
-                ]
-            );
+            $propietario = isset($validated['propietario_id'])
+                ? Propietario::findOrFail($validated['propietario_id'])
+                : $this->crearPropietarioDesdeFormulario($validated);
 
             $mascota = $historia->mascota ?? new Mascota();
             $mascota->nombre = $validated['nombreMascota'];
@@ -309,6 +297,27 @@ class HistoriaClinicaController extends Controller
         }
 
         return [$nombres, $apellidos];
+    }
+
+    /**
+     * Crea o actualiza un propietario a partir de los datos del formulario.
+     *
+     * @param array $validated Datos validados del request.
+     * @return Propietario Propietario persistido.
+     */
+    private function crearPropietarioDesdeFormulario(array $validated): Propietario
+    {
+        [$nombresPropietario, $apellidosPropietario] = $this->separarNombreCompleto($validated['nombrePropietario']);
+
+        return Propietario::updateOrCreate(
+            ['dni' => $validated['dni']],
+            [
+                'nombres' => $nombresPropietario,
+                'apellidos' => $apellidosPropietario,
+                'telefono' => $validated['telefono'],
+                'direccion' => $validated['direccion'],
+            ]
+        );
     }
 
     /**

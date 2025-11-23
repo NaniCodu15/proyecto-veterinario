@@ -65,13 +65,19 @@ class DashboardController extends Controller
                 ];
             });
 
+        $propietarios = Propietario::select('id_propietario', 'nombres', 'apellidos', 'dni')
+            ->orderBy('nombres')
+            ->orderBy('apellidos')
+            ->get();
+
         return view('layouts.dashboard', compact(
             'totalMascotas',
             'totalPropietarios',
             'totalHistorias',
             'totalConsultas',
             'mascotas',
-            'upcomingAppointments'
+            'upcomingAppointments',
+            'propietarios'
         ));
     }
 }

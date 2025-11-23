@@ -1,3 +1,5 @@
+        @php($propietarios = $propietarios ?? collect())
+
         {{-- Sección para creación de historias clínicas --}}
         <div id="section-historias" class="section">
             @if ($isAssistant)
@@ -152,7 +154,24 @@
 
                         <div class="form-section">
                             <h3 class="form-section__title"><span>👤</span>Datos del propietario</h3>
-                            <div class="form-grid">
+                            <div class="form-group full-width">
+                                {{-- Selección de propietario existente --}}
+                                <label for="propietarioSelect">Selecciona un propietario existente</label>
+                                <select id="propietarioSelect" name="propietario_id">
+                                    <option value="">Registrar un nuevo propietario</option>
+                                    @foreach ($propietarios as $propietario)
+                                        @php
+                                            $nombreCompleto = trim(($propietario->nombres ?? '') . ' ' . ($propietario->apellidos ?? ''));
+                                        @endphp
+                                        <option value="{{ $propietario->id_propietario }}">
+                                            {{ $nombreCompleto ?: 'Propietario sin nombre' }} · DNI: {{ $propietario->dni }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <small>Al elegir un propietario existente se ocultará el formulario de nuevo registro.</small>
+                            </div>
+
+                            <div class="form-grid" id="datosPropietarioNuevo">
                                 <div class="form-group">
                                     {{-- Nombre completo del responsable --}}
                                     <label>Nombre del Propietario:</label>
