@@ -284,8 +284,8 @@
         'citasEstadoBaseUrl' => url('citas'),
         'citasBaseUrl' => url('citas'),
         'citasUpcomingUrl' => route('citas.upcoming'),
-        'backupGenerateUrl' => route('backups.generate'),
-        'backupListUrl' => route('backups.index'),
+        'backupGenerateUrl' => $isAdmin ? route('backups.generate') : null,
+        'backupListUrl' => $isAdmin ? route('backups.index') : null,
             'permissions' => [
                 'is_admin' => $isAdmin,
                 'is_assistant' => $isAssistant,
