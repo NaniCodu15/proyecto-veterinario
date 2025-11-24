@@ -265,6 +265,7 @@
         'citasUpcomingUrl' => route('citas.upcoming'),
         'backupGenerateUrl' => route('backups.generate'),
         'backupListUrl' => route('backups.index'),
+        'propietarioSearchUrl' => route('propietarios.search'),
     ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
 </div>
 

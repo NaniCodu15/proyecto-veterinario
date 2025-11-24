@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Propietario;
 use Illuminate\Http\Request;
 
 class PropietarioController extends Controller
@@ -80,5 +81,48 @@ class PropietarioController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    /**
+     * Busca propietarios por nombre o DNI y devuelve un JSON compatible con Select2.
+     */
+    public function search(Request $request)
+    {
+        $termino = $request->string('q')->toString();
+
+        $propietarios = Propietario::query()
+            ->when($termino !== '', function ($query) use ($termino) {
+                $query->where(function ($subQuery) use ($termino) {
+                    $subQuery
+                        ->where('nombres', 'like', "%{$termino}%")
+                        ->orWhere('apellidos', 'like', "%{$termino}%")
+                        ->orWhere('dni', 'like', "%{$termino}%");
+                });
+            })
+            ->orderBy('nombres')
+            ->orderBy('apellidos')
+            ->limit(20)
+            ->get();
+
+        $resultados = $propietarios->map(function (Propietario $propietario) {
+            $nombreCompleto = trim(($propietario->nombres ?? '') . ' ' . ($propietario->apellidos ?? ''));
+            $dni = $propietario->dni ?? '';
+            $texto = $nombreCompleto !== '' ? $nombreCompleto : 'Propietario sin nombre';
+
+            return [
+                'id' => $propietario->id_propietario,
+                'text' => $dni !== '' ? sprintf('%s · DNI %s', $texto, $dni) : $texto,
+                'nombre_completo' => $nombreCompleto,
+                'nombres' => $propietario->nombres,
+                'apellidos' => $propietario->apellidos,
+                'telefono' => $propietario->telefono,
+                'direccion' => $propietario->direccion,
+                'dni' => $dni,
+            ];
+        });
+
+        return response()->json([
+            'results' => $resultados,
+        ]);
     }
 }
