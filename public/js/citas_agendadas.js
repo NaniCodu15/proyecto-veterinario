@@ -138,28 +138,28 @@
         }
     }
 
+    function esEstadoReprogramada(estado) {
+        return String(estado || '').toLowerCase() === 'reprogramada';
+    }
+
     // Muestra u oculta los campos de fecha y hora cuando el estado es reprogramada.
     function toggleCamposReprogramar(estado) {
-        const esReprogramada = String(estado || '').toLowerCase() === 'reprogramada';
+        const esReprogramada = esEstadoReprogramada(estado);
 
-        if (reprogramarCampos) {
-            reprogramarCampos.hidden = !esReprogramada;
-        }
+        if (esReprogramada) {
+            if (reprogramarCampos) {
+                reprogramarCampos.hidden = false;
+            }
 
-        if (reprogramarFechaInput) {
-            if (esReprogramada) {
+            if (reprogramarFechaInput) {
                 reprogramarFechaInput.setAttribute('required', 'required');
-            } else {
-                reprogramarFechaInput.removeAttribute('required');
             }
-        }
 
-        if (reprogramarHoraInput) {
-            if (esReprogramada) {
+            if (reprogramarHoraInput) {
                 reprogramarHoraInput.setAttribute('required', 'required');
-            } else {
-                reprogramarHoraInput.removeAttribute('required');
             }
+        } else {
+            resetCamposReprogramar();
         }
     }
 
@@ -531,19 +531,20 @@
             if (selectEstadoCita.value !== estadoTexto) {
                 selectEstadoCita.value = 'Pendiente';
             }
-            toggleCamposReprogramar(selectEstadoCita.value);
         }
 
-        if (reprogramarFechaInput) {
-            reprogramarFechaInput.value = cita.fecha ?? '';
-        }
+        const estadoSeleccionado = selectEstadoCita?.value || cita.estado;
+        const estadoEsReprogramada = esEstadoReprogramada(estadoSeleccionado);
+        toggleCamposReprogramar(estadoSeleccionado);
 
-        if (reprogramarHoraInput) {
-            reprogramarHoraInput.value = cita.hora ?? '';
-        }
+        if (estadoEsReprogramada) {
+            if (reprogramarFechaInput) {
+                reprogramarFechaInput.value = cita.fecha ?? '';
+            }
 
-        if (!selectEstadoCita) {
-            toggleCamposReprogramar(cita.estado);
+            if (reprogramarHoraInput) {
+                reprogramarHoraInput.value = cita.hora ?? '';
+            }
         }
 
         abrirModalGenerico(modalEstadoCita);
@@ -824,7 +825,33 @@
 
             const nuevoEstado = selectEstadoCita?.value || 'Pendiente';
             const esReprogramada = String(nuevoEstado).toLowerCase() === 'reprogramada';
+            const esCancelada = String(nuevoEstado).toLowerCase() === 'cancelada';
             const payload = { estado: nuevoEstado };
+
+            if (esCancelada) {
+                try {
+                    await eliminarCita(citaSeleccionadaParaEstado.id);
+                    cerrarModalGenerico(modalEstadoCita);
+                    resetCamposReprogramar();
+                    const citaCanceladaId = citaSeleccionadaParaEstado.id;
+                    citaSeleccionadaParaEstado = null;
+                    await cargarCitas(citasBusquedaActual);
+
+                    if (citaDetalleSeleccionada && String(citaDetalleSeleccionada.id) === String(citaCanceladaId)) {
+                        cerrarModalGenerico(modalDetalleCita);
+                        citaDetalleSeleccionada = null;
+                    }
+
+                    mostrarMensajeListadoCitas('La cita fue cancelada y eliminada correctamente.', 'success');
+                    if (typeof window.cargarCitasProximas === 'function') {
+                        window.cargarCitasProximas();
+                    }
+                } catch (error) {
+                    console.error(error);
+                    mostrarMensajeListadoCitas(error.message || 'No se pudo cancelar la cita.', 'error');
+                }
+                return;
+            }
 
             if (esReprogramada) {
                 const nuevaFecha = reprogramarFechaInput?.value || '';
