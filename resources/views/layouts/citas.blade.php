@@ -17,6 +17,12 @@
                     {{-- Formulario de registro de cita con datos precargados --}}
                     <form id="formRegistrarCita" class="cita-form" novalidate>
                         <div class="cita-form__group">
+                            {{-- Buscador en tiempo real para filtrar historias clínicas --}}
+                            <label for="historiaBusquedaCitas">Buscar historia clínica</label>
+                            <input type="text" id="historiaBusquedaCitas" placeholder="Busca por código, mascota o propietario">
+                        </div>
+
+                        <div class="cita-form__group">
                             {{-- Selección de la historia clínica relacionada --}}
                             <label for="historiaSelectCitas">Historia clínica</label>
                             <select id="historiaSelectCitas" name="historia" required>
