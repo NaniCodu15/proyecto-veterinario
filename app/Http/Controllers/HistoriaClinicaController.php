@@ -33,6 +33,65 @@ class HistoriaClinicaController extends Controller
     }
 
     /**
+     * Busca historias clínicas por propietario, DNI o mascota para consumo con Select2.
+     */
+    public function search(Request $request)
+    {
+        $termino = trim((string) $request->query('q', ''));
+
+        $historias = HistoriaClinica::with(['mascota.propietario'])
+            ->when($termino !== '', function ($query) use ($termino) {
+                $query->where(function ($subQuery) use ($termino) {
+                    $subQuery
+                        ->whereHas('mascota.propietario', function ($propietarioQuery) use ($termino) {
+                            $propietarioQuery->where(function ($propietarioSubQuery) use ($termino) {
+                                $propietarioSubQuery
+                                    ->where('nombres', 'like', "%{$termino}%")
+                                    ->orWhere('apellidos', 'like', "%{$termino}%")
+                                    ->orWhere('dni', 'like', "%{$termino}%");
+                            });
+                        })
+                        ->orWhereHas('mascota', function ($mascotaQuery) use ($termino) {
+                            $mascotaQuery->where('nombre', 'like', "%{$termino}%");
+                        })
+                        ->orWhere('numero_historia', 'like', "%{$termino}%");
+                });
+            })
+            ->orderByDesc('fecha_apertura')
+            ->orderByDesc('created_at')
+            ->limit(20)
+            ->get();
+
+        $resultados = $historias->map(function (HistoriaClinica $historia) {
+            $mascota = $historia->mascota;
+            $propietario = $mascota?->propietario;
+
+            $nombreMascota = $mascota?->nombre ?? 'Mascota sin nombre';
+            $nombrePropietario = trim(($propietario->nombres ?? '') . ' ' . ($propietario->apellidos ?? ''));
+            $dniPropietario = $propietario->dni ?? '';
+            $telefonoPropietario = $propietario->telefono ?? '';
+
+            $textoPropietario = $nombrePropietario !== '' ? $nombrePropietario : 'Propietario sin nombre';
+            $texto = $dniPropietario !== ''
+                ? sprintf('%s · DNI %s', $textoPropietario, $dniPropietario)
+                : $textoPropietario;
+
+            return [
+                'id' => $historia->id_historia,
+                'text' => sprintf('%s · %s', $nombreMascota, $texto),
+                'nombre_propietario' => $textoPropietario,
+                'dni_propietario' => $dniPropietario,
+                'telefono_propietario' => $telefonoPropietario,
+                'nombre_mascota' => $nombreMascota,
+            ];
+        });
+
+        return response()->json([
+            'results' => $resultados,
+        ]);
+    }
+
+    /**
      * Registra una nueva historia clínica junto con la mascota y propietario asociados.
      *
      * @param Request $request Solicitud con datos de mascota, propietario y parámetros clínicos iniciales.
