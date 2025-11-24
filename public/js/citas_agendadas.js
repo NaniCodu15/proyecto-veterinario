@@ -125,16 +125,19 @@
     function resetCamposReprogramar() {
         if (reprogramarCampos) {
             reprogramarCampos.hidden = true;
+            reprogramarCampos.setAttribute('aria-hidden', 'true');
         }
 
         if (reprogramarFechaInput) {
             reprogramarFechaInput.value = '';
             reprogramarFechaInput.removeAttribute('required');
+            reprogramarFechaInput.setAttribute('disabled', 'disabled');
         }
 
         if (reprogramarHoraInput) {
             reprogramarHoraInput.value = '';
             reprogramarHoraInput.removeAttribute('required');
+            reprogramarHoraInput.setAttribute('disabled', 'disabled');
         }
     }
 
@@ -144,21 +147,28 @@
 
         if (reprogramarCampos) {
             reprogramarCampos.hidden = !esReprogramada;
+            reprogramarCampos.setAttribute('aria-hidden', esReprogramada ? 'false' : 'true');
         }
 
         if (reprogramarFechaInput) {
             if (esReprogramada) {
                 reprogramarFechaInput.setAttribute('required', 'required');
+                reprogramarFechaInput.removeAttribute('disabled');
             } else {
+                reprogramarFechaInput.value = '';
                 reprogramarFechaInput.removeAttribute('required');
+                reprogramarFechaInput.setAttribute('disabled', 'disabled');
             }
         }
 
         if (reprogramarHoraInput) {
             if (esReprogramada) {
                 reprogramarHoraInput.setAttribute('required', 'required');
+                reprogramarHoraInput.removeAttribute('disabled');
             } else {
+                reprogramarHoraInput.value = '';
                 reprogramarHoraInput.removeAttribute('required');
+                reprogramarHoraInput.setAttribute('disabled', 'disabled');
             }
         }
     }
@@ -531,7 +541,6 @@
             if (selectEstadoCita.value !== estadoTexto) {
                 selectEstadoCita.value = 'Pendiente';
             }
-            toggleCamposReprogramar(selectEstadoCita.value);
         }
 
         if (reprogramarFechaInput) {
@@ -544,6 +553,8 @@
 
         if (!selectEstadoCita) {
             toggleCamposReprogramar(cita.estado);
+        } else {
+            toggleCamposReprogramar(selectEstadoCita.value);
         }
 
         abrirModalGenerico(modalEstadoCita);
@@ -824,7 +835,26 @@
 
             const nuevoEstado = selectEstadoCita?.value || 'Pendiente';
             const esReprogramada = String(nuevoEstado).toLowerCase() === 'reprogramada';
+            const esCancelada = String(nuevoEstado).toLowerCase() === 'cancelada';
             const payload = { estado: nuevoEstado };
+
+            if (esCancelada) {
+                try {
+                    await eliminarCita(citaSeleccionadaParaEstado.id);
+                    cerrarModalGenerico(modalEstadoCita);
+                    resetCamposReprogramar();
+                    citaSeleccionadaParaEstado = null;
+                    await cargarCitas(citasBusquedaActual);
+                    mostrarMensajeListadoCitas('La cita fue cancelada y eliminada correctamente.', 'success');
+                    if (typeof window.cargarCitasProximas === 'function') {
+                        window.cargarCitasProximas();
+                    }
+                } catch (error) {
+                    console.error(error);
+                    mostrarMensajeListadoCitas(error.message || 'No se pudo cancelar la cita.', 'error');
+                }
+                return;
+            }
 
             if (esReprogramada) {
                 const nuevaFecha = reprogramarFechaInput?.value || '';
