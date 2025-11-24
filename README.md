@@ -59,3 +59,11 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Backups automáticos
+
+El comando `backup:generate` está programado para ejecutarse diariamente a las 7:30 PM (America/Lima) mediante el scheduler de Laravel. Si trabajas en Windows y necesitas activar el scheduler localmente, ejecuta en tu terminal:
+
+```bash
+while true; do php artisan schedule:run; sleep 60; done
+```
