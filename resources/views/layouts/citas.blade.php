@@ -8,7 +8,7 @@
                             <h2>Registrar Cita</h2>
                             <p>Selecciona una historia clínica existente para completar automáticamente los datos.</p>
                         </div>
-                        <div class="citas-card__icon" aria-hidden="true"><i class="fas fa-calendar-plus"></i></div>
+                        <div class="citas-card__icon" aria-hidden="true"><i class="fas fa-calendar-circle-plus"></i></div>
                     </div>
 
                     {{-- Mensaje de retroalimentación para acciones de cita --}}

@@ -169,17 +169,29 @@ class CitaController extends Controller
      */
     public function update(Request $request, Cita $cita)
     {
-        $request->validate([
+        $validated = $request->validate([
             'fecha_cita' => 'required|date',
-            'hora_cita' => 'required',
+            'hora_cita' => 'required|date_format:H:i',
             'id_historia' => ['required', 'exists:historia_clinicas,id_historia'],
+            'motivo' => ['nullable', 'string', 'max:255'],
         ]);
 
+        $hora = $this->normalizarHora($validated['hora_cita'] ?? null) ?? $cita->hora_cita;
+
         $cita->update([
-            'fecha_cita' => $request->fecha_cita,
-            'hora_cita' => $request->hora_cita,
-            'id_historia' => $request->id_historia,
+            'fecha_cita' => $validated['fecha_cita'],
+            'hora_cita' => $hora,
+            'id_historia' => $validated['id_historia'],
+            'motivo' => $validated['motivo'] ?? $cita->motivo,
         ]);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Cita actualizada correctamente.',
+                'cita' => $this->transformCita($cita->fresh(['historiaClinica.mascota.propietario'])),
+            ]);
+        }
 
         return redirect()->route('citas.index')->with('success', 'Cita actualizada correctamente.');
     }

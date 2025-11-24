@@ -83,15 +83,27 @@
 
     // Comprueba si hay algún modal abierto para bloquear scroll de fondo.
     function hayModalVisible() {
-        return Array.from(document.querySelectorAll('.modal')).some(modalEl => modalEl.style.display === 'block');
+        return Array.from(document.querySelectorAll('.modal')).some(modalEl => 
+            modalEl.style.display === 'block' || modalEl.style.display === 'flex'
+        );
     }
 
     // Alterna la clase del body según el estado de los modales.
     function actualizarEstadoBodyModal() {
         if (hayModalVisible()) {
             document.body.classList.add('modal-open');
+            // Bloquear scroll del contenido principal
+            const content = document.querySelector('.content');
+            if (content) {
+                content.classList.add('modal-open');
+            }
         } else {
             document.body.classList.remove('modal-open');
+            // Restaurar scroll del contenido principal
+            const content = document.querySelector('.content');
+            if (content) {
+                content.classList.remove('modal-open');
+            }
         }
     }
 
@@ -101,9 +113,14 @@
             return;
         }
 
-        modalElement.style.display = 'block';
+        modalElement.style.display = 'flex';
         modalElement.setAttribute('aria-hidden', 'false');
         actualizarEstadoBodyModal();
+        
+        // Scroll al inicio del modal
+        if (modalElement.querySelector('.modal-content')) {
+            modalElement.scrollTop = 0;
+        }
     }
 
     // Oculta un modal genérico y restablece el estado del body.
@@ -115,6 +132,9 @@
         modalElement.style.display = 'none';
         modalElement.setAttribute('aria-hidden', 'true');
         actualizarEstadoBodyModal();
+        
+        // Reset scroll position
+        modalElement.scrollTop = 0;
     }
 
     // Muestra alertas contextualizadas dentro del modal de consultas y las oculta automáticamente.
@@ -539,6 +559,10 @@
         const acciones = document.createElement('div');
         acciones.className = 'historia-card__actions';
 
+        // Grupo de botones principales (Ver, Consultas)
+        const accionesPrimarias = document.createElement('div');
+        accionesPrimarias.className = 'historia-card__actions-primary';
+
         const btnVerPdf = document.createElement('a');
         btnVerPdf.className = 'btn btn-info btn-sm';
         btnVerPdf.title = 'Ver historia clínica';
@@ -560,6 +584,12 @@
         btnVerConsultas.title = 'Ver historial clínico';
         btnVerConsultas.innerHTML = '<i class="fas fa-stream"></i> Consultas';
 
+        accionesPrimarias.append(btnVerPdf, btnVerConsultas);
+
+        // Grupo de botones secundarios (Editar, Anular)
+        const accionesSecundarias = document.createElement('div');
+        accionesSecundarias.className = 'historia-card__actions-secondary';
+
         const btnEditar = document.createElement('button');
         btnEditar.className = 'btn btn-warning btn-sm btnEditar';
         btnEditar.title = 'Editar historia';
@@ -571,7 +601,9 @@
         btnAnular.title = 'Anular historia';
         btnAnular.innerHTML = '<i class="fas fa-ban" aria-hidden="true"></i> Anular';
 
-        acciones.append(btnVerPdf, btnVerConsultas, btnEditar, btnAnular);
+        accionesSecundarias.append(btnEditar, btnAnular);
+
+        acciones.append(accionesPrimarias, accionesSecundarias);
 
         card.append(header, body, acciones);
 

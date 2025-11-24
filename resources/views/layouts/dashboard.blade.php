@@ -19,21 +19,23 @@
         {{-- Menú de navegación de módulos --}}
         <ul class="sidebar-menu">
             {{-- Acceso directo a la sección de inicio --}}
-            <li><a href="#" class="nav-link active" data-section="inicio"><i class="fas fa-home"></i><span>Inicio</span></a></li>
+            <li><a href="#" class="nav-link active" data-section="inicio"><i class="fas fa-house"></i><span>Inicio</span></a></li>
+            {{-- Navegación hacia el módulo de historias clínicas --}}
             {{-- Navegación hacia el módulo de historias clínicas --}}
             <li class="sidebar-item sidebar-item--has-submenu">
-                <a href="#" class="nav-link" data-section="historias"><i class="fas fa-notes-medical"></i><span>Historias Clínicas</span></a>
+                <a href="#" class="nav-link" data-section="historias"><i class="fas fa-file-medical"></i><span>Historias Clínicas</span></a>
                 <ul class="sidebar-submenu">
                     <li>
                         <a href="#" class="nav-link nav-link--sublayer" data-section="historias-registradas" data-parent="historias">
-                            <i class="fas fa-folder-open"></i>
+                            <i class="fas fa-folder"></i>
                             <span>Historias Registradas</span>
                         </a>
                     </li>
                 </ul>
             </li>
+            {{-- Navegación hacia el módulo de citas --}}
             <li class="sidebar-item sidebar-item--has-submenu">
-                <a href="#" class="nav-link" data-section="citas"><i class="fas fa-calendar-alt"></i><span>Citas</span></a>
+                <a href="#" class="nav-link" data-section="citas"><i class="fas fa-calendar-days"></i><span>Citas</span></a>
                 <ul class="sidebar-submenu">
                     <li>
                         <a href="#" class="nav-link nav-link--sublayer" data-section="citas-agendadas" data-parent="citas">
@@ -66,7 +68,8 @@
             <form action="{{ route('logout') }}" method="POST" class="user-card__logout">
                 @csrf
                 <button type="submit" aria-label="Cerrar sesión">
-                    <i class="fas fa-sign-out-alt"></i>
+                    <i class="fas fa-right-from-bracket"></i>
+                    <span>Cerrar sesión</span>
                 </button>
             </form>
         </div>
@@ -85,7 +88,7 @@
                     </p>
                     <div class="home-hero__actions">
                         <a href="#" class="btn btn-primary btn-ir-historias" data-section="historias">
-                            <i class="fas fa-clinic-medical"></i>
+                            <i class="fas fa-hospital"></i>
                             Abrir módulo clínico
                         </a>
                     </div>

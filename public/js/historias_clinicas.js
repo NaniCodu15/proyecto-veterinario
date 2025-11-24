@@ -169,15 +169,27 @@
 
     // Determina si existe algún modal visible para sincronizar el estado del body.
     function hayModalVisible() {
-        return Array.from(document.querySelectorAll('.modal')).some(modalEl => modalEl.style.display === 'block');
+        return Array.from(document.querySelectorAll('.modal')).some(modalEl => 
+            modalEl.style.display === 'block' || modalEl.style.display === 'flex'
+        );
     }
 
     // Agrega o quita la clase en el body según el estado de los modales.
     function actualizarEstadoBodyModal() {
         if (hayModalVisible()) {
             document.body.classList.add('modal-open');
+            // Bloquear scroll del contenido principal
+            const content = document.querySelector('.content');
+            if (content) {
+                content.classList.add('modal-open');
+            }
         } else {
             document.body.classList.remove('modal-open');
+            // Restaurar scroll del contenido principal
+            const content = document.querySelector('.content');
+            if (content) {
+                content.classList.remove('modal-open');
+            }
         }
     }
 
@@ -187,9 +199,14 @@
             return;
         }
 
-        modal.style.display = 'block';
+        modal.style.display = 'flex';
         modal.setAttribute('aria-hidden', 'false');
         actualizarEstadoBodyModal();
+        
+        // Scroll al inicio del modal
+        if (modal.querySelector('.modal-content')) {
+            modal.scrollTop = 0;
+        }
     }
 
     // Oculta el modal principal y limpia el estado accesible.
@@ -201,6 +218,9 @@
         modal.style.display = 'none';
         modal.setAttribute('aria-hidden', 'true');
         actualizarEstadoBodyModal();
+        
+        // Reset scroll position
+        modal.scrollTop = 0;
     }
 
     // Oculta el campo "Otro" de especie y limpia su valor.

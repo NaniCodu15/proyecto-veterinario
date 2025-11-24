@@ -54,13 +54,15 @@ function setActiveLink(link) {
     clearActiveLinks();
     link.classList.add('active');
 
+    // Solo marca el padre como activo si el link es un submenú (tiene data-parent)
     const parentSection = link.dataset.parent;
     if (parentSection) {
         const parentLink = document.querySelector(`.sidebar-menu a.nav-link[data-section="${parentSection}"]`);
-        parentLink?.classList.add('nav-link--parent-active');
-    } else if (link.closest('.sidebar-item--has-submenu')) {
-        link.classList.add('nav-link--parent-active');
+        if (parentLink && !parentLink.classList.contains('nav-link--sublayer')) {
+            parentLink.classList.add('nav-link--parent-active');
+        }
     }
+    // NO marca como activo si es el link principal del menú padre
 }
 
 // Controla el flujo de navegación al hacer clic en un enlace del menú lateral.

@@ -1,14 +1,30 @@
-/* 🔥 Fuente moderna */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap'); 
-/* Importa la fuente "Poppins" desde Google Fonts para usarla en todo el sitio */
+/* ============================================
+   IMPORTS DE FUENTES GOOGLE FONTS
+   ============================================ */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Quicksand:wght@300;400;500;600;700&family=Raleway:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap');
 
-/* Estilos base para toda la página */
+/* ============================================
+   VARIABLES
+   ============================================ */
+:root {
+    --font-primary: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-body: 'Quicksand', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-accent: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* ============================================
+   ESTILOS BASE
+   ============================================ */
 html, body {
-    margin: 0; /* Elimina los márgenes por defecto del navegador */
-    padding: 0; /* Elimina el padding por defecto */
-    height: 100%; /* Hace que ocupen toda la altura de la ventana */
-    overflow: hidden; /* Quita las barras de desplazamiento */
-    font-family: 'Poppins', sans-serif; /* Aplica la fuente importada a todo el contenido */
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    font-family: var(--font-body);
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 /* Contenedor principal que aloja el formulario frente al fondo. */
@@ -26,34 +42,48 @@ html, body {
 
 /* Caja del formulario con sombra y bordes redondeados. */
 .login-form {
-    background: #fff; /* Fondo blanco */
-    padding: 20px 25px; /* Espaciado interno */
-    border-radius: 15px; /* Bordes redondeados */
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15); /* Sombra para dar profundidad */
-    width: 320px; /* Ancho fijo del formulario */
-    text-align: left; /* Texto alineado a la izquierda */
-    position: relative; /* Posición relativa para elementos internos posicionados absolutamente */
+    background: rgba(255, 255, 255, 0.98);
+    padding: 32px 28px;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5);
+    width: 360px;
+    text-align: left;
+    position: relative;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 /* Alerta para mostrar errores de autenticación. */
 .login-error {
-    background: rgba(242, 65, 215, 0.08); /* Fondo sutil */
-    border: 1px solid rgba(242, 65, 215, 0.4); /* Borde fino y moderno */
-    border-radius: 12px; /* Bordes suaves */
-    color: #c2185b; /* Texto elegante */
+    background: rgba(242, 65, 215, 0.1);
+    border: 2px solid rgba(242, 65, 215, 0.3);
+    border-radius: 12px;
+    color: #c2185b;
+    font-family: var(--font-body);
     font-size: 13px;
-    font-weight: 500;
-    padding: 10px 14px;
-    margin-bottom: 14px;
+    font-weight: 600;
+    padding: 12px 16px;
+    margin-bottom: 18px;
     text-align: center;
+    box-shadow: 0 4px 12px rgba(242, 65, 215, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 /* Logo centrado que encabeza el formulario. */
 .login-logo img.logo {
-    width: 180px;      /* más pequeño */
+    width: 180px;
     height: auto;
     display: block;
-    margin: 20px auto 15px auto; /* más abajo y con espacio inferior */
+    margin: 20px auto 20px auto;
+    filter: drop-shadow(0 8px 16px rgba(91, 105, 255, 0.2));
+    transition: transform 0.3s ease;
+}
+
+.login-logo img.logo:hover {
+    transform: scale(1.05);
 }
 
 /* ---- INPUTS CON ICONO Y LABEL FLOTANTE ---- */
@@ -69,39 +99,45 @@ html, body {
 
 /* ÍCONO a la izquierda dentro del input */
 .input-group .icon {
-    position: absolute; /* Posiciona de forma absoluta respecto al .input-group */
-    top: 50%; /* Centrado vertical */
-    left: 32px; /* Separación desde la izquierda */
-    transform: translateY(-50%); /* Ajusta para un centrado exacto vertical */
-    font-size: 16px; /* Tamaño del ícono */
-    color: #5b69ff; /* Color del ícono */
-    pointer-events: none; /* El ícono no captura clics */
-    transition: color 0.3s ease; /* Transición suave al cambiar color */
+    position: absolute;
+    top: 50%;
+    left: 32px;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: #5b69ff;
+    pointer-events: none;
+    transition: color 0.3s ease, transform 0.3s ease;
+    z-index: 2;
 }
 
 /* Estilos del input */
 .input-group input {
-    width: 73%; /* Ancho del input */
-    margin-left: 5%; /* Margen izquierdo para centrar dentro del grupo */
-    padding: 14px 12px 14px 40px; /* Espaciado interno, dejando espacio para el ícono */
-    border-radius: 10px; /* Bordes redondeados */
-    border: 1px solid #ccc; /* Borde gris claro */
-    background: #f9f9f9; /* Fondo gris muy claro */
-    font-size: 14px; /* Tamaño del texto */
-    outline: none; /* Quita el borde por defecto al enfocar */
-    transition: border 0.3s ease, box-shadow 0.3s ease; /* Transición suave al enfocar */
+    width: 73%;
+    margin-left: 5%;
+    padding: 14px 12px 14px 40px;
+    border-radius: 12px;
+    border: 2px solid #e0e0e0;
+    background: #f9f9f9;
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 400;
+    outline: none;
+    transition: border 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
 
 /* Label flotante */
 .input-group label {
-    position: absolute; /* Posiciona el label dentro del input-group */
-    left: calc(5% + 40px); /* Lo alinea después del ícono */
-    top: 50%; /* Centrado vertical */
-    transform: translateY(-50%); /* Ajuste vertical exacto */
-    font-size: 14px; /* Tamaño de texto del label */
-    color: #666; /* Color gris */
-    pointer-events: none; /* No captura clics */
-    transition: all 0.25s ease-in-out; /* Transición suave de todos los cambios */
+    position: absolute;
+    left: calc(5% + 40px);
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    color: #666;
+    pointer-events: none;
+    transition: all 0.25s ease-in-out;
+    z-index: 1;
 }
 
 /* Animación del label al enfocar o tener contenido */
@@ -130,20 +166,48 @@ html, body {
 
 /* Botón de login */
 .login-form button {
-    width: 100%; /* Ocupa todo el ancho del formulario */
-    padding: 10px; /* Espaciado interno */
-    border: none; /* Sin borde */
-    border-radius: 10px; /* Bordes redondeados */
-    background: linear-gradient(135deg, #fa69d1, #f241d7); /* Degradado rosa */
-    color: white; /* Texto blanco */
-    font-size: 15px; /* Tamaño del texto */
-    font-weight: 600; /* Negrita */
-    cursor: pointer; /* Cambia el cursor al pasar por encima */
-    transition: all 0.3s ease; /* Transición suave para todos los cambios */
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #fa69d1, #f241d7);
+    color: white;
+    font-family: var(--font-primary);
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 20px rgba(250, 105, 209, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.login-form button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+}
+
+.login-form button:hover::before {
+    width: 300px;
+    height: 300px;
 }
 
 /* Efecto hover del botón */
 .login-form button:hover {
-    background: linear-gradient(135deg, #5682f4, #4451ea); /* Degradado azul al pasar el mouse */
-    transform: translateY(-2px); /* Se eleva ligeramente al pasar el mouse */
+    background: linear-gradient(135deg, #5682f4, #4451ea);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(86, 130, 244, 0.4);
+}
+
+.login-form button:active {
+    transform: translateY(0);
 }

@@ -21,8 +21,8 @@
                     </label>
                 </div>
 
-                <div class="citas-table-wrapper citas-grid-wrapper">
-                    {{-- Listado de citas en tarjetas --}}
+                <div class="citas-grid-wrapper">
+                    {{-- Listado de citas en formato línea --}}
                     <div class="citas-grid" id="tablaCitas">
                         <div class="citas-grid__empty">No hay citas registradas todavía.</div>
                     </div>
@@ -35,22 +35,40 @@
 @endpush
         </div>
 
-        {{-- Modal para mostrar detalle completo de la cita --}}
-        <div id="modalDetalleCita" class="modal modal--cita" aria-hidden="true">
+        {{-- Modal para editar cita --}}
+        <div id="modalEditarCita" class="modal modal--cita" aria-hidden="true">
             <div class="modal-content modal-content--cita">
-                <span class="close" data-close="detalleCita">&times;</span>
-                <h2>Detalle de la cita</h2>
-                <div class="cita-detalle">
-                    <div class="cita-detalle__row"><span class="cita-detalle__label">ID</span><span class="cita-detalle__value" data-detalle="id">—</span></div>
-                    <div class="cita-detalle__row"><span class="cita-detalle__label">Historia clínica</span><span class="cita-detalle__value" data-detalle="numero_historia">—</span></div>
-                    <div class="cita-detalle__row"><span class="cita-detalle__label">Mascota</span><span class="cita-detalle__value" data-detalle="mascota">—</span></div>
-                    <div class="cita-detalle__row"><span class="cita-detalle__label">Propietario</span><span class="cita-detalle__value" data-detalle="propietario">—</span></div>
-                    <div class="cita-detalle__row"><span class="cita-detalle__label">Teléfono</span><span class="cita-detalle__value" data-detalle="propietario_telefono">—</span></div>
-                    <div class="cita-detalle__row"><span class="cita-detalle__label">Fecha</span><span class="cita-detalle__value" data-detalle="fecha_legible">—</span></div>
-                    <div class="cita-detalle__row"><span class="cita-detalle__label">Hora</span><span class="cita-detalle__value" data-detalle="hora">—</span></div>
-                    <div class="cita-detalle__row"><span class="cita-detalle__label">Estado</span><span class="cita-detalle__value" data-detalle="estado">—</span></div>
-                    <div class="cita-detalle__row cita-detalle__row--full"><span class="cita-detalle__label">Motivo</span><span class="cita-detalle__value" data-detalle="motivo">—</span></div>
-                </div>
+                <span class="close" data-close="editarCita">&times;</span>
+                <h2>Editar Cita</h2>
+                <div id="editarCitaMensaje" class="cita-alert" role="alert" hidden></div>
+                <form id="formEditarCita" class="cita-estado-form">
+                    <div class="form-group">
+                        <label for="editarCitaHistoria">Historia Clínica</label>
+                        <select id="editarCitaHistoria" name="id_historia" required>
+                            <option value="">Selecciona una historia clínica</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editarCitaFecha">Fecha de la cita</label>
+                        <input type="date" id="editarCitaFecha" name="fecha_cita" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editarCitaHora">Hora de la cita</label>
+                        <input type="time" id="editarCitaHora" name="hora_cita" required>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="editarCitaMotivo">Motivo</label>
+                        <textarea id="editarCitaMotivo" name="motivo" rows="4" required></textarea>
+                    </div>
+
+                    <div class="cita-estado-actions">
+                        <button type="button" class="btn btn-outline" data-close="editarCita">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                    </div>
+                </form>
             </div>
         </div>
 

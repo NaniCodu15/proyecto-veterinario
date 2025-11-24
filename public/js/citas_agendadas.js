@@ -24,13 +24,16 @@
     const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
     const csrfToken = csrfTokenElement ? csrfTokenElement.getAttribute('content') : '';
 
-    // Referencias al DOM para listado, búsqueda y modales de detalle/estado.
+    // Referencias al DOM para listado, búsqueda y modales de detalle/estado/edición.
     const tablaCitas = document.getElementById('tablaCitas');
     const buscarCitasInput = document.getElementById('buscarCitas');
     const citasListadoMensaje = document.getElementById('citasListadoMensaje');
     const modalDetalleCita = document.getElementById('modalDetalleCita');
+    const modalEditarCita = document.getElementById('modalEditarCita');
     const modalEstadoCita = document.getElementById('modalEstadoCita');
     const formEstadoCita = document.getElementById('formEstadoCita');
+    const formEditarCita = document.getElementById('formEditarCita');
+    const editarCitaMensaje = document.getElementById('editarCitaMensaje');
     const selectEstadoCita = document.getElementById('selectEstadoCita');
     const reprogramarCampos = document.getElementById('reprogramarCampos');
     const reprogramarFechaInput = document.getElementById('citaReprogramadaFecha');
@@ -49,9 +52,10 @@
         motivo: modalDetalleCita.querySelector('[data-detalle="motivo"]'),
     } : {};
 
-    // Estados locales: almacenamiento temporal de citas, selección de detalle y búsqueda.
+    // Estados locales: almacenamiento temporal de citas, selección de detalle, edición y búsqueda.
     let citasCache = [];
     let citaDetalleSeleccionada = null;
+    let citaSeleccionadaParaEditar = null;
     let citaSeleccionadaParaEstado = null;
     let citasBusquedaActual = window.citasBusquedaActual || '';
     window.citasBusquedaActual = citasBusquedaActual;
@@ -63,15 +67,27 @@
 
     // Detecta si hay algún modal visible para controlar el scroll del body.
     function hayModalVisible() {
-        return Array.from(document.querySelectorAll('.modal')).some(modalEl => modalEl.style.display === 'block');
+        return Array.from(document.querySelectorAll('.modal')).some(modalEl => 
+            modalEl.style.display === 'block' || modalEl.style.display === 'flex'
+        );
     }
 
     // Alterna la clase del body según la visibilidad de modales.
     function actualizarEstadoBodyModal() {
         if (hayModalVisible()) {
             document.body.classList.add('modal-open');
+            // Bloquear scroll del contenido principal
+            const content = document.querySelector('.content');
+            if (content) {
+                content.classList.add('modal-open');
+            }
         } else {
             document.body.classList.remove('modal-open');
+            // Restaurar scroll del contenido principal
+            const content = document.querySelector('.content');
+            if (content) {
+                content.classList.remove('modal-open');
+            }
         }
     }
 
@@ -81,9 +97,14 @@
             return;
         }
 
-        modalElement.style.display = 'block';
+        modalElement.style.display = 'flex';
         modalElement.setAttribute('aria-hidden', 'false');
         actualizarEstadoBodyModal();
+        
+        // Scroll al inicio del modal
+        if (modalElement.querySelector('.modal-content')) {
+            modalElement.scrollTop = 0;
+        }
     }
 
     // Cierra un modal genérico y restablece el estado del documento.
@@ -95,6 +116,9 @@
         modalElement.style.display = 'none';
         modalElement.setAttribute('aria-hidden', 'true');
         actualizarEstadoBodyModal();
+        
+        // Reset scroll position
+        modalElement.scrollTop = 0;
     }
 
     // Limpia y oculta campos adicionales cuando no se reprograma una cita.
@@ -295,16 +319,41 @@
         }
     }
 
-    // Construye una tarjeta de cita con sus acciones asociadas.
+    // Construye una tarjeta de cita en formato línea/horizontal.
     function crearTarjetaCita(cita = {}) {
         const card = document.createElement('article');
         card.className = 'cita-card';
         card.dataset.citaId = cita.id ?? '';
 
-        const encabezado = document.createElement('div');
-        encabezado.className = 'cita-card__top';
+        // Fecha y hora destacada a la izquierda
+        const datetimeDiv = document.createElement('div');
+        datetimeDiv.className = 'cita-card__datetime';
+        
+        const fechaLabel = document.createElement('span');
+        fechaLabel.className = 'cita-card__meta-label';
+        fechaLabel.textContent = 'Fecha';
+        
+        const fechaValue = document.createElement('span');
+        fechaValue.className = 'cita-card__meta-value';
+        fechaValue.textContent = cita.fecha_legible ?? cita.fecha ?? '—';
+        
+        const horaLabel = document.createElement('span');
+        horaLabel.className = 'cita-card__meta-label';
+        horaLabel.textContent = 'Hora';
+        
+        const horaValue = document.createElement('span');
+        horaValue.className = 'cita-card__meta-value';
+        horaValue.textContent = cita.hora ?? '—';
+        
+        datetimeDiv.appendChild(fechaLabel);
+        datetimeDiv.appendChild(fechaValue);
+        datetimeDiv.appendChild(horaLabel);
+        datetimeDiv.appendChild(horaValue);
 
+        // Información principal (mascota y propietario)
         const infoPrincipal = document.createElement('div');
+        infoPrincipal.className = 'cita-card__top';
+        
         const tituloMascota = document.createElement('h3');
         tituloMascota.className = 'cita-card__title';
         tituloMascota.textContent = cita.mascota ?? '—';
@@ -316,13 +365,7 @@
         infoPrincipal.appendChild(tituloMascota);
         infoPrincipal.appendChild(propietarioTexto);
 
-        const estadoPill = document.createElement('span');
-        estadoPill.className = `cita-status ${obtenerClaseEstadoCita(cita.estado)}`;
-        estadoPill.textContent = cita.estado ?? 'Pendiente';
-
-        encabezado.appendChild(infoPrincipal);
-        encabezado.appendChild(estadoPill);
-
+        // Metadatos adicionales
         const meta = document.createElement('div');
         meta.className = 'cita-card__meta';
 
@@ -343,10 +386,14 @@
             return item;
         };
 
-        meta.appendChild(crearItemMeta('Fecha', cita.fecha_legible ?? cita.fecha ?? '—', 'fas fa-calendar-alt'));
-        meta.appendChild(crearItemMeta('Hora', cita.hora ?? '—', 'far fa-clock'));
-        meta.appendChild(crearItemMeta('Motivo', cita.motivo ?? '—', 'fas fa-notes-medical'));
+        meta.appendChild(crearItemMeta('Motivo', cita.motivo ? (cita.motivo.length > 40 ? cita.motivo.substring(0, 40) + '...' : cita.motivo) : '—', 'fas fa-file-medical'));
 
+        // Estado
+        const estadoPill = document.createElement('span');
+        estadoPill.className = `cita-status ${obtenerClaseEstadoCita(cita.estado)}`;
+        estadoPill.textContent = cita.estado ?? 'Pendiente';
+
+        // Acciones
         const accionesWrapper = document.createElement('div');
         accionesWrapper.className = 'citas-actions cita-card__actions';
 
@@ -368,20 +415,21 @@
             whatsappLink.title = 'Teléfono no disponible';
         }
 
-        const btnDetalles = document.createElement('button');
-        btnDetalles.type = 'button';
-        btnDetalles.className = 'btn btn-outline btn-sm btnVerCita';
-        btnDetalles.innerHTML = '<i class="fas fa-eye"></i> Ver detalles';
+        const btnEditar = document.createElement('button');
+        btnEditar.type = 'button';
+        btnEditar.className = 'btn btn-primary btn-sm btnEditarCita';
+        btnEditar.innerHTML = '<i class="fas fa-edit"></i>';
+        btnEditar.title = 'Editar cita';
 
         const btnEstado = document.createElement('button');
         btnEstado.type = 'button';
         btnEstado.className = 'btn btn-warning btn-sm btnEstadoCita';
-        btnEstado.innerHTML = '<i class="fas fa-exchange-alt"></i> Cambiar estado';
+        btnEstado.innerHTML = '<i class="fas fa-exchange-alt"></i>';
 
         const btnAnular = document.createElement('button');
         btnAnular.type = 'button';
         btnAnular.className = 'btn btn-danger btn-sm btnAnularCita';
-        btnAnular.innerHTML = '<i class="fas fa-ban"></i> Anular';
+        btnAnular.innerHTML = '<i class="fas fa-ban"></i>';
 
         if (String(cita.estado || '').trim().toLowerCase() === 'atendida') {
             btnEstado.disabled = true;
@@ -391,12 +439,14 @@
         }
 
         accionesWrapper.appendChild(whatsappLink);
-        accionesWrapper.appendChild(btnDetalles);
+        accionesWrapper.appendChild(btnEditar);
         accionesWrapper.appendChild(btnEstado);
         accionesWrapper.appendChild(btnAnular);
 
-        card.appendChild(encabezado);
+        card.appendChild(datetimeDiv);
+        card.appendChild(infoPrincipal);
         card.appendChild(meta);
+        card.appendChild(estadoPill);
         card.appendChild(accionesWrapper);
 
         return card;
@@ -626,10 +676,10 @@
             }
 
             const botonAnular = event.target.closest('.btnAnularCita');
-            const botonDetalles = event.target.closest('.btnVerCita');
+            const botonEditar = event.target.closest('.btnEditarCita');
             const botonEstado = event.target.closest('.btnEstadoCita');
 
-            if (!botonDetalles && !botonEstado && !botonAnular) {
+            if (!botonEditar && !botonEstado && !botonAnular) {
                 return;
             }
 
@@ -670,8 +720,8 @@
                 return;
             }
 
-            if (botonDetalles && cita) {
-                mostrarDetalleCita(cita);
+            if (botonEditar && cita) {
+                prepararModalEditar(cita);
                 return;
             }
 
@@ -692,6 +742,16 @@
         });
     });
 
+    document.querySelectorAll('[data-close="editarCita"]').forEach(elemento => {
+        elemento.addEventListener('click', () => {
+            cerrarModalGenerico(modalEditarCita);
+            citaSeleccionadaParaEditar = null;
+            if (formEditarCita) {
+                formEditarCita.reset();
+            }
+        });
+    });
+
     document.querySelectorAll('[data-close="estadoCita"]').forEach(elemento => {
         elemento.addEventListener('click', () => {
             cerrarModalGenerico(modalEstadoCita);
@@ -709,6 +769,26 @@
         });
     }
 
+    if (modalEditarCita) {
+        modalEditarCita.addEventListener('click', event => {
+            if (event.target === modalEditarCita) {
+                cerrarModalGenerico(modalEditarCita);
+                citaSeleccionadaParaEditar = null;
+                if (formEditarCita) {
+                    formEditarCita.reset();
+                }
+            }
+        });
+        
+        // Prevenir que el clic en el contenido cierre el modal
+        const modalContentEditar = modalEditarCita.querySelector('.modal-content');
+        if (modalContentEditar) {
+            modalContentEditar.addEventListener('click', event => {
+                event.stopPropagation();
+            });
+        }
+    }
+
     if (modalEstadoCita) {
         modalEstadoCita.addEventListener('click', event => {
             if (event.target === modalEstadoCita) {
@@ -717,6 +797,14 @@
                 citaSeleccionadaParaEstado = null;
             }
         });
+        
+        // Prevenir que el clic en el contenido cierre el modal
+        const modalContentEstado = modalEstadoCita.querySelector('.modal-content');
+        if (modalContentEstado) {
+            modalContentEstado.addEventListener('click', event => {
+                event.stopPropagation();
+            });
+        }
     }
 
     if (selectEstadoCita) {
@@ -782,18 +870,200 @@
         });
     }
 
+    // Carga las historias clínicas en el select del modal de edición
+    async function cargarHistoriasParaEditar() {
+        const historiaListUrl = moduleConfig.historiaListUrl || '';
+        if (!historiaListUrl) {
+            return [];
+        }
+
+        try {
+            const response = await fetch(historiaListUrl, {
+                headers: { Accept: 'application/json' },
+            });
+
+            if (!response.ok) {
+                throw new Error('No se pudieron obtener las historias clínicas.');
+            }
+
+            const data = await response.json();
+            return Array.isArray(data?.data) ? data.data : [];
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
+    // Prepara el modal de edición con los datos de la cita
+    async function prepararModalEditar(cita) {
+        if (!cita || !modalEditarCita) {
+            return;
+        }
+
+        citaSeleccionadaParaEditar = cita;
+
+        const selectHistoria = document.getElementById('editarCitaHistoria');
+        const inputFecha = document.getElementById('editarCitaFecha');
+        const inputHora = document.getElementById('editarCitaHora');
+        const textareaMotivo = document.getElementById('editarCitaMotivo');
+
+        // Cargar y poblar historias clínicas
+        if (selectHistoria) {
+            selectHistoria.innerHTML = '<option value="">Cargando...</option>';
+            const historias = await cargarHistoriasParaEditar();
+            
+            selectHistoria.innerHTML = '<option value="">Selecciona una historia clínica</option>';
+            historias.forEach(historia => {
+                const option = document.createElement('option');
+                option.value = historia.id;
+                option.textContent = `${historia.numero_historia || ''} - ${historia.nombreMascota || ''} (${historia.nombrePropietario || ''})`;
+                selectHistoria.appendChild(option);
+            });
+
+            if (cita.id_historia) {
+                selectHistoria.value = cita.id_historia;
+            }
+        }
+
+        if (inputFecha && cita.fecha) {
+            inputFecha.value = cita.fecha;
+        }
+
+        if (inputHora && cita.hora) {
+            inputHora.value = cita.hora;
+        }
+
+        if (textareaMotivo && cita.motivo) {
+            textareaMotivo.value = cita.motivo;
+        }
+
+        if (editarCitaMensaje) {
+            editarCitaMensaje.hidden = true;
+            editarCitaMensaje.classList.remove('cita-alert--success', 'cita-alert--error', 'is-visible');
+        }
+
+        abrirModalGenerico(modalEditarCita);
+    }
+
+    // Actualiza una cita mediante PUT
+    async function actualizarCita(id, datos) {
+        if (!id || !citasBaseUrl) {
+            throw new Error('No se pudo identificar la cita seleccionada.');
+        }
+
+        const response = await fetch(`${citasBaseUrl}/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+            },
+            body: JSON.stringify(datos),
+        });
+
+        const data = await response.json().catch(() => null);
+
+        if (response.status === 422) {
+            const errores = Object.values(data?.errors ?? {}).flat();
+            const mensaje = errores.join(' ') || 'Verifica los datos ingresados.';
+            throw new Error(mensaje);
+        }
+
+        if (!response.ok) {
+            throw new Error(data?.message || 'No se pudo actualizar la cita.');
+        }
+
+        return data?.cita ?? null;
+    }
+
+    // Maneja el envío del formulario de edición
+    if (formEditarCita) {
+        formEditarCita.addEventListener('submit', async event => {
+            event.preventDefault();
+
+            if (!citaSeleccionadaParaEditar) {
+                mostrarMensajeEditar('Selecciona una cita para editar.', 'error');
+                return;
+            }
+
+            const formData = new FormData(formEditarCita);
+            const datos = {
+                id_historia: formData.get('id_historia'),
+                fecha_cita: formData.get('fecha_cita'),
+                hora_cita: formData.get('hora_cita'),
+                motivo: formData.get('motivo'),
+            };
+
+            const submitButton = formEditarCita.querySelector('button[type="submit"]');
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.classList.add('is-loading');
+            }
+
+            try {
+                await actualizarCita(citaSeleccionadaParaEditar.id, datos);
+                
+                cerrarModalGenerico(modalEditarCita);
+                citaSeleccionadaParaEditar = null;
+                formEditarCita.reset();
+
+                await cargarCitas(citasBusquedaActual);
+                mostrarMensajeListadoCitas('Cita actualizada correctamente.', 'success');
+                
+                if (typeof window.cargarCitasProximas === 'function') {
+                    window.cargarCitasProximas();
+                }
+            } catch (error) {
+                console.error(error);
+                mostrarMensajeEditar(error.message || 'No se pudo actualizar la cita.', 'error');
+            } finally {
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.classList.remove('is-loading');
+                }
+            }
+        });
+    }
+
+    // Muestra mensajes en el modal de edición
+    function mostrarMensajeEditar(texto, tipo = 'error') {
+        if (!editarCitaMensaje) {
+            return;
+        }
+
+        editarCitaMensaje.textContent = texto;
+        editarCitaMensaje.classList.remove('cita-alert--info', 'cita-alert--error', 'cita-alert--success', 'is-visible');
+
+        const clase = tipo === 'error'
+            ? 'cita-alert--error'
+            : tipo === 'success'
+                ? 'cita-alert--success'
+                : 'cita-alert--info';
+
+        editarCitaMensaje.classList.add(clase, 'is-visible');
+        editarCitaMensaje.hidden = false;
+    }
+
     document.addEventListener('keydown', event => {
         if (event.key !== 'Escape') {
             return;
         }
 
-        if (modalEstadoCita && modalEstadoCita.style.display === 'block') {
+        if (modalEditarCita && (modalEditarCita.style.display === 'block' || modalEditarCita.style.display === 'flex')) {
+            cerrarModalGenerico(modalEditarCita);
+            citaSeleccionadaParaEditar = null;
+            if (formEditarCita) {
+                formEditarCita.reset();
+            }
+        }
+
+        if (modalEstadoCita && (modalEstadoCita.style.display === 'block' || modalEstadoCita.style.display === 'flex')) {
             cerrarModalGenerico(modalEstadoCita);
             resetCamposReprogramar();
             citaSeleccionadaParaEstado = null;
         }
 
-        if (modalDetalleCita && modalDetalleCita.style.display === 'block') {
+        if (modalDetalleCita && (modalDetalleCita.style.display === 'block' || modalDetalleCita.style.display === 'flex')) {
             cerrarModalGenerico(modalDetalleCita);
             citaDetalleSeleccionada = null;
         }

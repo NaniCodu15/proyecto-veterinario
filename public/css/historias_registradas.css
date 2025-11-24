@@ -1,4 +1,18 @@
-/* Layout general de la página de historias registradas. */
+/* ============================================
+   IMPORTS DE FUENTES
+   ============================================ */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Quicksand:wght@300;400;500;600;700&family=Raleway:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Oswald:wght@400;500;600&display=swap');
+
+:root {
+    --font-primary: 'Montserrat', sans-serif;
+    --font-body: 'Quicksand', sans-serif;
+    --font-accent: 'Raleway', sans-serif;
+    --font-display: 'Oswald', sans-serif;
+}
+
+/* ============================================
+   LAYOUT GENERAL
+   ============================================ */
 .historias-registradas {
     display: flex;
     flex-direction: column;
@@ -28,106 +42,290 @@
     align-self: flex-start;
 }
 
-/* Grid responsivo que organiza las tarjetas de historias. */
+/* Grid responsivo que organiza las tarjetas de historias - MEJORADO */
 .historias-registradas__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
 }
 
-/* Tarjeta individual de historia con degradado y sombra. */
+@media (max-width: 768px) {
+    .historias-registradas__grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}
+
+/* Tarjeta individual de historia con degradado y sombra - MEJORADO */
 .historia-card {
-    background: linear-gradient(150deg, rgba(228, 240, 255, 0.92), rgba(255, 229, 244, 0.9));
-    border-radius: var(--radius-lg);
-    padding: 24px;
-    border: 1px solid rgba(127, 169, 255, 0.16);
-    box-shadow: var(--shadow-soft);
+    background: linear-gradient(150deg, rgba(255, 255, 255, 0.98), rgba(248, 252, 255, 0.95));
+    border-radius: 20px;
+    padding: 26px;
+    border: 2px solid rgba(127, 169, 255, 0.2);
+    box-shadow: 0 8px 24px rgba(122, 168, 255, 0.15), 0 0 0 1px rgba(122, 168, 255, 0.08);
     display: flex;
     flex-direction: column;
-    gap: 18px;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    gap: 20px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Efecto de brillo sutil en hover */
+.historia-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, rgba(122, 168, 255, 0.6), rgba(255, 170, 214, 0.6));
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 /* Eleva ligeramente la tarjeta al pasar el cursor. */
 .historia-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 26px 50px rgba(122, 168, 255, 0.25);
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(122, 168, 255, 0.25), 0 0 0 1px rgba(122, 168, 255, 0.15);
+    border-color: rgba(122, 168, 255, 0.35);
 }
 
-/* Encabezado de tarjeta con badge y fecha. */
+.historia-card:hover::before {
+    opacity: 1;
+}
+
+/* Encabezado de tarjeta con badge y fecha - MEJORADO */
 .historia-card__header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     gap: 12px;
     flex-wrap: wrap;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(122, 168, 255, 0.12);
 }
 
-/* Etiqueta que destaca el estado o tipo de historia. */
+/* Etiqueta que destaca el estado o tipo de historia - MEJORADO */
 .historia-card__badge {
-    background: var(--surface);
-    color: var(--primary-dark);
-    padding: 8px 14px;
-    border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, rgba(122, 168, 255, 0.95), rgba(178, 214, 255, 0.9));
+    color: #1d2150;
+    padding: 10px 16px;
+    border-radius: 12px;
     font-weight: 700;
-    letter-spacing: 0.02em;
-    box-shadow: 0 16px 30px rgba(122, 168, 255, 0.22);
+    font-size: 0.9rem;
+    letter-spacing: 0.03em;
+    box-shadow: 0 4px 12px rgba(122, 168, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    font-family: var(--font-primary);
 }
 
-/* Información de fecha con icono. */
+/* Información de fecha con icono - MEJORADO */
 .historia-card__date {
     display: flex;
     align-items: center;
     gap: 8px;
-    color: var(--text-muted);
-    font-size: 0.85rem;
+    color: rgba(43, 57, 144, 0.7);
+    font-size: 0.88rem;
     font-weight: 600;
+    font-family: var(--font-body);
+    padding: 6px 12px;
+    background: rgba(237, 244, 255, 0.6);
+    border-radius: 10px;
 }
 
-/* Contenido principal de la tarjeta. */
+.historia-card__date i {
+    color: rgba(122, 168, 255, 0.8);
+}
+
+/* Contenido principal de la tarjeta - MEJORADO */
 .historia-card__body {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
+    flex: 1;
 }
 
-/* Fila que separa etiquetas y valores. */
+/* Fila que separa etiquetas y valores - MEJORADO */
 .historia-card__row {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(122, 168, 255, 0.08);
 }
 
-/* Etiquetas con iconos para los campos. */
+.historia-card__row:last-of-type {
+    border-bottom: none;
+}
+
+/* Etiquetas con iconos para los campos - MEJORADO */
 .historia-card__label {
     display: flex;
     align-items: center;
-    gap: 8px;
-    color: var(--text-muted);
+    gap: 10px;
+    color: rgba(43, 57, 144, 0.7);
     font-weight: 600;
+    font-size: 0.9rem;
+    font-family: var(--font-body);
+}
+
+/* Color específico para los iconos de etiqueta - MEJORADO */
+.historia-card__label i {
+    color: rgba(122, 168, 255, 0.8);
+    font-size: 0.95rem;
+    width: 18px;
+    text-align: center;
+}
+
+/* Valores alineados a la derecha - MEJORADO */
+.historia-card__value {
+    font-weight: 600;
+    color: #2c2f66;
+    font-size: 0.95rem;
+    text-align: right;
+    font-family: var(--font-primary);
+    max-width: 60%;
+    word-break: break-word;
+}
+
+/* Botones de acción al final de cada tarjeta - MEJORADO Y REORGANIZADO */
+.historia-card__actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding-top: 16px;
+    margin-top: auto;
+    border-top: 1px solid rgba(122, 168, 255, 0.12);
+}
+
+/* Grupo de botones principales (Ver, Consultas) */
+.historia-card__actions-primary {
+    display: flex;
+    gap: 8px;
+    flex: 1;
+}
+
+/* Grupo de botones secundarios (Editar, Anular) */
+.historia-card__actions-secondary {
+    display: flex;
+    gap: 8px;
+}
+
+/* Estilos mejorados para botones dentro de las tarjetas */
+.historia-card__actions .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.88rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    font-family: var(--font-body);
+    white-space: nowrap;
+    min-width: fit-content;
+}
+
+.historia-card__actions .btn i {
     font-size: 0.9rem;
 }
 
-/* Color específico para los iconos de etiqueta. */
-.historia-card__label i {
-    color: var(--accent-dark);
+/* Botón Ver (Info) - Icono solo */
+.historia-card__actions .btn-info {
+    background: linear-gradient(135deg, rgba(96, 165, 250, 0.95), rgba(147, 197, 253, 0.9));
+    color: #1e3a5f;
+    padding: 10px;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
 }
 
-/* Valores alineados a la derecha. */
-.historia-card__value {
-    font-weight: 600;
-    color: var(--text-dark);
-    font-size: 0.95rem;
-    text-align: right;
+.historia-card__actions .btn-info:hover {
+    background: linear-gradient(135deg, rgba(96, 165, 250, 1), rgba(147, 197, 253, 1));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(96, 165, 250, 0.4);
 }
 
-/* Botones de acción al final de cada tarjeta. */
-.historia-card__actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    flex-wrap: wrap;
+/* Botón Consultas (Primary) - Con texto */
+.historia-card__actions .btn-primary {
+    background: linear-gradient(135deg, rgba(122, 168, 255, 0.95), rgba(178, 214, 255, 0.9));
+    color: #1d2150;
+    padding: 10px 18px;
+    box-shadow: 0 4px 12px rgba(122, 168, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.historia-card__actions .btn-primary:hover {
+    background: linear-gradient(135deg, rgba(122, 168, 255, 1), rgba(178, 214, 255, 1));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(122, 168, 255, 0.4);
+}
+
+/* Botón Editar (Warning) - Icono solo */
+.historia-card__actions .btn-warning {
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.95), rgba(253, 224, 71, 0.9));
+    color: #78350f;
+    padding: 10px;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+}
+
+.historia-card__actions .btn-warning:hover {
+    background: linear-gradient(135deg, rgba(251, 191, 36, 1), rgba(253, 224, 71, 1));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(251, 191, 36, 0.4);
+}
+
+/* Botón Anular - Con texto */
+.historia-card__actions .btnAnular {
+    background: linear-gradient(135deg, rgba(255, 210, 220, 0.95), rgba(255, 160, 180, 0.9));
+    color: #6f2030;
+    padding: 10px 18px;
+    box-shadow: 0 4px 12px rgba(255, 163, 186, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.historia-card__actions .btnAnular:hover {
+    background: linear-gradient(135deg, rgba(255, 210, 220, 1), rgba(255, 160, 180, 1));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 150, 180, 0.4);
+}
+
+/* Estados deshabilitados */
+.historia-card__actions .btn.disabled,
+.historia-card__actions .btn[aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Responsive para botones */
+@media (max-width: 600px) {
+    .historia-card__actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .historia-card__actions-primary,
+    .historia-card__actions-secondary {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .historia-card__actions .btn {
+        flex: 1;
+    }
 }
 
 /* Estado vacío con mensaje centrado. */
@@ -209,28 +407,33 @@
 
         /* Etiqueta superior de pequeña tipografía. */
         .historias-registradas__eyebrow {
+            font-family: var(--font-display);
             font-size: 0.8rem;
-            letter-spacing: 0.12em;
+            letter-spacing: 0.15em;
             text-transform: uppercase;
             color: rgba(82, 67, 170, 0.7);
-            font-weight: 700;
+            font-weight: 500;
         }
 
         /* Título prominente en el hero. */
         .historias-registradas__title {
             margin: 0;
-            font-size: clamp(1.6rem, 4vw, 2.2rem);
+            font-family: var(--font-primary);
+            font-size: clamp(1.8rem, 4vw, 2.4rem);
             color: #2c2f66;
-            font-weight: 800;
+            font-weight: 700;
+            letter-spacing: -0.02em;
         }
 
         /* Subtítulo descriptivo bajo el título principal. */
         .historias-registradas__subtitle {
             margin: 0;
             max-width: 600px;
+            font-family: var(--font-body);
             color: rgba(48, 52, 110, 0.75);
-            font-size: 1rem;
-            line-height: 1.5;
+            font-size: 1.05rem;
+            font-weight: 400;
+            line-height: 1.6;
         }
 
         /* Botón redondeado para crear una nueva historia. */
@@ -245,12 +448,21 @@
             padding: 14px 26px;
             background: linear-gradient(135deg, rgba(122, 168, 255, 0.95), rgba(255, 170, 214, 0.92));
             color: #1d2150;
+            font-family: var(--font-body);
             font-weight: 700;
             font-size: 0.95rem;
-            letter-spacing: 0.01em;
+            letter-spacing: 0.02em;
             box-shadow: 0 18px 36px rgba(132, 160, 255, 0.25);
             cursor: pointer;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .historias-registradas__create-btn i {
+            transition: transform 0.2s ease;
+        }
+        
+        .historias-registradas__create-btn:hover i {
+            transform: scale(1.1) rotate(5deg);
         }
 
         /* Eleva el botón de creación al hacer hover. */
@@ -394,14 +606,39 @@
             }
         }
 
-        /* Contenedor principal del modal de historia. */
+        /* Contenedor principal del modal de historia - SOLO ESTE TIENE SCROLL */
         .modal--historia .modal-content--historia {
             max-width: 1100px;
+            max-height: calc(100vh - 80px);
             background: linear-gradient(135deg, rgba(244, 248, 255, 0.98), rgba(255, 255, 255, 0.98));
             border-radius: 28px;
             border: 1px solid rgba(134, 165, 255, 0.2);
             padding: 32px 36px;
             box-shadow: 0 40px 80px rgba(132, 160, 255, 0.18);
+            overflow-y: auto;
+            overflow-x: hidden;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(156, 194, 255, 0.5) transparent;
+            overscroll-behavior: contain;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .modal--historia .modal-content--historia::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal--historia .modal-content--historia::-webkit-scrollbar-track {
+            background: rgba(156, 194, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        .modal--historia .modal-content--historia::-webkit-scrollbar-thumb {
+            background: rgba(156, 194, 255, 0.5);
+            border-radius: 4px;
+        }
+
+        .modal--historia .modal-content--historia::-webkit-scrollbar-thumb:hover {
+            background: rgba(156, 194, 255, 0.7);
         }
 
         /* Layout de detalle de historia dentro del modal. */
@@ -436,15 +673,20 @@
 
         /* Título principal del detalle. */
         .historia-detalle__title {
-            font-size: 1.75rem;
+            font-family: var(--font-primary);
+            font-size: 1.85rem;
+            font-weight: 700;
             color: var(--text-dark);
             margin: 10px 0 6px;
+            letter-spacing: -0.01em;
         }
 
         /* Subtítulo con información complementaria. */
         .historia-detalle__subtitle {
+            font-family: var(--font-body);
             color: rgba(43, 57, 144, 0.7);
-            font-size: 0.95rem;
+            font-size: 0.98rem;
+            font-weight: 400;
             margin: 0;
         }
 
@@ -566,8 +808,11 @@
         /* Título de sección dentro del detalle. */
         .historia-detalle__section-header h3 {
             margin: 0;
-            font-size: 1.2rem;
+            font-family: var(--font-primary);
+            font-size: 1.3rem;
+            font-weight: 700;
             color: var(--text-dark);
+            letter-spacing: -0.01em;
         }
 
         /* Descripción secundaria bajo el título de sección. */
