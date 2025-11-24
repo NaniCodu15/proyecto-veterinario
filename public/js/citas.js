@@ -25,6 +25,7 @@
     // Referencias a formularios y campos del flujo de registro de cita.
     const formularioCita = document.getElementById('formRegistrarCita');
     const historiaSelectCita = document.getElementById('historiaSelectCitas');
+    const historiaBusquedaCita = document.getElementById('historiaBusquedaCitas');
     const citaMensaje = document.getElementById('citaMensaje');
 
     // Campos individuales del formulario para mostrar o asignar datos.
@@ -38,10 +39,9 @@
         hora: document.getElementById('citaHora'),
     };
 
-    // Estados auxiliares: selección actual, catálogos y componente TomSelect.
+    // Estados auxiliares: selección actual y catálogo de historias.
     let historiaSeleccionadaParaCita = null;
     let historiasDisponibles = [];
-    let tomSelectHistoria = null;
 
     // Muestra alertas específicas del formulario de citas y las oculta tras unos segundos.
     function mostrarMensajeCita(texto, tipo = 'success') {
@@ -103,94 +103,60 @@
         }
     }
 
-    // Prepara la estructura de datos que TomSelect requiere para mostrar opciones.
-    function formatearHistoriaParaOpcion(historia) {
-        if (!historia || !historia.id) {
-            return null;
-        }
+    // Formatea textos para comparación y visualización.
+    const normalizarTexto = valor => (valor ?? '').toString().trim().toLowerCase();
 
+    function formatearEtiquetaHistoria(historia) {
         const numero = (historia.numero_historia ?? '').toString().trim() || 'Sin código';
         const mascota = (historia.mascota ?? '').toString().trim() || 'Mascota sin nombre';
         const propietario = (historia.propietario ?? '').toString().trim() || 'Propietario sin registrar';
-        const propietarioDni = (historia.propietario_dni ?? '').toString().trim();
 
-        return {
-            value: String(historia.id),
-            text: `${numero} · ${mascota}`,
-            numero_historia: numero,
-            mascota,
-            propietario,
-            propietario_dni: propietarioDni,
-        };
+        return `${numero} — ${mascota} — ${propietario}`;
     }
 
-    // Sincroniza las opciones de TomSelect con la lista de historias disponibles.
-    function sincronizarTomSelectHistorias() {
-        if (!tomSelectHistoria) {
-            return;
+    function filtrarHistoriasDisponibles(termino = '') {
+        const listaBase = Array.isArray(historiasDisponibles) ? historiasDisponibles : [];
+        const terminoNormalizado = normalizarTexto(termino);
+
+        if (!terminoNormalizado) {
+            return listaBase;
         }
 
-        const valorActual = tomSelectHistoria.getValue();
-        tomSelectHistoria.clearOptions();
+        return listaBase.filter(historia => {
+            const numero = normalizarTexto(historia.numero_historia);
+            const mascota = normalizarTexto(historia.mascota);
+            const propietario = normalizarTexto(historia.propietario);
+            const propietarioDni = normalizarTexto(historia.propietario_dni);
 
-        if (valorActual) {
-            const historiaActual = historiasDisponibles.find(
-                historia => String(historia?.id ?? '') === String(valorActual)
+            return (
+                numero.includes(terminoNormalizado) ||
+                mascota.includes(terminoNormalizado) ||
+                propietario.includes(terminoNormalizado) ||
+                propietarioDni.includes(terminoNormalizado)
             );
-
-            if (historiaActual) {
-                const opcion = formatearHistoriaParaOpcion(historiaActual);
-                if (opcion) {
-                    tomSelectHistoria.addOption(opcion);
-                    tomSelectHistoria.setValue(opcion.value, true);
-                }
-            } else {
-                tomSelectHistoria.clear(true);
-                historiaSeleccionadaParaCita = null;
-                limpiarDatosHistoriaEnCita();
-            }
-        }
-
-        if (!historiasDisponibles.length) {
-            tomSelectHistoria.clear(true);
-            tomSelectHistoria.disable();
-            historiaSeleccionadaParaCita = null;
-            limpiarDatosHistoriaEnCita();
-        } else {
-            tomSelectHistoria.enable();
-        }
-
-        tomSelectHistoria.setTextboxValue('');
-        tomSelectHistoria.refreshOptions(false);
+        });
     }
 
-    // Rellena el select de historias con la data disponible y conserva selección previa.
-    function poblarHistoriasParaCitas(lista = []) {
+    function actualizarSelectHistorias(listaFiltrada = []) {
         if (!historiaSelectCita) {
-            return;
-        }
-
-        historiasDisponibles = Array.isArray(lista)
-            ? lista.filter(historia => historia && historia.id)
-            : [];
-
-        if (tomSelectHistoria) {
-            sincronizarTomSelectHistorias();
             return;
         }
 
         const valorActual = historiaSelectCita.value;
         historiaSelectCita.innerHTML = '<option value="">Selecciona una historia clínica</option>';
 
-        historiasDisponibles.forEach(historia => {
+        listaFiltrada.forEach(historia => {
+            if (!historia?.id) {
+                return;
+            }
+
             const opcion = document.createElement('option');
             opcion.value = historia.id;
-            const formateada = formatearHistoriaParaOpcion(historia);
-            opcion.textContent = formateada?.text ?? '';
+            opcion.textContent = formatearEtiquetaHistoria(historia);
             historiaSelectCita.appendChild(opcion);
         });
 
-        const existeValorPrevio = historiasDisponibles.some(
+        const existeValorPrevio = listaFiltrada.some(
             historia => String(historia?.id ?? '') === String(valorActual)
         );
 
@@ -201,112 +167,40 @@
             historiaSeleccionadaParaCita = null;
             limpiarDatosHistoriaEnCita();
         }
+
+        historiaSelectCita.disabled = !listaFiltrada.length;
+    }
+
+    function renderizarHistoriasParaCita() {
+        const termino = historiaBusquedaCita?.value || '';
+        const listaFiltrada = filtrarHistoriasDisponibles(termino);
+        actualizarSelectHistorias(listaFiltrada);
+    }
+
+    // Rellena el select de historias con la data disponible y conserva selección previa.
+    function poblarHistoriasParaCitas(lista = []) {
+        historiasDisponibles = Array.isArray(lista)
+            ? lista.filter(historia => historia && historia.id)
+            : [];
+
+        renderizarHistoriasParaCita();
     }
 
     window.poblarHistoriasParaCitas = poblarHistoriasParaCitas;
 
-    // Inicializa el componente TomSelect para buscar historias clínicas.
-    window.inicializarBuscadorHistorias = function inicializarBuscadorHistorias() {
-        if (!historiaSelectCita || typeof TomSelect === 'undefined') {
-            return;
+    // Inicializa el buscador externo y sincroniza el select al cargar el DOM.
+    function inicializarBuscadorHistorias() {
+        if (historiaBusquedaCita) {
+            historiaBusquedaCita.addEventListener('input', renderizarHistoriasParaCita);
         }
 
-        if (tomSelectHistoria) {
-            tomSelectHistoria.destroy();
-            tomSelectHistoria = null;
-        }
-
-        tomSelectHistoria = new TomSelect(historiaSelectCita, {
-            valueField: 'value',
-            labelField: 'text',
-            searchField: ['text', 'numero_historia', 'mascota', 'propietario', 'propietario_dni'],
-            allowEmptyOption: true,
-            placeholder: 'Escribe al menos 2 caracteres para buscar...',
-            loadThrottle: 250,
-            closeAfterSelect: true,
-            shouldLoad(query) {
-                return query.length >= 2;
-            },
-            load(query, callback) {
-                if (query.length < 2) {
-                    callback();
-                    return;
-                }
-
-                const termino = query.toLowerCase();
-                const coincidencias = historiasDisponibles
-                    .filter(historia => {
-                        const numero = (historia.numero_historia ?? '').toString().toLowerCase();
-                        const mascota = (historia.mascota ?? '').toString().toLowerCase();
-                        const propietario = (historia.propietario ?? '').toString().toLowerCase();
-                        const propietarioDni = (historia.propietario_dni ?? '').toString().toLowerCase();
-
-                        return (
-                            numero.includes(termino) ||
-                            mascota.includes(termino) ||
-                            propietario.includes(termino) ||
-                            propietarioDni.includes(termino)
-                        );
-                    })
-                    .slice(0, 25)
-                    .map(formatearHistoriaParaOpcion)
-                    .filter(Boolean);
-
-                callback(coincidencias);
-            },
-            render: {
-                option(item, escape) {
-                    const numero = escape(item.numero_historia ?? 'Sin código');
-                    const mascota = escape(item.mascota ?? 'Mascota sin nombre');
-                    const propietario = escape(item.propietario ?? 'Propietario sin registrar');
-                    const propietarioDni = escape(item.propietario_dni ?? '');
-                    const propietarioDetalle = propietarioDni
-                        ? `${propietario} · DNI ${propietarioDni}`
-                        : propietario;
-                    return `
-                        <div class="ts-option__content">
-                            <span class="ts-option__numero">${numero}</span>
-                            <span class="ts-option__mascota">${mascota}</span>
-                            <span class="ts-option__propietario">${propietarioDetalle}</span>
-                        </div>
-                    `;
-                },
-                item(item, escape) {
-                    const numero = escape(item.numero_historia ?? 'Sin código');
-                    const mascota = escape(item.mascota ?? 'Mascota sin nombre');
-                    const propietario = escape(item.propietario ?? 'Propietario sin registrar');
-                    return `
-                        <div class="ts-item__content">
-                            <span class="ts-item__numero">${numero}</span>
-                            <span class="ts-item__mascota">${mascota}</span>
-                            <span class="ts-item__propietario">${propietario}</span>
-                        </div>
-                    `;
-                },
-                no_results() {
-                    if (this.inputValue.length < 2) {
-                        return '<div class="ts-dropdown__message">Escribe al menos 2 caracteres para buscar.</div>';
-                    }
-
-                    return '<div class="ts-dropdown__message">No se encontraron coincidencias.</div>';
-                },
-            },
-        });
-
-        sincronizarTomSelectHistorias();
-    };
-
-    // Ejecuta la inicialización del buscador según el estado de carga del DOM.
-    const iniciarBuscadorHistorias = () => {
-        if (typeof window.inicializarBuscadorHistorias === 'function') {
-            window.inicializarBuscadorHistorias();
-        }
-    };
+        renderizarHistoriasParaCita();
+    }
 
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', iniciarBuscadorHistorias);
+        document.addEventListener('DOMContentLoaded', inicializarBuscadorHistorias);
     } else {
-        iniciarBuscadorHistorias();
+        inicializarBuscadorHistorias();
     }
 
     // Cambio de la historia seleccionada: obtiene detalle vía AJAX y rellena campos.

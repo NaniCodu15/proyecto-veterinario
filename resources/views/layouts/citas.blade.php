@@ -17,6 +17,17 @@
                     {{-- Formulario de registro de cita con datos precargados --}}
                     <form id="formRegistrarCita" class="cita-form" novalidate>
                         <div class="cita-form__group">
+                            {{-- Buscador externo para historias clínicas --}}
+                            <label for="historiaBusquedaCitas">Buscar historia clínica</label>
+                            <input
+                                type="text"
+                                id="historiaBusquedaCitas"
+                                placeholder="Ingresa nombre de mascota, propietario o código HC-00001"
+                                autocomplete="off"
+                            >
+                        </div>
+
+                        <div class="cita-form__group">
                             {{-- Selección de la historia clínica relacionada --}}
                             <label for="historiaSelectCitas">Historia clínica</label>
                             <select id="historiaSelectCitas" name="historia" required>
