@@ -396,6 +396,106 @@
     gap: 10px;
 }
 
+/* Select2 con estética pastel y bordes suaves. */
+.select2-container--default .select2-selection--single {
+    height: 46px;
+    padding: 8px 14px;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(127, 169, 255, 0.32);
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    color: #5b6478;
+    box-shadow: 0 12px 28px rgba(127, 169, 255, 0.18);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+/* Texto del Select2 con tono gris suave. */
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    padding-left: 2px;
+    padding-right: 30px;
+    color: #6d7385;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+/* Indicador de placeholder en tono pastel. */
+.select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: #9aa3b5;
+    font-weight: 500;
+}
+
+/* Flecha del Select2 con color acorde a la paleta. */
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 46px;
+    width: 36px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow b {
+    border-color: #9aa3b5 transparent transparent transparent;
+    border-width: 6px 6px 0 6px;
+}
+
+/* Estado enfocado y abierto con resalte delicado. */
+.select2-container--default.select2-container--focus .select2-selection--single,
+.select2-container--default.select2-container--open .select2-selection--single {
+    border-color: rgba(255, 159, 207, 0.6);
+    box-shadow: 0 14px 36px rgba(255, 159, 207, 0.28), 0 3px 10px rgba(127, 169, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+/* Dropdown estilizado con sombras suaves y bordes redondeados. */
+.select2-container--default .select2-dropdown {
+    border: 1px solid rgba(127, 169, 255, 0.25);
+    border-radius: var(--radius-md);
+    box-shadow: 0 26px 48px rgba(127, 169, 255, 0.16);
+    background: #fff9fb;
+    overflow: hidden;
+}
+
+.select2-container--default .select2-search--dropdown .select2-search__field {
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(127, 169, 255, 0.3);
+    box-shadow: inset 0 2px 6px rgba(127, 169, 255, 0.08);
+    padding: 8px 10px;
+    color: #5b6478;
+}
+
+/* Opciones del menú con hover delicado y selección pastel. */
+.select2-results__option {
+    padding: 10px 14px;
+    color: #5b6478;
+    transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+.select2-results__option--highlighted,
+.select2-results__option--highlighted.select2-results__option--selectable {
+    background: linear-gradient(135deg, rgba(228, 240, 255, 0.85), rgba(255, 229, 244, 0.9));
+    color: #374151;
+}
+
+.select2-results__option--selected {
+    background: rgba(255, 159, 207, 0.16);
+    color: #374151;
+    font-weight: 700;
+}
+
+/* Hover delicado para opciones disponibles. */
+.select2-results__option.select2-results__option--selectable:hover {
+    background: rgba(122, 168, 255, 0.12);
+    color: #3f4a60;
+}
+
+/* Ajuste responsivo para garantizar legibilidad en móviles. */
+@media (max-width: 600px) {
+    .select2-container--default .select2-selection--single {
+        height: 44px;
+        padding: 8px 12px;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        font-size: 0.95rem;
+    }
+}
+
 /* Optimiza la cabecera para móviles. */
 @media (max-width: 600px) {
     .historias-header {
