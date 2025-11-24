@@ -77,6 +77,115 @@
     color: #d03f3f;
 }
 
+/* Contenedor con padding sutil para el grid de tarjetas. */
+.citas-grid-wrapper {
+    padding: 6px;
+}
+
+/* Grid responsivo para las tarjetas de citas. */
+.citas-grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+    .citas-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .citas-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+/* Estilo de tarjeta pastel con sombra suave. */
+.cita-card {
+    background: linear-gradient(155deg, rgba(255, 255, 255, 0.96), rgba(229, 241, 255, 0.92), rgba(255, 231, 245, 0.92));
+    border-radius: var(--radius-xl);
+    border: 1px solid rgba(122, 168, 255, 0.18);
+    box-shadow: 0 24px 45px rgba(122, 168, 255, 0.18);
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-height: 100%;
+}
+
+/* Cabecera de tarjeta alineada. */
+.cita-card__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.cita-card__title {
+    margin: 0 0 6px;
+    font-size: 1.1rem;
+    color: var(--text-dark);
+}
+
+.cita-card__owner {
+    margin: 0;
+    color: var(--text-muted);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Metadatos de la cita distribuidos en columnas. */
+.cita-card__meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+}
+
+.cita-card__meta-item {
+    background: rgba(247, 249, 255, 0.92);
+    border: 1px solid rgba(122, 168, 255, 0.12);
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.cita-card__meta-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.cita-card__meta-value {
+    font-weight: 700;
+    color: var(--text-dark);
+    word-break: break-word;
+}
+
+/* Acciones alineadas al final de la tarjeta. */
+.cita-card__actions {
+    justify-content: flex-start;
+}
+
+/* Estado vacío centrado dentro del grid. */
+.citas-grid__empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 28px 18px;
+    color: var(--text-muted);
+    background: rgba(247, 249, 255, 0.92);
+    border: 1px dashed rgba(122, 168, 255, 0.35);
+    border-radius: var(--radius-lg);
+    font-style: italic;
+}
+
 /* Contenedor de la tabla con fondo degradado y bordes redondeados. */
 .citas-table-wrapper {
     background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(228, 240, 255, 0.9));

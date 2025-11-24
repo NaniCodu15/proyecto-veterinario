@@ -295,44 +295,60 @@
         }
     }
 
-    // Construye una fila de la tabla de citas con sus acciones asociadas.
-    function crearFilaCita(cita = {}) {
-        const fila = document.createElement('tr');
-        fila.dataset.citaId = cita.id ?? '';
+    // Construye una tarjeta de cita con sus acciones asociadas.
+    function crearTarjetaCita(cita = {}) {
+        const card = document.createElement('article');
+        card.className = 'cita-card';
+        card.dataset.citaId = cita.id ?? '';
 
-        const crearCeldaTexto = (valor, clase = '') => {
-            const celda = document.createElement('td');
-            if (clase) {
-                celda.classList.add(clase);
-            }
-            celda.textContent = valor ?? '—';
-            return celda;
-        };
+        const encabezado = document.createElement('div');
+        encabezado.className = 'cita-card__top';
 
-        fila.appendChild(crearCeldaTexto(cita.id ?? '—'));
-        fila.appendChild(crearCeldaTexto(cita.mascota ?? '—'));
-        fila.appendChild(crearCeldaTexto(cita.propietario ?? '—'));
-        fila.appendChild(crearCeldaTexto(cita.fecha_legible ?? cita.fecha ?? '—'));
-        fila.appendChild(crearCeldaTexto(cita.hora ?? '—'));
+        const infoPrincipal = document.createElement('div');
+        const tituloMascota = document.createElement('h3');
+        tituloMascota.className = 'cita-card__title';
+        tituloMascota.textContent = cita.mascota ?? '—';
 
-        const motivoCell = crearCeldaTexto(cita.motivo ?? '—', 'citas-table__motivo');
-        if (cita.motivo) {
-            motivoCell.title = cita.motivo;
-        }
-        fila.appendChild(motivoCell);
+        const propietarioTexto = document.createElement('p');
+        propietarioTexto.className = 'cita-card__owner';
+        propietarioTexto.innerHTML = `<i class="fas fa-user"></i> ${cita.propietario ?? '—'}`;
 
-        const estadoCell = document.createElement('td');
+        infoPrincipal.appendChild(tituloMascota);
+        infoPrincipal.appendChild(propietarioTexto);
+
         const estadoPill = document.createElement('span');
         estadoPill.className = `cita-status ${obtenerClaseEstadoCita(cita.estado)}`;
         estadoPill.textContent = cita.estado ?? 'Pendiente';
-        estadoCell.appendChild(estadoPill);
-        fila.appendChild(estadoCell);
 
-        const accionesCell = document.createElement('td');
-        accionesCell.classList.add('citas-table__acciones');
+        encabezado.appendChild(infoPrincipal);
+        encabezado.appendChild(estadoPill);
+
+        const meta = document.createElement('div');
+        meta.className = 'cita-card__meta';
+
+        const crearItemMeta = (label, value, iconClass) => {
+            const item = document.createElement('div');
+            item.className = 'cita-card__meta-item';
+
+            const labelEl = document.createElement('span');
+            labelEl.className = 'cita-card__meta-label';
+            labelEl.innerHTML = iconClass ? `<i class="${iconClass}"></i> ${label}` : label;
+
+            const valueEl = document.createElement('span');
+            valueEl.className = 'cita-card__meta-value';
+            valueEl.textContent = value ?? '—';
+
+            item.appendChild(labelEl);
+            item.appendChild(valueEl);
+            return item;
+        };
+
+        meta.appendChild(crearItemMeta('Fecha', cita.fecha_legible ?? cita.fecha ?? '—', 'fas fa-calendar-alt'));
+        meta.appendChild(crearItemMeta('Hora', cita.hora ?? '—', 'far fa-clock'));
+        meta.appendChild(crearItemMeta('Motivo', cita.motivo ?? '—', 'fas fa-notes-medical'));
 
         const accionesWrapper = document.createElement('div');
-        accionesWrapper.className = 'citas-actions';
+        accionesWrapper.className = 'citas-actions cita-card__actions';
 
         const whatsappLink = document.createElement('a');
         whatsappLink.className = 'citas-accion__whatsapp';
@@ -378,13 +394,15 @@
         accionesWrapper.appendChild(btnDetalles);
         accionesWrapper.appendChild(btnEstado);
         accionesWrapper.appendChild(btnAnular);
-        accionesCell.appendChild(accionesWrapper);
-        fila.appendChild(accionesCell);
 
-        return fila;
+        card.appendChild(encabezado);
+        card.appendChild(meta);
+        card.appendChild(accionesWrapper);
+
+        return card;
     }
 
-    // Renderiza la tabla principal de citas aplicando orden y estados visuales.
+    // Renderiza el grid principal de citas aplicando orden y estados visuales.
     function renderCitas(lista = []) {
         if (!tablaCitas) {
             return;
@@ -395,18 +413,16 @@
         tablaCitas.innerHTML = '';
 
         if (!ordenadas.length) {
-            const vacio = document.createElement('tr');
-            const celda = document.createElement('td');
-            celda.colSpan = 7;
-            celda.textContent = 'No hay citas registradas.';
-            vacio.appendChild(celda);
+            const vacio = document.createElement('div');
+            vacio.className = 'citas-grid__empty';
+            vacio.textContent = 'No hay citas registradas.';
             tablaCitas.appendChild(vacio);
             return;
         }
 
         const fragment = document.createDocumentFragment();
         ordenadas.forEach(cita => {
-            fragment.appendChild(crearFilaCita(cita));
+            fragment.appendChild(crearTarjetaCita(cita));
         });
 
         tablaCitas.appendChild(fragment);
@@ -617,8 +633,8 @@
                 return;
             }
 
-            const fila = event.target.closest('tr');
-            const id = fila?.dataset.citaId;
+            const tarjeta = event.target.closest('[data-cita-id]');
+            const id = tarjeta?.dataset.citaId;
             if (!id) {
                 return;
             }

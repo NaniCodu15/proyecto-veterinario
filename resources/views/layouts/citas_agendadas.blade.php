@@ -21,30 +21,12 @@
                     </label>
                 </div>
 
-                <div class="citas-table-wrapper">
-                    <div class="citas-table-container">
-                        {{-- Tabla con citas registradas --}}
-                        <table class="citas-table">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Mascota</th>
-                                    <th>Propietario</th>
-                                    <th>Fecha</th>
-                                    <th>Hora</th>
-                                    <th>Motivo</th>
-                                    <th>Estado</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tablaCitas">
-                                <tr class="citas-table__empty">
-                                    <td colspan="8">No hay citas registradas todavía.</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <div class="citas-table-wrapper citas-grid-wrapper">
+                    {{-- Listado de citas en tarjetas --}}
+                    <div class="citas-grid" id="tablaCitas">
+                        <div class="citas-grid__empty">No hay citas registradas todavía.</div>
                     </div>
-    </div>
+                </div>
 </section>
 
 @push('scripts')
