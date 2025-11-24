@@ -55,6 +55,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('historia_clinicas/{id}/ver', [HistoriaClinicaController::class, 'ver'])->name('historia_clinicas.ver');
     // Ruta protegida: generación/visualización de PDF (HistoriaClinicaController@pdf) para historias clínicas.
     Route::get('historia_clinicas/{historia}/pdf', [HistoriaClinicaController::class, 'pdf'])->name('historia_clinicas.pdf');
+    Route::get('historia_clinicas/search', [HistoriaClinicaController::class, 'search'])->name('historia_clinicas.search');
     // Ruta protegida: consulta específica de historia clínica (HistoriaClinicaController@show) para edición.
     Route::get('historia_clinicas/{id}', [HistoriaClinicaController::class,'show'])->name('historia_clinicas.show');
     // Ruta protegida: creación de historia clínica (HistoriaClinicaController@store) mediante AJAX.

@@ -19,6 +19,7 @@
 
     // Rutas y tokens para enviar la cita registrada.
     const citasStoreUrl = moduleConfig.citasStoreUrl || '';
+    const historiaSearchUrl = moduleConfig.historiaSearchUrl || '';
     const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
     const csrfToken = csrfTokenElement ? csrfTokenElement.getAttribute('content') : '';
 
@@ -38,10 +39,8 @@
         hora: document.getElementById('citaHora'),
     };
 
-    // Estados auxiliares: selección actual, catálogos y componente TomSelect.
+    // Estados auxiliares: selección actual
     let historiaSeleccionadaParaCita = null;
-    let historiasDisponibles = [];
-    let tomSelectHistoria = null;
 
     // Muestra alertas específicas del formulario de citas y las oculta tras unos segundos.
     function mostrarMensajeCita(texto, tipo = 'success') {
@@ -91,243 +90,93 @@
 
         if (citaCampos.propietarioNombre) {
             citaCampos.propietarioNombre.value = historia.nombrePropietario ?? '';
+            citaCampos.propietarioNombre.setAttribute('readonly', 'readonly');
         }
         if (citaCampos.propietarioDni) {
             citaCampos.propietarioDni.value = historia.dni ?? '';
+            citaCampos.propietarioDni.setAttribute('readonly', 'readonly');
         }
         if (citaCampos.propietarioTelefono) {
             citaCampos.propietarioTelefono.value = historia.telefono ?? '';
+            citaCampos.propietarioTelefono.setAttribute('readonly', 'readonly');
         }
         if (citaCampos.mascotaNombre) {
             citaCampos.mascotaNombre.value = historia.nombreMascota ?? '';
+            citaCampos.mascotaNombre.setAttribute('readonly', 'readonly');
         }
     }
 
-    // Prepara la estructura de datos que TomSelect requiere para mostrar opciones.
-    function formatearHistoriaParaOpcion(historia) {
-        if (!historia || !historia.id) {
-            return null;
-        }
-
-        const numero = (historia.numero_historia ?? '').toString().trim() || 'Sin código';
-        const mascota = (historia.mascota ?? '').toString().trim() || 'Mascota sin nombre';
-        const propietario = (historia.propietario ?? '').toString().trim() || 'Propietario sin registrar';
-        const propietarioDni = (historia.propietario_dni ?? '').toString().trim();
-
-        return {
-            value: String(historia.id),
-            text: `${numero} · ${mascota}`,
-            numero_historia: numero,
-            mascota,
-            propietario,
-            propietario_dni: propietarioDni,
-        };
-    }
-
-    // Sincroniza las opciones de TomSelect con la lista de historias disponibles.
-    function sincronizarTomSelectHistorias() {
-        if (!tomSelectHistoria) {
-            return;
-        }
-
-        const valorActual = tomSelectHistoria.getValue();
-        tomSelectHistoria.clearOptions();
-
-        if (valorActual) {
-            const historiaActual = historiasDisponibles.find(
-                historia => String(historia?.id ?? '') === String(valorActual)
-            );
-
-            if (historiaActual) {
-                const opcion = formatearHistoriaParaOpcion(historiaActual);
-                if (opcion) {
-                    tomSelectHistoria.addOption(opcion);
-                    tomSelectHistoria.setValue(opcion.value, true);
-                }
-            } else {
-                tomSelectHistoria.clear(true);
-                historiaSeleccionadaParaCita = null;
-                limpiarDatosHistoriaEnCita();
-            }
-        }
-
-        if (!historiasDisponibles.length) {
-            tomSelectHistoria.clear(true);
-            tomSelectHistoria.disable();
-            historiaSeleccionadaParaCita = null;
-            limpiarDatosHistoriaEnCita();
-        } else {
-            tomSelectHistoria.enable();
-        }
-
-        tomSelectHistoria.setTextboxValue('');
-        tomSelectHistoria.refreshOptions(false);
-    }
-
-    // Rellena el select de historias con la data disponible y conserva selección previa.
-    function poblarHistoriasParaCitas(lista = []) {
-        if (!historiaSelectCita) {
-            return;
-        }
-
-        historiasDisponibles = Array.isArray(lista)
-            ? lista.filter(historia => historia && historia.id)
-            : [];
-
-        if (tomSelectHistoria) {
-            sincronizarTomSelectHistorias();
-            return;
-        }
-
-        const valorActual = historiaSelectCita.value;
-        historiaSelectCita.innerHTML = '<option value="">Selecciona una historia clínica</option>';
-
-        historiasDisponibles.forEach(historia => {
-            const opcion = document.createElement('option');
-            opcion.value = historia.id;
-            const formateada = formatearHistoriaParaOpcion(historia);
-            opcion.textContent = formateada?.text ?? '';
-            historiaSelectCita.appendChild(opcion);
-        });
-
-        const existeValorPrevio = historiasDisponibles.some(
-            historia => String(historia?.id ?? '') === String(valorActual)
-        );
-
-        if (existeValorPrevio) {
-            historiaSelectCita.value = valorActual;
-        } else {
-            historiaSelectCita.value = '';
-            historiaSeleccionadaParaCita = null;
-            limpiarDatosHistoriaEnCita();
-        }
-    }
-
-    window.poblarHistoriasParaCitas = poblarHistoriasParaCitas;
-
-    // Inicializa el componente TomSelect para buscar historias clínicas.
-    window.inicializarBuscadorHistorias = function inicializarBuscadorHistorias() {
-        if (!historiaSelectCita || typeof TomSelect === 'undefined') {
-            return;
-        }
-
-        if (tomSelectHistoria) {
-            tomSelectHistoria.destroy();
-            tomSelectHistoria = null;
-        }
-
-        tomSelectHistoria = new TomSelect(historiaSelectCita, {
-            valueField: 'value',
-            labelField: 'text',
-            searchField: ['text', 'numero_historia', 'mascota', 'propietario', 'propietario_dni'],
-            allowEmptyOption: true,
-            placeholder: 'Escribe al menos 2 caracteres para buscar...',
-            loadThrottle: 250,
-            closeAfterSelect: true,
-            shouldLoad(query) {
-                return query.length >= 2;
-            },
-            load(query, callback) {
-                if (query.length < 2) {
-                    callback();
-                    return;
-                }
-
-                const termino = query.toLowerCase();
-                const coincidencias = historiasDisponibles
-                    .filter(historia => {
-                        const numero = (historia.numero_historia ?? '').toString().toLowerCase();
-                        const mascota = (historia.mascota ?? '').toString().toLowerCase();
-                        const propietario = (historia.propietario ?? '').toString().toLowerCase();
-                        const propietarioDni = (historia.propietario_dni ?? '').toString().toLowerCase();
-
-                        return (
-                            numero.includes(termino) ||
-                            mascota.includes(termino) ||
-                            propietario.includes(termino) ||
-                            propietarioDni.includes(termino)
-                        );
-                    })
-                    .slice(0, 25)
-                    .map(formatearHistoriaParaOpcion)
-                    .filter(Boolean);
-
-                callback(coincidencias);
-            },
-            render: {
-                option(item, escape) {
-                    const numero = escape(item.numero_historia ?? 'Sin código');
-                    const mascota = escape(item.mascota ?? 'Mascota sin nombre');
-                    const propietario = escape(item.propietario ?? 'Propietario sin registrar');
-                    const propietarioDni = escape(item.propietario_dni ?? '');
-                    const propietarioDetalle = propietarioDni
-                        ? `${propietario} · DNI ${propietarioDni}`
-                        : propietario;
-                    return `
-                        <div class="ts-option__content">
-                            <span class="ts-option__numero">${numero}</span>
-                            <span class="ts-option__mascota">${mascota}</span>
-                            <span class="ts-option__propietario">${propietarioDetalle}</span>
-                        </div>
-                    `;
-                },
-                item(item, escape) {
-                    const numero = escape(item.numero_historia ?? 'Sin código');
-                    const mascota = escape(item.mascota ?? 'Mascota sin nombre');
-                    const propietario = escape(item.propietario ?? 'Propietario sin registrar');
-                    return `
-                        <div class="ts-item__content">
-                            <span class="ts-item__numero">${numero}</span>
-                            <span class="ts-item__mascota">${mascota}</span>
-                            <span class="ts-item__propietario">${propietario}</span>
-                        </div>
-                    `;
-                },
-                no_results() {
-                    if (this.inputValue.length < 2) {
-                        return '<div class="ts-dropdown__message">Escribe al menos 2 caracteres para buscar.</div>';
-                    }
-
-                    return '<div class="ts-dropdown__message">No se encontraron coincidencias.</div>';
-                },
-            },
-        });
-
-        sincronizarTomSelectHistorias();
+    // Mantiene compatibilidad con inicializaciones previas aunque ya no se carguen listados locales.
+    window.poblarHistoriasParaCitas = function poblarHistoriasParaCitas() {
+        // El buscador ahora funciona 100% vía AJAX con Select2, por lo que no requiere pre-carga.
     };
+
+    // Inicializa el componente Select2 para buscar historias clínicas por propietario o DNI.
+    function inicializarBuscadorSelect2() {
+        if (!historiaSelectCita || typeof $ === 'undefined' || typeof $.fn.select2 === 'undefined') {
+            return;
+        }
+
+        const $select = $(historiaSelectCita);
+
+        $select.select2({
+            placeholder: 'Busca por propietario o DNI',
+            minimumInputLength: 2,
+            allowClear: true,
+            width: '100%',
+            ajax: {
+                url: historiaSearchUrl,
+                dataType: 'json',
+                delay: 300,
+                data(params) {
+                    return { q: params.term || '' };
+                },
+                processResults(data) {
+                    const resultados = Array.isArray(data?.results) ? data.results : [];
+                    return {
+                        results: resultados.map(item => ({
+                            id: item.id,
+                            text: item.text,
+                            nombrePropietario: item.nombre_propietario || '',
+                            dni: item.dni_propietario || '',
+                            telefono: item.telefono_propietario || '',
+                            nombreMascota: item.nombre_mascota || '',
+                        })),
+                    };
+                },
+            },
+            language: {
+                inputTooShort: () => 'Escribe al menos 2 caracteres para buscar.',
+                noResults: () => 'No se encontraron propietarios.',
+                searching: () => 'Buscando...'
+            },
+        });
+
+        $select.on('select2:select', event => {
+            const data = event.params?.data || {};
+            rellenarDatosHistoriaEnCita({
+                id: data.id,
+                nombrePropietario: data.nombrePropietario,
+                dni: data.dni,
+                telefono: data.telefono,
+                nombreMascota: data.nombreMascota,
+            });
+        });
+
+        $select.on('select2:clear', () => {
+            rellenarDatosHistoriaEnCita(null);
+        });
+    }
 
     // Ejecuta la inicialización del buscador según el estado de carga del DOM.
     const iniciarBuscadorHistorias = () => {
-        if (typeof window.inicializarBuscadorHistorias === 'function') {
-            window.inicializarBuscadorHistorias();
-        }
+        inicializarBuscadorSelect2();
     };
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', iniciarBuscadorHistorias);
     } else {
         iniciarBuscadorHistorias();
-    }
-
-    // Cambio de la historia seleccionada: obtiene detalle vía AJAX y rellena campos.
-    if (historiaSelectCita) {
-        historiaSelectCita.addEventListener('change', async event => {
-            const id = event.target.value;
-
-            if (!id) {
-                rellenarDatosHistoriaEnCita(null);
-                return;
-            }
-
-            try {
-                const { historia } = await window.obtenerHistoriaDetallada(id);
-                rellenarDatosHistoriaEnCita(historia);
-            } catch (error) {
-                console.error(error);
-                mostrarMensajeCita(error.message || 'No se pudo cargar la historia clínica seleccionada.', 'error');
-                rellenarDatosHistoriaEnCita(null);
-            }
-        });
     }
 
     // Evento submit del formulario de citas: valida, arma payload y lo envía.
@@ -345,7 +194,7 @@
             const hora = citaCampos.hora?.value || '';
 
             if (!historiaSeleccionadaParaCita?.id) {
-                mostrarMensajeCita('Selecciona una historia clínica antes de registrar la cita.', 'error');
+                mostrarMensajeCita('Selecciona un propietario con historia clínica antes de registrar la cita.', 'error');
                 return;
             }
 
@@ -414,6 +263,10 @@
 
                 if (typeof window.cargarCitasProximas === 'function') {
                     window.cargarCitasProximas();
+                }
+
+                if (typeof $ !== 'undefined' && typeof $.fn.select2 !== 'undefined') {
+                    $(historiaSelectCita).val(null).trigger('change');
                 }
             } catch (error) {
                 console.error(error);

@@ -260,6 +260,7 @@
         'historiaListUrl' => route('historia_clinicas.list'),
         'historiaStoreUrl' => route('historia_clinicas.store'),
         'historiaBaseUrl' => url('historia_clinicas'),
+        'historiaSearchUrl' => route('historia_clinicas.search'),
         'consultaStoreUrl' => route('consultas.store'),
         'consultaBaseUrl' => url('consultas'),
         'citasStoreUrl' => route('citas.store'),
