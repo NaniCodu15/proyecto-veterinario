@@ -248,6 +248,22 @@ class CitaController extends Controller
             ]);
         }
 
+        if ($nuevoEstado === 'Cancelada') {
+            $cita->delete();
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Cita cancelada y eliminada correctamente.',
+                    'deleted' => true,
+                    'redirect' => route('citas.index'),
+                ]);
+            }
+
+            return redirect()
+                ->route('citas.index')
+                ->with('success', 'Cita cancelada y eliminada correctamente.');
+        }
+
         if ($nuevoEstado === 'Reprogramada') {
             $nuevaFecha = $validated['fecha_cita'] ?? null;
             $nuevaHora = $validated['hora_cita'] ?? null;
