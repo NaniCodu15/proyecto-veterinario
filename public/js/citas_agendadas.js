@@ -146,21 +146,22 @@
             reprogramarCampos.hidden = !esReprogramada;
         }
 
-        if (reprogramarFechaInput) {
-            if (esReprogramada) {
-                reprogramarFechaInput.setAttribute('required', 'required');
-            } else {
+        if (!esReprogramada) {
+            if (reprogramarFechaInput) {
+                reprogramarFechaInput.value = '';
                 reprogramarFechaInput.removeAttribute('required');
             }
-        }
 
-        if (reprogramarHoraInput) {
-            if (esReprogramada) {
-                reprogramarHoraInput.setAttribute('required', 'required');
-            } else {
+            if (reprogramarHoraInput) {
+                reprogramarHoraInput.value = '';
                 reprogramarHoraInput.removeAttribute('required');
             }
+
+            return;
         }
+
+        reprogramarFechaInput?.setAttribute('required', 'required');
+        reprogramarHoraInput?.setAttribute('required', 'required');
     }
 
     // Muestra mensajes en la parte superior del listado de citas y los oculta automáticamente.
@@ -823,7 +824,9 @@
             }
 
             const nuevoEstado = selectEstadoCita?.value || 'Pendiente';
-            const esReprogramada = String(nuevoEstado).toLowerCase() === 'reprogramada';
+            const estadoNormalizado = String(nuevoEstado).toLowerCase();
+            const esReprogramada = estadoNormalizado === 'reprogramada';
+            const esCancelada = estadoNormalizado === 'cancelada';
             const payload = { estado: nuevoEstado };
 
             if (esReprogramada) {
@@ -847,6 +850,28 @@
             }
 
             try {
+                if (esCancelada) {
+                    await eliminarCita(citaSeleccionadaParaEstado.id);
+                    citasCache = citasCache.filter(cita => String(cita?.id ?? '') !== String(citaSeleccionadaParaEstado.id ?? ''));
+                    if (modalDetalleCita && String(citaDetalleSeleccionada?.id ?? '') === String(citaSeleccionadaParaEstado.id ?? '')) {
+                        cerrarModalGenerico(modalDetalleCita);
+                        citaDetalleSeleccionada = null;
+                    }
+
+                    cerrarModalGenerico(modalEstadoCita);
+                    resetCamposReprogramar();
+                    citaSeleccionadaParaEstado = null;
+
+                    await cargarCitas(citasBusquedaActual);
+                    mostrarMensajeListadoCitas('Cita cancelada y eliminada correctamente.', 'success');
+
+                    if (typeof window.cargarCitasProximas === 'function') {
+                        window.cargarCitasProximas();
+                    }
+
+                    return;
+                }
+
                 const citaActualizada = await actualizarEstadoCita(citaSeleccionadaParaEstado.id, payload);
                 cerrarModalGenerico(modalEstadoCita);
                 resetCamposReprogramar();
