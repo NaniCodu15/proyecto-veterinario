@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Mi App</title>
+    <title>Gestión de Historias</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/logoVet.png') }}">
 
     {{-- Si estamos en el login, carga login.css --}}
     @if (Request::is('login'))
