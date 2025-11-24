@@ -396,6 +396,77 @@
     gap: 10px;
 }
 
+/* Ajustes visuales para Select2 que armonizan con los campos del formulario. */
+.select2-container {
+    width: 100% !important;
+}
+
+/* Caja principal del selector con bordes y fondo coherentes con los inputs. */
+.select2-container--default .select2-selection--single {
+    height: 48px;
+    padding: 6px 12px;
+    border: 1px solid rgba(127, 169, 255, 0.35);
+    border-radius: var(--radius-md);
+    background: var(--surface-alt);
+    transition: border 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+/* Tono de foco con halo azul para mantener la retroalimentación visual. */
+.select2-container--default.select2-container--focus .select2-selection--single {
+    border-color: rgba(95, 141, 229, 0.7);
+    box-shadow: 0 0 0 4px rgba(95, 141, 229, 0.15);
+    background: #fff;
+    outline: none;
+}
+
+/* Texto y placeholder alineados verticalmente. */
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: var(--text-dark);
+    line-height: 34px;
+    padding-left: 0;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* Icono de flecha con color acorde al resto de controles. */
+.select2-container--default .select2-selection--single .select2-selection__arrow b {
+    border-color: var(--text-muted) transparent transparent transparent;
+    margin-top: 2px;
+}
+
+/* Cajón desplegable con esquinas suaves y sombra sutil. */
+.select2-container .select2-dropdown {
+    border-color: rgba(127, 169, 255, 0.3);
+    box-shadow: 0 20px 40px rgba(122, 168, 255, 0.18);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+/* Estilo del buscador interno del dropdown. */
+.select2-search--dropdown .select2-search__field {
+    border: 1px solid rgba(127, 169, 255, 0.35);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    font-size: 0.95rem;
+}
+
+/* Item seleccionado y hover con los tonos principales del formulario. */
+.select2-results__option--highlighted.select2-results__option--selectable {
+    background: linear-gradient(135deg, rgba(142, 183, 255, 0.22), rgba(255, 159, 207, 0.18));
+    color: var(--text-dark);
+}
+
+.select2-container--default .select2-results__option--selected {
+    background: rgba(95, 141, 229, 0.12);
+    color: var(--primary-dark);
+    font-weight: 600;
+}
+
 /* Optimiza la cabecera para móviles. */
 @media (max-width: 600px) {
     .historias-header {
