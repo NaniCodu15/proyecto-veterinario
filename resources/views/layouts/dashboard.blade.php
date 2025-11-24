@@ -258,6 +258,7 @@
         'historiaStoreUrl' => route('historia_clinicas.store'),
         'historiaBaseUrl' => url('historia_clinicas'),
         'consultaStoreUrl' => route('consultas.store'),
+        'consultaBaseUrl' => url('consultas'),
         'citasStoreUrl' => route('citas.store'),
         'citasListUrl' => route('citas.list'),
         'citasEstadoBaseUrl' => url('citas'),

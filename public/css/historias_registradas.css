@@ -684,6 +684,21 @@
             gap: 14px;
         }
 
+        .consulta-item__actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            margin-top: 14px;
+        }
+
+        .consulta-item__action {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+        }
+
         /* Bloques con fondo azul claro para secciones de texto. */
         .consulta-item__block {
             background: rgba(237, 244, 255, 0.6);

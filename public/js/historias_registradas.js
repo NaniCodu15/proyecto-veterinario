@@ -21,6 +21,7 @@
     const historiaListUrl = moduleConfig.historiaListUrl || '';
     const historiaBaseUrl = moduleConfig.historiaBaseUrl || '';
     const consultaStoreUrl = moduleConfig.consultaStoreUrl || '';
+    const consultaBaseUrl = moduleConfig.consultaBaseUrl || '';
     const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
     const csrfToken = csrfTokenElement ? csrfTokenElement.getAttribute('content') : '';
 
@@ -33,6 +34,7 @@
     const consultaMensaje = document.getElementById('consultaMensaje');
     const consultaHistoriaId = document.getElementById('consultaHistoriaId');
     const btnIrCrearHistoria = document.getElementById('btnIrCrearHistoria');
+    const consultaSubmitButton = formConsulta?.querySelector('button[type="submit"]');
 
     // Mapeo de campos del formulario de consultas para lectura y escritura.
     const consultaCampos = {
@@ -67,6 +69,7 @@
     let terminoBusquedaHistorias = '';
     let historiaDetalleActual = null;
     let consultasDetalleActual = [];
+    let consultaEditandoId = null;
 
     // Reutiliza mensajes del módulo de historias clínicas si están disponibles.
     const mostrarMensajeHistoria = window.mostrarMensajeHistoria || (() => {});
@@ -176,6 +179,16 @@
     // Activa por defecto la pestaña de registro de consultas cuando se carga el módulo.
     activarTabConsulta('registro');
 
+    function marcarEdicionConsulta(activa = false) {
+        if (!consultaSubmitButton) {
+            return;
+        }
+
+        consultaSubmitButton.innerHTML = activa
+            ? '<i class="fas fa-sync-alt"></i> Actualizar consulta'
+            : '<i class="fas fa-save"></i> Guardar consulta';
+    }
+
     // Restablece campos del formulario de consulta y asigna la historia actual.
     function limpiarFormularioConsulta() {
         if (!formConsulta) {
@@ -183,6 +196,9 @@
         }
 
         formConsulta.reset();
+
+        consultaEditandoId = null;
+        marcarEdicionConsulta(false);
 
         if (consultaHistoriaId && historiaDetalleActual?.id) {
             consultaHistoriaId.value = historiaDetalleActual.id;
@@ -201,6 +217,7 @@
     function crearNodoConsulta(consulta = {}) {
         const item = document.createElement('li');
         item.className = 'consulta-item';
+        item.dataset.consultaId = consulta.id ?? '';
 
         const header = document.createElement('div');
         header.className = 'consulta-item__header';
@@ -267,6 +284,20 @@
             item.appendChild(cuerpo);
         }
 
+        if (consulta.id) {
+            const acciones = document.createElement('div');
+            acciones.className = 'consulta-item__actions';
+
+            const btnEditarConsulta = document.createElement('button');
+            btnEditarConsulta.type = 'button';
+            btnEditarConsulta.className = 'btn btn-warning btn-sm consulta-item__action consulta-item__action-edit';
+            btnEditarConsulta.dataset.consultaId = consulta.id;
+            btnEditarConsulta.innerHTML = '<i class="fas fa-pen"></i> Editar';
+
+            acciones.appendChild(btnEditarConsulta);
+            item.appendChild(acciones);
+        }
+
         return item;
     }
 
@@ -307,6 +338,50 @@
         });
 
         listaConsultas.appendChild(fragment);
+    }
+
+    function prepararFormularioEdicionConsulta(consulta = null) {
+        if (!consulta || !formConsulta) {
+            return;
+        }
+
+        consultaEditandoId = consulta.id ?? null;
+        marcarEdicionConsulta(Boolean(consultaEditandoId));
+
+        if (consultaHistoriaId) {
+            consultaHistoriaId.value = consulta.id_historia || historiaDetalleActual?.id || '';
+        }
+
+        if (consultaCampos.fecha) {
+            consultaCampos.fecha.value = consulta.fecha || '';
+        }
+
+        if (consultaCampos.peso) {
+            consultaCampos.peso.value = consulta.peso ?? '';
+        }
+
+        if (consultaCampos.temperatura) {
+            consultaCampos.temperatura.value = consulta.temperatura ?? '';
+        }
+
+        if (consultaCampos.sintomas) {
+            consultaCampos.sintomas.value = consulta.sintomas || '';
+        }
+
+        if (consultaCampos.diagnostico) {
+            consultaCampos.diagnostico.value = consulta.diagnostico || '';
+        }
+
+        if (consultaCampos.tratamiento) {
+            consultaCampos.tratamiento.value = consulta.tratamiento || '';
+        }
+
+        if (consultaCampos.observaciones) {
+            consultaCampos.observaciones.value = consulta.observaciones || '';
+        }
+
+        activarTabConsulta('registro');
+        mostrarMensajeConsulta('Edita la consulta seleccionada y guarda los cambios.');
     }
 
     function actualizarDetalleHistoria(historia = {}) {
@@ -648,6 +723,27 @@
         });
     }
 
+    if (listaConsultas) {
+        listaConsultas.addEventListener('click', event => {
+            const botonEditarConsulta = event.target.closest('.consulta-item__action-edit');
+
+            if (!botonEditarConsulta) {
+                return;
+            }
+
+            const consultaId = botonEditarConsulta.dataset.consultaId;
+            const consultaSeleccionada = consultasDetalleActual.find(
+                consulta => String(consulta.id) === String(consultaId),
+            );
+
+            if (consultaSeleccionada) {
+                prepararFormularioEdicionConsulta(consultaSeleccionada);
+            } else {
+                mostrarMensajeConsulta('No se pudo cargar la consulta a editar.', 'error');
+            }
+        });
+    }
+
     // Enlace rápido que lleva a la sección de alta de historias en el dashboard.
     if (btnIrCrearHistoria) {
         btnIrCrearHistoria.addEventListener('click', event => {
@@ -689,8 +785,16 @@
         formConsulta.addEventListener('submit', async event => {
             event.preventDefault();
 
-            if (!consultaStoreUrl) {
-                mostrarMensajeConsulta('No se pudo determinar la ruta para guardar la consulta.', 'error');
+            const esEdicion = Boolean(consultaEditandoId);
+            const consultaUrl = esEdicion && consultaBaseUrl
+                ? `${consultaBaseUrl}/${consultaEditandoId}`
+                : consultaStoreUrl;
+
+            if (!consultaUrl) {
+                const mensajeRuta = esEdicion
+                    ? 'No se pudo determinar la ruta para actualizar la consulta.'
+                    : 'No se pudo determinar la ruta para guardar la consulta.';
+                mostrarMensajeConsulta(mensajeRuta, 'error');
                 return;
             }
 
@@ -725,8 +829,8 @@
             }
 
             try {
-                const response = await fetch(consultaStoreUrl, {
-                    method: 'POST',
+                const response = await fetch(consultaUrl, {
+                    method: esEdicion ? 'PUT' : 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         Accept: 'application/json',
@@ -749,14 +853,25 @@
                 }
 
                 if (data?.consulta) {
-                    consultasDetalleActual = [data.consulta, ...consultasDetalleActual];
+                    if (esEdicion) {
+                        consultasDetalleActual = consultasDetalleActual.map(consulta =>
+                            consulta.id === consultaEditandoId ? data.consulta : consulta,
+                        );
+                    } else {
+                        consultasDetalleActual = [data.consulta, ...consultasDetalleActual];
+                    }
+
                     renderConsultas(consultasDetalleActual);
                 }
 
-                mostrarMensajeConsulta('Consulta registrada correctamente.');
+                const mensajeExito = esEdicion
+                    ? 'Consulta actualizada correctamente.'
+                    : 'Consulta registrada correctamente.';
+                mostrarMensajeConsulta(mensajeExito);
+
                 limpiarFormularioConsulta();
                 if (consultaCampos.fecha) {
-                    consultaCampos.fecha.value = fecha;
+                    consultaCampos.fecha.value = data?.consulta?.fecha || fecha;
                 }
             } catch (error) {
                 console.error(error);
