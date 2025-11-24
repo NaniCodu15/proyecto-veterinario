@@ -22,6 +22,7 @@
     const historiaBaseUrl = moduleConfig.historiaBaseUrl || '';
     const backupGenerateUrl = moduleConfig.backupGenerateUrl || '';
     const backupListUrl = moduleConfig.backupListUrl || '';
+    const propietarioSearchUrl = moduleConfig.propietarioSearchUrl || '';
     const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
     const csrfToken = csrfTokenElement ? csrfTokenElement.getAttribute('content') : '';
 
@@ -50,6 +51,7 @@
     const confirmModal = document.getElementById('confirmModal');
     const confirmAcceptButton = confirmModal?.querySelector('[data-confirm="accept"]');
     const confirmCancelButton = confirmModal?.querySelector('[data-confirm="cancel"]');
+    const propietarioSelect = document.getElementById('buscadorPropietario');
 
     // Mapeo de campos de formulario para facilitar asignaciones y validaciones.
     const campos = {
@@ -66,6 +68,104 @@
 
     let historiaEditandoId = null;
     let historiaPorAnularId = null;
+    let buscadorPropietarioSelect = null;
+
+    function toggleCamposPropietarioSoloLectura(estado = false) {
+        ['nombrePropietario', 'telefono', 'direccion', 'dni'].forEach(clave => {
+            const campo = campos[clave];
+            if (!campo) {
+                return;
+            }
+
+            if (estado) {
+                campo.setAttribute('readonly', 'readonly');
+            } else {
+                campo.removeAttribute('readonly');
+            }
+        });
+    }
+
+    function limpiarCamposPropietario() {
+        ['nombrePropietario', 'telefono', 'direccion', 'dni'].forEach(clave => {
+            const campo = campos[clave];
+            if (campo) {
+                campo.value = '';
+            }
+        });
+
+        toggleCamposPropietarioSoloLectura(false);
+    }
+
+    function rellenarCamposPropietario(propietario) {
+        if (!propietario) {
+            return;
+        }
+
+        const nombreCompleto = (propietario.nombre_completo
+            || `${propietario.nombres ?? ''} ${propietario.apellidos ?? ''}`)
+            .trim();
+
+        if (campos.nombrePropietario) {
+            campos.nombrePropietario.value = nombreCompleto || '';
+        }
+
+        if (campos.telefono) {
+            campos.telefono.value = propietario.telefono ?? '';
+        }
+
+        if (campos.direccion) {
+            campos.direccion.value = propietario.direccion ?? '';
+        }
+
+        if (campos.dni) {
+            campos.dni.value = propietario.dni ?? '';
+        }
+
+        toggleCamposPropietarioSoloLectura(true);
+    }
+
+    function inicializarBuscadorPropietarios() {
+        if (!propietarioSelect || !propietarioSearchUrl || !window.jQuery) {
+            return;
+        }
+
+        const $select = window.jQuery(propietarioSelect);
+        buscadorPropietarioSelect = $select;
+
+        $select.select2({
+            width: 'resolve',
+            placeholder: $select.data('placeholder') || 'Buscar propietario',
+            allowClear: true,
+            minimumInputLength: 1,
+            ajax: {
+                url: propietarioSearchUrl,
+                dataType: 'json',
+                delay: 300,
+                data: params => ({
+                    q: params.term || '',
+                }),
+                processResults: data => ({
+                    results: Array.isArray(data?.results) ? data.results : [],
+                }),
+            },
+            language: {
+                noResults: () => 'Sin coincidencias',
+                searching: () => 'Buscando...',
+                inputTooShort: () => 'Escribe para buscar',
+            },
+        });
+
+        $select.on('select2:select', event => {
+            const data = event.params?.data;
+            if (data) {
+                rellenarCamposPropietario(data);
+            }
+        });
+
+        $select.on('select2:clear select2:unselect', () => {
+            limpiarCamposPropietario();
+        });
+    }
 
     // Determina si existe algún modal visible para sincronizar el estado del body.
     function hayModalVisible() {
@@ -132,6 +232,14 @@
 
         form.reset();
         ocultarEspecieOtro();
+
+        limpiarCamposPropietario();
+
+        if (buscadorPropietarioSelect) {
+            buscadorPropietarioSelect.val(null).trigger('change');
+        } else if (propietarioSelect) {
+            propietarioSelect.value = '';
+        }
 
         if (numeroHistoriaInput) {
             numeroHistoriaInput.value = window.proximoNumeroHistoria || 'HC-00001';
@@ -236,6 +344,8 @@
     }
 
     window.mostrarMensajeHistoria = mostrarMensajeHistoria;
+
+    inicializarBuscadorPropietarios();
 
     // Muestra mensajes para las acciones de respaldo de historias.
     function mostrarMensajeBackup(texto, tipo = 'success') {

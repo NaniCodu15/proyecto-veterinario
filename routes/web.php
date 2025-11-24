@@ -41,6 +41,7 @@ Route::middleware(['auth'])->group(function () {
     // Rutas REST protegidas: CRUD de mascotas gestionadas por MascotaController para el módulo de mascotas.
     Route::resource('mascotas', MascotaController::class);
     // Rutas REST protegidas: CRUD de propietarios gestionadas por PropietarioController para el módulo de clientes.
+    Route::get('propietarios/buscar', [PropietarioController::class, 'search'])->name('propietarios.search');
     Route::resource('propietarios', PropietarioController::class);
 
     // Ruta protegida: generación de respaldo (BackupController@generate) para el módulo de copias de seguridad.

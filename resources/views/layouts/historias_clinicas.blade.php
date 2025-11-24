@@ -70,7 +70,13 @@
     </div>
 </div>
 
+@push('styles')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
+@endpush
+
 @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     {{-- Script dedicado al manejo de historias clínicas --}}
     <script src="{{ asset('js/historias_clinicas.js') }}"></script>
 @endpush
@@ -148,6 +154,14 @@
                     <div class="form-section">
                         <h3 class="form-section__title"><span>👤</span>Datos del propietario</h3>
                         <div class="form-grid">
+                            <div class="form-group full-width">
+                                {{-- Búsqueda de propietario existente --}}
+                                <label>Buscar propietario registrado:</label>
+                                <select id="buscadorPropietario" style="width: 100%;" data-placeholder="Escribe nombre o DNI">
+                                    <option value="">Escribe para buscar</option>
+                                </select>
+                            </div>
+
                             <div class="form-group">
                                 {{-- Nombre completo del responsable --}}
                                 <label>Nombre del Propietario:</label>
