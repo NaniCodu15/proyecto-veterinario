@@ -48,6 +48,7 @@ class HistoriaClinicaController extends Controller
             'sexo' => ['required', Rule::in(['macho', 'hembra'])],
             'edad' => ['nullable', 'integer', 'min:0', 'max:60'],
             'peso' => ['required', 'numeric', 'min:0'],
+            'propietario_id' => ['nullable', 'integer', 'exists:propietarios,id_propietario'],
             'nombrePropietario' => ['required', 'string', 'max:200'],
             'telefono' => ['required', 'string', 'max:20'],
             'direccion' => ['required', 'string', 'max:200'],
@@ -64,17 +65,23 @@ class HistoriaClinicaController extends Controller
             $especieNormalizada = ucfirst(strtolower($especieSeleccionada));
             $sexoNormalizado = $validated['sexo'] === 'macho' ? 'Macho' : 'Hembra';
 
-            [$nombresPropietario, $apellidosPropietario] = $this->separarNombreCompleto($validated['nombrePropietario']);
+            $propietario = null;
 
-            $propietario = Propietario::updateOrCreate(
-                ['dni' => $validated['dni']],
-                [
-                    'nombres' => $nombresPropietario,
-                    'apellidos' => $apellidosPropietario,
-                    'telefono' => $validated['telefono'],
-                    'direccion' => $validated['direccion'],
-                ]
-            );
+            if (! empty($validated['propietario_id'])) {
+                $propietario = Propietario::find($validated['propietario_id']);
+            } else {
+                [$nombresPropietario, $apellidosPropietario] = $this->separarNombreCompleto($validated['nombrePropietario']);
+
+                $propietario = Propietario::updateOrCreate(
+                    ['dni' => $validated['dni']],
+                    [
+                        'nombres' => $nombresPropietario,
+                        'apellidos' => $apellidosPropietario,
+                        'telefono' => $validated['telefono'],
+                        'direccion' => $validated['direccion'],
+                    ]
+                );
+            }
 
             $mascota = Mascota::firstOrCreate(
                 [

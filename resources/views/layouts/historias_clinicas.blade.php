@@ -147,6 +147,10 @@
 
                     <div class="form-section">
                         <h3 class="form-section__title"><span>👤</span>Datos del propietario</h3>
+                        <input type="hidden" id="propietario_id" name="propietario_id">
+
+                        @livewire('buscar-propietario')
+
                         <div class="form-grid">
                             <div class="form-group">
                                 {{-- Nombre completo del responsable --}}

@@ -64,8 +64,61 @@
         peso: document.getElementById('peso'),
     };
 
+    const propietarioIdInput = document.getElementById('propietario_id');
+
     let historiaEditandoId = null;
     let historiaPorAnularId = null;
+
+    function bloquearCamposPropietario(estado) {
+        ['nombrePropietario', 'telefono', 'direccion', 'dni'].forEach(campo => {
+            const input = campos[campo];
+            if (input) {
+                input.readOnly = estado;
+            }
+        });
+    }
+
+    function limpiarPropietarioSeleccionado() {
+        if (propietarioIdInput) {
+            propietarioIdInput.value = '';
+        }
+
+        ['nombrePropietario', 'telefono', 'direccion', 'dni'].forEach(campo => {
+            const input = campos[campo];
+            if (input) {
+                input.value = '';
+                input.readOnly = false;
+            }
+        });
+    }
+
+    function asignarPropietarioSeleccionado(propietario) {
+        if (!propietario) {
+            return;
+        }
+
+        if (propietarioIdInput) {
+            propietarioIdInput.value = propietario.id ?? '';
+        }
+
+        if (campos.nombrePropietario) {
+            campos.nombrePropietario.value = propietario.nombre_propietario ?? '';
+        }
+
+        if (campos.telefono) {
+            campos.telefono.value = propietario.telefono_propietario ?? '';
+        }
+
+        if (campos.direccion) {
+            campos.direccion.value = propietario.direccion_propietario ?? '';
+        }
+
+        if (campos.dni) {
+            campos.dni.value = propietario.dni_propietario ?? '';
+        }
+
+        bloquearCamposPropietario(true);
+    }
 
     // Determina si existe algún modal visible para sincronizar el estado del body.
     function hayModalVisible() {
@@ -131,6 +184,7 @@
         }
 
         form.reset();
+        limpiarPropietarioSeleccionado();
         ocultarEspecieOtro();
 
         if (numeroHistoriaInput) {
@@ -138,6 +192,16 @@
             numeroHistoriaInput.placeholder = 'Se generará automáticamente';
         }
     }
+
+    document.addEventListener('livewire:init', () => {
+        Livewire.on('propietarioSeleccionado', propietario => {
+            asignarPropietarioSeleccionado(propietario);
+        });
+
+        Livewire.on('nuevoPropietario', () => {
+            limpiarPropietarioSeleccionado();
+        });
+    });
 
     // Refresca el número de historia mostrado mientras el modal está abierto y no hay edición.
     function actualizarNumeroHistoriaEnFormulario() {

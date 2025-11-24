@@ -6,6 +6,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Mi App</title>
 
+    @livewireStyles
+
     {{-- Si estamos en el login, carga login.css --}}
     @if (Request::is('login'))
         <link rel="stylesheet" href="{{ asset('css/login.css') }}">
@@ -22,5 +24,7 @@
     @yield('content')
 
     @stack('scripts')
+
+    @livewireScripts
 </body>
 </html>
