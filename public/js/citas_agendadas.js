@@ -823,7 +823,9 @@
             }
 
             const nuevoEstado = selectEstadoCita?.value || 'Pendiente';
-            const esReprogramada = String(nuevoEstado).toLowerCase() === 'reprogramada';
+            const nuevoEstadoNormalizado = String(nuevoEstado).toLowerCase();
+            const esReprogramada = nuevoEstadoNormalizado === 'reprogramada';
+            const esCancelada = nuevoEstadoNormalizado === 'cancelada';
             const payload = { estado: nuevoEstado };
 
             if (esReprogramada) {
@@ -847,16 +849,25 @@
             }
 
             try {
-                const citaActualizada = await actualizarEstadoCita(citaSeleccionadaParaEstado.id, payload);
+                const resultado = await actualizarEstadoCita(citaSeleccionadaParaEstado.id, payload);
                 cerrarModalGenerico(modalEstadoCita);
                 resetCamposReprogramar();
                 citaSeleccionadaParaEstado = null;
 
                 await cargarCitas(citasBusquedaActual);
 
-                if (citaActualizada) {
-                    const citaDesdeLista = obtenerCitaPorId(citaActualizada.id);
-                    actualizarDetalleCitaSiCorresponde(citaDesdeLista ?? citaActualizada);
+                if (esCancelada || resultado?.deleted) {
+                    citaDetalleSeleccionada = null;
+                    mostrarMensajeListadoCitas(resultado?.message || 'Cita cancelada y eliminada correctamente.', 'success');
+                    if (typeof window.cargarCitasProximas === 'function') {
+                        window.cargarCitasProximas();
+                    }
+                    return;
+                }
+
+                if (resultado) {
+                    const citaDesdeLista = obtenerCitaPorId(resultado.id);
+                    actualizarDetalleCitaSiCorresponde(citaDesdeLista ?? resultado);
                 }
 
                 mostrarMensajeListadoCitas('Estado actualizado correctamente.', 'success');
