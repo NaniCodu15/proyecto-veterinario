@@ -22,7 +22,6 @@ class HistoriaClinica extends Model
         'sintomas',
         'diagnostico',
         'tratamientos',
-        'vacunas',
         'notas',
         'archivo',
         'created_by',
@@ -52,14 +51,5 @@ class HistoriaClinica extends Model
     public function consultas()
     {
         return $this->hasMany(Consulta::class, 'id_historia', 'id_historia');
-    }
-
-    /**
-     * Relación: una historia clínica puede tener varias vacunas asociadas a través de la mascota.
-     * Útil para consultar el calendario de inmunizaciones de la mascota.
-     */
-    public function vacunas()
-    {
-        return $this->hasMany(Vacuna::class, 'id_mascota', 'id_mascota');
     }
 }

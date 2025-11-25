@@ -29,8 +29,6 @@ return new class extends Migration {
             $table->text('diagnostico')->nullable();
             // Tratamientos generales aplicados (texto libre).
             $table->text('tratamientos')->nullable();
-            // Vacunas relevantes relacionadas a la historia.
-            $table->text('vacunas')->nullable();
             // Notas adicionales del veterinario.
             $table->text('notas')->nullable();
             // Ruta del archivo adjunto con documentos de soporte.
