@@ -12,4 +12,21 @@
             });
         });
     }
+
+    // Botón para alternar la visibilidad de la contraseña.
+    const passwordInput = document.querySelector('#password');
+    const togglePasswordBtn = document.querySelector('.toggle-password');
+
+    if (passwordInput && togglePasswordBtn) {
+        togglePasswordBtn.addEventListener('click', () => {
+            const isHidden = passwordInput.getAttribute('type') === 'password';
+            passwordInput.setAttribute('type', isHidden ? 'text' : 'password');
+
+            const icon = togglePasswordBtn.querySelector('i');
+            if (icon) {
+                icon.classList.toggle('fa-eye');
+                icon.classList.toggle('fa-eye-slash');
+            }
+        });
+    }
 })();
