@@ -423,7 +423,6 @@ class HistoriaClinicaController extends Controller
         $consultas = $historia->consultas->map(function ($consulta) {
             return [
                 'fecha' => optional($consulta->fecha_consulta)->format('d/m/Y'),
-                'hora' => optional($consulta->fecha_consulta)->format('H:i'),
                 'sintomas' => $consulta->sintomas,
                 'diagnostico' => $consulta->diagnostico,
                 'tratamiento' => $consulta->tratamiento,
