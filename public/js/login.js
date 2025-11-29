@@ -12,4 +12,22 @@
             });
         });
     }
+
+    // Alterna la visibilidad de la contraseña manteniendo el estilo del formulario.
+    const toggleButtons = document.querySelectorAll('.toggle-password');
+    toggleButtons.forEach(button => {
+        const targetSelector = button.getAttribute('data-target');
+        const targetInput = document.querySelector(targetSelector);
+        const icon = button.querySelector('i');
+
+        if (!targetInput || !icon) return;
+
+        button.addEventListener('click', () => {
+            const isPassword = targetInput.type === 'password';
+            targetInput.type = isPassword ? 'text' : 'password';
+            icon.classList.toggle('fa-eye', !isPassword);
+            icon.classList.toggle('fa-eye-slash', isPassword);
+            button.setAttribute('aria-label', isPassword ? 'Ocultar contraseña' : 'Mostrar contraseña');
+        });
+    });
 })();
