@@ -12,4 +12,16 @@
             });
         });
     }
+
+    const togglePassword = document.querySelector('.toggle-password');
+    const passwordInput = document.getElementById('password');
+
+    if (togglePassword && passwordInput) {
+        togglePassword.addEventListener('click', () => {
+            const isPassword = passwordInput.getAttribute('type') === 'password';
+            passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+            togglePassword.firstElementChild.classList.toggle('fa-eye');
+            togglePassword.firstElementChild.classList.toggle('fa-eye-slash');
+        });
+    }
 })();
