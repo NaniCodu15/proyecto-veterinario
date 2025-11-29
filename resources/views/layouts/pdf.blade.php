@@ -292,9 +292,6 @@
                                 <h3 class="consulta-card__title">Consulta {{ $index + 1 }}</h3>
                                 <span class="consulta-card__date">
                                     {{ $consulta['fecha'] ?? '—' }}
-                                    @if(!empty($consulta['hora']))
-                                        · {{ $consulta['hora'] }}
-                                    @endif
                                 </span>
                             </div>
                             <div class="consulta-card__grid">
