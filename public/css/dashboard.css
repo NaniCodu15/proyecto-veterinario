@@ -273,15 +273,15 @@ img {
 .user-card__info {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
     flex: 1;
     min-width: 0;
 }
 
 /* Avatar circular con sombra suave - MEJORADO */
 .user-card__avatar {
-    width: 60px;
-    height: 60px;
+    width: 52px;
+    height: 52px;
     border-radius: 50%;
     overflow: hidden;
     box-shadow: 0 6px 16px rgba(123, 164, 255, 0.25);
@@ -309,7 +309,7 @@ img {
 .user-card__details {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
     min-width: 0;
     flex: 1;
 }
@@ -318,25 +318,21 @@ img {
 .user-card__name {
     font-family: var(--font-primary);
     font-weight: 700;
-    font-size: 1.05rem;
+    font-size: 0.98rem;
     color: var(--text-dark);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1.3;
+    white-space: normal;
+    line-height: 1.25;
     letter-spacing: -0.01em;
 }
 
 /* Correo con estilo secundario - MEJORADO */
 .user-card__email {
     font-family: var(--font-body);
-    font-size: 0.88rem;
+    font-size: 0.84rem;
     font-weight: 500;
     color: var(--text-muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1.4;
+    white-space: normal;
+    line-height: 1.35;
 }
 
 /* Contenedor del botón de cierre de sesión - REDISEÑADO */
