@@ -881,30 +881,6 @@
         });
     }
 
-    // Carga las historias clínicas en el select del modal de edición
-    async function cargarHistoriasParaEditar() {
-        const historiaListUrl = moduleConfig.historiaListUrl || '';
-        if (!historiaListUrl) {
-            return [];
-        }
-
-        try {
-            const response = await fetch(historiaListUrl, {
-                headers: { Accept: 'application/json' },
-            });
-
-            if (!response.ok) {
-                throw new Error('No se pudieron obtener las historias clínicas.');
-            }
-
-            const data = await response.json();
-            return Array.isArray(data?.data) ? data.data : [];
-        } catch (error) {
-            console.error(error);
-            return [];
-        }
-    }
-
     // Prepara el modal de edición con los datos de la cita
     async function prepararModalEditar(cita) {
         if (!cita || !modalEditarCita) {
@@ -913,27 +889,18 @@
 
         citaSeleccionadaParaEditar = cita;
 
-        const selectHistoria = document.getElementById('editarCitaHistoria');
+        const inputHistoria = document.getElementById('editarCitaHistoria');
         const inputFecha = document.getElementById('editarCitaFecha');
         const inputHora = document.getElementById('editarCitaHora');
         const textareaMotivo = document.getElementById('editarCitaMotivo');
 
-        // Cargar y poblar historias clínicas
-        if (selectHistoria) {
-            selectHistoria.innerHTML = '<option value="">Cargando...</option>';
-            const historias = await cargarHistoriasParaEditar();
-            
-            selectHistoria.innerHTML = '<option value="">Selecciona una historia clínica</option>';
-            historias.forEach(historia => {
-                const option = document.createElement('option');
-                option.value = historia.id;
-                option.textContent = `${historia.numero_historia || ''} - ${historia.nombreMascota || ''} (${historia.nombrePropietario || ''})`;
-                selectHistoria.appendChild(option);
-            });
+        if (inputHistoria) {
+            const descripcionMascota = cita.mascota ? `${cita.mascota}` : '';
+            const descripcionPropietario = cita.propietario ? `(${cita.propietario})` : '';
+            const descripcionDetalle = [descripcionMascota, descripcionPropietario].filter(Boolean).join(' ');
+            const descripcionHistoria = [cita.numero_historia, descripcionDetalle].filter(Boolean).join(' - ');
 
-            if (cita.id_historia) {
-                selectHistoria.value = cita.id_historia;
-            }
+            inputHistoria.value = descripcionHistoria || 'Sin historia clínica';
         }
 
         if (inputFecha && cita.fecha) {
@@ -999,7 +966,6 @@
 
             const formData = new FormData(formEditarCita);
             const datos = {
-                id_historia: formData.get('id_historia'),
                 fecha_cita: formData.get('fecha_cita'),
                 hora_cita: formData.get('hora_cita'),
                 motivo: formData.get('motivo'),

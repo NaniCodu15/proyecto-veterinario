@@ -163,7 +163,7 @@ class CitaController extends Controller
     /**
      * Actualiza los datos básicos de la cita luego de validar la información.
      *
-     * @param Request $request Solicitud con fecha, hora e historia clínica seleccionada.
+     * @param Request $request Solicitud con fecha, hora y motivo de la cita.
      * @param Cita $cita Instancia de la cita a actualizar.
      * @return \Illuminate\Http\RedirectResponse Redirección a `citas.index` con mensaje de éxito.
      */
@@ -172,7 +172,6 @@ class CitaController extends Controller
         $validated = $request->validate([
             'fecha_cita' => 'required|date',
             'hora_cita' => 'required|date_format:H:i',
-            'id_historia' => ['required', 'exists:historia_clinicas,id_historia'],
             'motivo' => ['nullable', 'string', 'max:255'],
         ]);
 
@@ -181,7 +180,6 @@ class CitaController extends Controller
         $cita->update([
             'fecha_cita' => $validated['fecha_cita'],
             'hora_cita' => $hora,
-            'id_historia' => $validated['id_historia'],
             'motivo' => $validated['motivo'] ?? $cita->motivo,
         ]);
 
