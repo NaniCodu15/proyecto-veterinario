@@ -43,10 +43,9 @@
                 <div id="editarCitaMensaje" class="cita-alert" role="alert" hidden></div>
                 <form id="formEditarCita" class="cita-estado-form">
                     <div class="form-group">
-                        <label for="editarCitaHistoria">Historia Clínica</label>
-                        <select id="editarCitaHistoria" name="id_historia" required>
-                            <option value="">Selecciona una historia clínica</option>
-                        </select>
+                        <label for="editarCitaHistoriaTexto">Historia Clínica</label>
+                        <input type="text" id="editarCitaHistoriaTexto" readonly aria-readonly="true">
+                        <input type="hidden" id="editarCitaHistoria" name="id_historia">
                     </div>
 
                     <div class="form-group">
