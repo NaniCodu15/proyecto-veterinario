@@ -12,4 +12,27 @@
             });
         });
     }
+
+    // Alterna la visibilidad de la contraseña al presionar el ícono de ojo.
+    const passwordInput = document.querySelector('#password');
+    const togglePasswordBtn = document.querySelector('#toggle-password');
+
+    if (passwordInput && togglePasswordBtn) {
+        const icon = togglePasswordBtn.querySelector('i');
+
+        togglePasswordBtn.addEventListener('click', () => {
+            const isHidden = passwordInput.getAttribute('type') === 'password';
+            passwordInput.setAttribute('type', isHidden ? 'text' : 'password');
+            togglePasswordBtn.setAttribute('aria-pressed', String(isHidden));
+
+            if (icon) {
+                icon.classList.toggle('fa-eye', isHidden);
+                icon.classList.toggle('fa-eye-slash', !isHidden);
+            }
+
+            passwordInput.focus({ preventScroll: true });
+            const caret = passwordInput.value.length;
+            passwordInput.setSelectionRange(caret, caret);
+        });
+    }
 })();
