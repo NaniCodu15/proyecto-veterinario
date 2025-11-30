@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'PDF Historia')
+
 @push('styles')
 <style>
     body.dashboard-layout {
