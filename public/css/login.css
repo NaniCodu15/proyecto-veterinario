@@ -112,9 +112,9 @@ html, body {
 
 /* Estilos del input */
 .input-group input {
-    width: 73%;
+    width: 90%;
     margin-left: 5%;
-    padding: 14px 12px 14px 40px;
+    padding: 14px 44px 14px 40px;
     border-radius: 12px;
     border: 2px solid #e0e0e0;
     background: #f9f9f9;
@@ -162,6 +162,31 @@ html, body {
 /* Cambio de color del ícono al enfocar el input */
 .input-group input:focus ~ .icon {
     color: #2a41d9; /* Ícono se vuelve azul */
+}
+
+.input-group .toggle-password {
+    position: absolute;
+    top: 50%;
+    right: calc(5% + 12px);
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: #5b69ff;
+    font-size: 18px;
+    padding: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.input-group .toggle-password:focus {
+    outline: none;
+}
+
+.input-group input:focus ~ .toggle-password {
+    color: #2a41d9;
 }
 
 /* Botón de login */
