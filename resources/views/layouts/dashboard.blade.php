@@ -1,6 +1,8 @@
 {{-- Plantilla principal del panel de control --}}
 @extends('layouts.app')
 
+@section('title', 'Inicio')
+
 @section('content')
 
 @push('scripts')

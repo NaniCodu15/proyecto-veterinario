@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Historia clínica {{ $codigo }}</title>
+    <title>PDF Historia</title>
     <style>
         @page {
             margin: 32px 36px;
