@@ -38,6 +38,9 @@
                 <i class="fa-solid fa-lock icon"></i>
                 <input type="password" name="password" id="password" placeholder=" " required>
                 <label for="password">Contraseña:</label>
+                <button type="button" class="toggle-password" data-target="#password" aria-label="Mostrar contraseña">
+                    <i class="fa-solid fa-eye"></i>
+                </button>
             </div>
 
             {{-- Acción para enviar las credenciales --}}
