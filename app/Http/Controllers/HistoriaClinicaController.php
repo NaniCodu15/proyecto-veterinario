@@ -22,6 +22,7 @@ class HistoriaClinicaController extends Controller
      */
     public function list()
     {
+        // API: Eloquent ORM para cargar historias clínicas con relaciones de mascota y propietario consumidas por la tabla AJAX del frontend.
         $historias = HistoriaClinica::with(['mascota.propietario'])
             ->orderByDesc('fecha_apertura')
             ->orderByDesc('created_at')
@@ -39,6 +40,7 @@ class HistoriaClinicaController extends Controller
     {
         $termino = trim((string) $request->query('q', ''));
 
+        // API: Eloquent Query Builder para filtrar historias clínicas y relaciones según texto buscado por Select2 en el formulario.
         $historias = HistoriaClinica::with(['mascota.propietario'])
             ->when($termino !== '', function ($query) use ($termino) {
                 $query->where(function ($subQuery) use ($termino) {
@@ -99,6 +101,7 @@ class HistoriaClinicaController extends Controller
      */
     public function store(Request $request)
     {
+        // API: Validador de Laravel para asegurar datos clínicos y de contacto requeridos antes de crear registros.
         $validated = $request->validate([
             'nombreMascota' => ['required', 'string', 'max:100'],
             'especie' => ['required', Rule::in(['perro', 'gato', 'otro'])],
@@ -115,6 +118,7 @@ class HistoriaClinicaController extends Controller
             'especieOtro.required_if' => 'Debe especificar la especie de la mascota.',
         ]);
 
+        // API: Transacción de base de datos para crear propietario, mascota e historia clínica de forma atómica solicitada por el panel clínico.
         $historia = DB::transaction(function () use ($validated) {
             $especieSeleccionada = $validated['especie'] === 'otro'
                 ? $validated['especieOtro']
@@ -165,6 +169,7 @@ class HistoriaClinicaController extends Controller
 
             $numeroHistoria = $this->generarNumeroHistoria();
 
+            // API: Eloquent ORM para registrar la historia clínica asociada al usuario autenticado en el módulo de admisión.
             $historia = HistoriaClinica::create([
                 'id_mascota' => $mascota->id_mascota,
                 'numero_historia' => $numeroHistoria,
@@ -214,6 +219,7 @@ class HistoriaClinicaController extends Controller
      */
     public function update(Request $request, $id)
     {
+        // API: Validador de Laravel para asegurar integridad de los campos clínicos antes de actualizar registros existentes.
         $validated = $request->validate([
             'nombreMascota' => ['required', 'string', 'max:100'],
             'especie' => ['required', Rule::in(['perro', 'gato', 'otro'])],
@@ -230,8 +236,10 @@ class HistoriaClinicaController extends Controller
             'especieOtro.required_if' => 'Debe especificar la especie de la mascota.',
         ]);
 
+        // API: Eloquent ORM para recuperar la historia con sus relaciones que se mostrará en el formulario del panel.
         $historia = HistoriaClinica::with(['mascota.propietario'])->findOrFail($id);
 
+        // API: Transacción de base de datos para actualizar propietario, mascota e historia de manera consistente.
         $historia = DB::transaction(function () use ($validated, $historia) {
             $especieSeleccionada = $validated['especie'] === 'otro'
                 ? $validated['especieOtro']
@@ -302,6 +310,7 @@ class HistoriaClinicaController extends Controller
      */
     public function ver($id)
     {
+        // API: Eloquent ORM para obtener historia completa que alimenta la vista de detalle y generación de PDF.
         $historia = $this->obtenerHistoriaCompleta($id);
 
         $codigo = $historia->numero_historia ?: sprintf('HC-%05d', $historia->id_historia);
@@ -328,6 +337,7 @@ class HistoriaClinicaController extends Controller
 
         $datosPdf = $this->prepararDatosPdf($historia, $codigo);
 
+        // API: DOMPDF (Barryvdh\DomPDF) para renderizar la historia clínica en PDF consumido por descargas y vista previa.
         $pdf = Pdf::loadView('layouts.pdf', $datosPdf)->setPaper('a4');
 
         $nombreArchivo = 'historia_clinica_' . Str::of($codigo)->replace([' ', '/'], '_') . '.pdf';

@@ -90,6 +90,7 @@ class PropietarioController extends Controller
     {
         $termino = $request->string('q')->toString();
 
+        // API: Eloquent Query Builder para alimentar el autocompletado Select2 con propietarios filtrados por nombre o DNI.
         $propietarios = Propietario::query()
             ->when($termino !== '', function ($query) use ($termino) {
                 $query->where(function ($subQuery) use ($termino) {

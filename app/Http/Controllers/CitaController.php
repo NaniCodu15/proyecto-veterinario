@@ -22,6 +22,7 @@ class CitaController extends Controller
     {
         $search = trim((string) $request->input('q', ''));
 
+        // API: Eloquent ORM con carga ansiosa para exponer citas y relaciones a la tabla del panel administrativo.
         $citasQuery = Cita::with(['historiaClinica.mascota.propietario']);
 
         if ($search !== '') {
@@ -67,6 +68,7 @@ class CitaController extends Controller
         $today = Carbon::today();
         $limitDate = $today->copy()->addDays(3);
 
+        // API: Eloquent ORM para listar próximas citas pendientes usadas por el widget de recordatorios.
         $citas = Cita::with(['historiaClinica.mascota.propietario'])
             ->where('estado', 'Pendiente')
             ->whereBetween('fecha_cita', [$today, $limitDate])
@@ -110,6 +112,7 @@ class CitaController extends Controller
      */
     public function store(Request $request)
     {
+        // API: Validador de Laravel para asegurar integridad de fecha, hora y referencia clínica al crear la cita.
         $validated = $request->validate([
             'fecha_cita' => ['required', 'date'],
             'hora_cita' => ['required', 'date_format:H:i'],
@@ -169,6 +172,7 @@ class CitaController extends Controller
      */
     public function update(Request $request, Cita $cita)
     {
+        // API: Validador de Laravel para controlar los campos editables de la cita desde el panel administrativo.
         $validated = $request->validate([
             'fecha_cita' => 'required|date',
             'hora_cita' => 'required|date_format:H:i',

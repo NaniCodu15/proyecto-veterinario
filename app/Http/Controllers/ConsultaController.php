@@ -20,6 +20,7 @@ class ConsultaController extends Controller
     {
         $historiaId = $request->query('id_historia');
 
+        // API: Eloquent Query Builder para listar consultas filtradas por historia clínica en la tabla de consultas.
         $consultas = Consulta::query()
             ->when($historiaId, fn ($query) => $query->where('id_historia', $historiaId))
             ->orderByDesc('fecha_consulta')
@@ -38,8 +39,10 @@ class ConsultaController extends Controller
      */
     public function store(Request $request)
     {
+        // API: Validador de Laravel para controlar los parámetros clínicos recibidos desde el formulario de nueva consulta.
         $validated = $this->validarConsulta($request);
 
+        // API: Eloquent ORM para garantizar que la historia clínica asociada existe antes de guardar la consulta.
         $historia = HistoriaClinica::findOrFail($validated['id_historia']);
 
         $consulta = new Consulta();
@@ -47,6 +50,7 @@ class ConsultaController extends Controller
         $consulta->fecha_consulta = $this->parsearFecha($validated['fecha_consulta']);
         $consulta->save();
 
+        // API: Eloquent touch() para actualizar la marca de tiempo y reflejar cambios en la historia clínica usada por reportes.
         $historia->touch();
 
         return response()->json([
@@ -77,9 +81,11 @@ class ConsultaController extends Controller
      */
     public function update(Request $request, Consulta $consulta)
     {
+        // API: Validador de Laravel para normalizar los datos clínicos editados desde el frontend.
         $validated = $this->validarConsulta($request, $consulta);
 
         if ($consulta->id_historia !== (int) $validated['id_historia']) {
+            // API: Eloquent ORM para verificar la existencia de la nueva historia clínica vinculada.
             HistoriaClinica::findOrFail($validated['id_historia']);
             $consulta->id_historia = $validated['id_historia'];
         }
@@ -88,6 +94,7 @@ class ConsultaController extends Controller
         $consulta->fecha_consulta = $this->parsearFecha($validated['fecha_consulta']);
         $consulta->save();
         $consulta->loadMissing('historiaClinica');
+        // API: Eloquent touch() para reflejar la modificación en la historia clínica consumida por listados y reportes.
         $consulta->historiaClinica?->touch();
 
         return response()->json([
@@ -120,6 +127,7 @@ class ConsultaController extends Controller
      */
     public function porHistoria($historiaId)
     {
+        // API: Eloquent ORM para obtener consultas ligadas a una historia específica mostrada en el detalle clínico.
         $historia = HistoriaClinica::findOrFail($historiaId);
 
         $consultas = $historia->consultas()

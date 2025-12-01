@@ -24,6 +24,7 @@ class BackupController extends Controller
      */
     public function generate(): JsonResponse
     {
+        // API: Servicio de dominio `BackupService` que encapsula el uso de la API de almacenamiento y consola para copias usadas en el panel de administración.
         $result = $this->backupService->generate();
 
         return response()->json($result['data'], $result['status']);
@@ -36,8 +37,10 @@ class BackupController extends Controller
      */
     public function index(): JsonResponse
     {
+        // API: Servicio `BackupService` para limpiar respaldos heredados en el sistema de archivos antes de listar.
         $this->backupService->cleanupLegacyBackupsDirectory();
 
+        // API: Eloquent ORM para consultar los respaldos almacenados que se muestran en el listado de administración.
         $respaldos = RespaldoDato::query()
             ->orderByDesc('fecha_respaldo')
             ->get()

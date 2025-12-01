@@ -20,12 +20,14 @@ class DashboardController extends Controller
     public function index()
     {
         // Estadísticas generales
+        // API: Eloquent ORM para contar entidades principales mostradas en los KPI del tablero.
         $totalMascotas = Mascota::count();
         $totalPropietarios = Propietario::count();
         $totalHistorias = HistoriaClinica::count();
         $totalConsultas = Consulta::count();
 
         // Mascotas con sus relaciones para la tabla
+        // API: Eloquent ORM con paginación de Laravel para alimentar la tabla de mascotas del dashboard.
         $mascotas = Mascota::with([
             'propietario',
             'historiaClinica.consultas',
@@ -34,6 +36,7 @@ class DashboardController extends Controller
         $today = Carbon::today();
         $endDate = $today->copy()->addDays(3);
 
+        // API: Eloquent ORM para obtener citas próximas consumidas por el módulo de recordatorios en el panel.
         $upcomingAppointments = Cita::with(['historiaClinica.mascota.propietario'])
             ->where('estado', 'Pendiente')
             ->whereBetween('fecha_cita', [$today, $endDate])
