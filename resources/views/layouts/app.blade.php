@@ -7,6 +7,8 @@
     <title>@yield('title', 'Gestión de Historias')</title>
     <link rel="icon" type="image/png" href="{{ asset('images/logoVet.png') }}">
 
+    @livewireStyles
+
     {{-- Si estamos en el login, carga login.css --}}
     @if (Request::is('login'))
         <link rel="stylesheet" href="{{ asset('css/login.css') }}">
@@ -23,5 +25,7 @@
     @yield('content')
 
     @stack('scripts')
+
+    @livewireScripts
 </body>
 </html>
