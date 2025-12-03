@@ -22,7 +22,7 @@ class CitaController extends Controller
     {
         $search = trim((string) $request->input('q', ''));
 
-        // API: Eloquent ORM con carga ansiosa para exponer citas y relaciones a la tabla del panel administrativo.
+        // API: Eloquent ORM con para exponer citas y relaciones a la tabla del panel administrativo.
         $citasQuery = Cita::with(['historiaClinica.mascota.propietario']);
 
         if ($search !== '') {
