@@ -33,10 +33,13 @@
                 <label for="email">Email:</label>
             </div>
 
-            <div class="input-group">
+            <div class="input-group password-group">
                 {{-- Campo de contraseña --}}
                 <i class="fa-solid fa-lock icon"></i>
                 <input type="password" name="password" id="password" placeholder=" " required>
+                <button type="button" class="toggle-password" aria-label="Mostrar u ocultar contraseña">
+                    <i class="fa-regular fa-eye"></i>
+                </button>
                 <label for="password">Contraseña:</label>
             </div>
 

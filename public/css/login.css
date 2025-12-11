@@ -125,6 +125,38 @@ html, body {
     transition: border 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
 
+.password-group input {
+    padding-right: 44px;
+}
+
+.password-group .toggle-password {
+    position: absolute;
+    top: 50%;
+    right: calc(22% - 8px);
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    color: #5b69ff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 28px;
+    z-index: 3;
+}
+
+.password-group .toggle-password:focus-visible {
+    outline: none;
+}
+
+.password-group .toggle-password .fa-eye,
+.password-group .toggle-password .fa-eye-slash {
+    font-size: 18px;
+}
+
 /* Label flotante */
 .input-group label {
     position: absolute;
