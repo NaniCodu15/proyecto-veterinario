@@ -114,7 +114,7 @@ html, body {
 .input-group input {
     width: 73%;
     margin-left: 5%;
-    padding: 14px 12px 14px 40px;
+    padding: 14px 48px 14px 40px;
     border-radius: 12px;
     border: 2px solid #e0e0e0;
     background: #f9f9f9;
@@ -123,6 +123,28 @@ html, body {
     font-weight: 400;
     outline: none;
     transition: border 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+/* Botón para mostrar/ocultar contraseña */
+.input-group .toggle-password {
+    position: absolute;
+    top: 10px;
+    right: 24px;
+    background: transparent;
+    border: none;
+    color: #5b69ff;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.3s ease;
+}
+
+.input-group .toggle-password:hover,
+.input-group .toggle-password:focus {
+    color: #2a41d9;
 }
 
 /* Label flotante */
